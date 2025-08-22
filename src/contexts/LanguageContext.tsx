@@ -121,7 +121,7 @@ const translations = {
   ru: {
     // Auth
     'auth.title': 'Sport Body System',
-    'auth.subtitle': 'Ваш Персональный ИИ Фитнес-Тренер',
+    'auth.subtitle': 'Ваш Персональный Фитнес-Партнер',
     'auth.name': 'Полное имя',
     'auth.email': 'Email',
     'auth.password': 'Пароль',
