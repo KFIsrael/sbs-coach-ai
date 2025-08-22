@@ -46,7 +46,7 @@ const translations = {
     // Questions
     'question.fitness_goal': "What's your primary fitness goal?",
     'question.fitness_level': "What's your current fitness level?", 
-    'question.training_days': 'How many days per week can you train?',
+    'question.age': 'What is your age?',
     'question.limitations': 'Do you have any injuries or physical limitations?',
     'question.equipment': 'What equipment do you have access to?',
     
@@ -62,11 +62,11 @@ const translations = {
     'level.advanced': 'Advanced - Regular training',
     'level.expert': 'Expert - Competitive level',
     
-    'days.2': '2 days per week',
-    'days.3': '3 days per week',
-    'days.4': '4 days per week', 
-    'days.5': '5 days per week',
-    'days.6+': '6+ days per week',
+    'age.18-25': '18-25 years old',
+    'age.26-35': '26-35 years old',
+    'age.36-45': '36-45 years old', 
+    'age.46-55': '46-55 years old',
+    'age.56+': '56+ years old',
     
     'limitations.none': 'No limitations',
     'limitations.back': 'Back problems',
@@ -114,6 +114,9 @@ const translations = {
     'common.save': 'Save',
     'common.delete': 'Delete',
     'common.edit': 'Edit',
+    'common.language': 'Language',
+    'common.english': 'English',
+    'common.russian': 'Русский',
   },
   ru: {
     // Auth
@@ -152,7 +155,7 @@ const translations = {
     // Questions
     'question.fitness_goal': 'Какая ваша основная фитнес-цель?',
     'question.fitness_level': 'Каков ваш текущий уровень физической подготовки?',
-    'question.training_days': 'Сколько дней в неделю вы можете тренироваться?',
+    'question.age': 'Сколько вам лет?',
     'question.limitations': 'Есть ли у вас травмы или физические ограничения?',
     'question.equipment': 'К какому оборудованию у вас есть доступ?',
     
@@ -168,11 +171,11 @@ const translations = {
     'level.advanced': 'Продвинутый - регулярные тренировки',
     'level.expert': 'Эксперт - соревновательный уровень',
     
-    'days.2': '2 дня в неделю',
-    'days.3': '3 дня в неделю',
-    'days.4': '4 дня в неделю',
-    'days.5': '5 дней в неделю',
-    'days.6+': '6+ дней в неделю',
+    'age.18-25': '18-25 лет',
+    'age.26-35': '26-35 лет',
+    'age.36-45': '36-45 лет',
+    'age.46-55': '46-55 лет',
+    'age.56+': '56+ лет',
     
     'limitations.none': 'Нет ограничений',
     'limitations.back': 'Проблемы со спиной',
@@ -220,13 +223,16 @@ const translations = {
     'common.save': 'Сохранить',
     'common.delete': 'Удалить',
     'common.edit': 'Редактировать',
+    'common.language': 'Язык',
+    'common.english': 'English',
+    'common.russian': 'Русский',
   }
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguage] = useState<Language>('ru');
 
   const t = (key: string): string => {
     return translations[language][key] || key;

@@ -6,10 +6,11 @@ import { Questionnaire } from "@/components/questionnaire/Questionnaire";
 import { ProgramChoice } from "@/components/workout/ProgramChoice";
 import { WorkoutProgram } from "@/components/workout/WorkoutProgram";
 import { WorkoutSession } from "@/components/workout/WorkoutSession";
+import { TestWorkout } from "@/components/workout/TestWorkout";
 import { AIChat } from "@/components/chat/AIChat";
 import heroImage from "@/assets/hero-fitness.jpg";
 
-type AppState = 'auth' | 'dashboard' | 'questionnaire' | 'program_choice' | 'programs' | 'workout';
+type AppState = 'auth' | 'dashboard' | 'questionnaire' | 'program_choice' | 'programs' | 'workout' | 'test_workout';
 
 interface User {
   name: string;
@@ -56,7 +57,12 @@ const Index = () => {
 
   const handleWorkoutComplete = () => {
     setCurrentWorkout(null);
-    setAppState('programs');
+    setAppState('dashboard');
+  };
+
+  const handleTestWorkoutComplete = (results: any) => {
+    console.log('Test workout results:', results);
+    setAppState('dashboard');
   };
 
   return (
@@ -97,13 +103,20 @@ const Index = () => {
           <ProgramChoice
             onBack={() => setAppState('questionnaire')}
             onAIGeneration={() => setAppState('programs')}
-            onTestWorkout={() => setAppState('programs')}
+            onTestWorkout={() => setAppState('test_workout')}
+          />
+        )}
+
+        {appState === 'test_workout' && (
+          <TestWorkout
+            onBack={() => setAppState('program_choice')}
+            onComplete={handleTestWorkoutComplete}
           />
         )}
 
         {appState === 'programs' && (
           <WorkoutProgram
-            onBack={() => setAppState('program_choice')}
+            onBack={() => setAppState('dashboard')}
             onStartWorkout={handleStartWorkout}
             questionnaireData={questionnaireData}
           />
@@ -112,7 +125,7 @@ const Index = () => {
         {appState === 'workout' && currentWorkout && (
           <WorkoutSession
             workout={currentWorkout}
-            onBack={() => setAppState('programs')}
+            onBack={() => setAppState('dashboard')}
             onComplete={handleWorkoutComplete}
           />
         )}

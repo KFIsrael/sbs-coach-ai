@@ -38,14 +38,14 @@ const getQuestions = (t: (key: string) => string) => [
   },
   {
     id: 3,
-    title: t("question.training_days"),
+    title: t("question.age"),
     type: "single",
     options: [
-      { value: "2", label: t("days.2") },
-      { value: "3", label: t("days.3") },
-      { value: "4", label: t("days.4") },
-      { value: "5", label: t("days.5") },
-      { value: "6+", label: t("days.6+") }
+      { value: "18-25", label: t("age.18-25") },
+      { value: "26-35", label: t("age.26-35") },
+      { value: "36-45", label: t("age.36-45") },
+      { value: "46-55", label: t("age.46-55") },
+      { value: "56+", label: t("age.56+") }
     ]
   },
   {
@@ -96,6 +96,7 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
     if (isLastQuestion) {
       setIsCompleting(true);
       setTimeout(() => {
+        // Save questionnaire results to database
         onComplete(answers);
       }, 1500);
     } else {

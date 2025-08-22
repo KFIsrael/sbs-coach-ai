@@ -92,8 +92,8 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
             setIsTimerRunning(false);
             clearInterval(timer);
             toast({
-              title: "Rest Complete!",
-              description: "Time for your next set"
+              title: "Отдых завершен!",
+              description: "Время для следующего подхода"
             });
             return 0;
           }
@@ -123,8 +123,8 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
 
   const handleCompleteWorkout = () => {
     toast({
-      title: "Workout Complete! 🎉",
-      description: "Great job! Your progress has been saved."
+      title: "Тренировка завершена! 🎉",
+      description: "Отличная работа! Ваш прогресс сохранен."
     });
     setTimeout(() => onComplete(), 1000);
   };
@@ -148,7 +148,7 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
             className="text-muted-foreground hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+            Назад
           </Button>
           
           {restTimer > 0 && (
@@ -184,7 +184,7 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
             />
           </Progress>
           <p className="text-sm text-muted-foreground">
-            Exercise {currentExercise + 1} of {workout.exercises.length}
+            Упражнение {currentExercise + 1} из {workout.exercises.length}
           </p>
         </div>
       </div>
@@ -209,7 +209,7 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
         {/* Set Tracking */}
         <Card className="card-premium mb-6">
           <CardHeader>
-            <CardTitle className="text-lg">Track Your Sets</CardTitle>
+            <CardTitle className="text-lg">Отслеживание подходов</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {log.sets.map((set, index) => (
@@ -222,7 +222,7 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
-                  <Label className="text-base font-medium">Set {index + 1}</Label>
+                  <Label className="text-base font-medium">Подход {index + 1}</Label>
                   <Button
                     variant={set.completed ? "secondary" : "outline_gold"}
                     size="sm"
@@ -231,17 +231,17 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
                     {set.completed ? (
                       <>
                         <CheckCircle2 className="h-4 w-4 mr-1" />
-                        Done
+                        Выполнено
                       </>
                     ) : (
-                      "Mark Complete"
+                      "Отметить выполненным"
                     )}
                   </Button>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor={`weight-${index}`} className="text-sm">Weight (kg)</Label>
+                    <Label htmlFor={`weight-${index}`} className="text-sm">Вес (кг)</Label>
                     <Input
                       id={`weight-${index}`}
                       type="number"
@@ -252,7 +252,7 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
                     />
                   </div>
                   <div>
-                    <Label htmlFor={`reps-${index}`} className="text-sm">Reps</Label>
+                    <Label htmlFor={`reps-${index}`} className="text-sm">Повторения</Label>
                     <Input
                       id={`reps-${index}`}
                       type="number"
@@ -276,7 +276,7 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
             disabled={currentExercise === 0}
             className="flex-1"
           >
-            Previous Exercise
+            Предыдущее упражнение
           </Button>
           
           <Button 
@@ -285,9 +285,9 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
             className="flex-1"
           >
             {isLastExercise ? (
-              <>Complete Workout</>
+              <>Завершить тренировку</>
             ) : (
-              <>Next Exercise</>
+              <>Следующее упражнение</>
             )}
           </Button>
         </div>

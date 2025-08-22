@@ -11,7 +11,7 @@ const corsHeaders = {
 interface QuestionnaireData {
   1: string; // fitness goal
   2: string; // fitness level  
-  3: string; // training days
+  3: string; // age
   4: string; // limitations
   5: string; // equipment
 }
@@ -32,46 +32,53 @@ serve(async (req) => {
     // Create a fitness profile from questionnaire data
     const fitnessGoal = questionnaireData[1];
     const fitnessLevel = questionnaireData[2];
-    const trainingDays = questionnaireData[3];
+    const age = questionnaireData[3];
     const limitations = questionnaireData[4];
     const equipment = questionnaireData[5];
 
-    const prompt = `You are an expert fitness trainer. Create a personalized 4-week workout program based on this profile:
+    const prompt = `You are an expert fitness trainer. Create a personalized 3-day split workout program based on this profile:
 
 Goal: ${fitnessGoal}
 Fitness Level: ${fitnessLevel}  
-Training Days: ${trainingDays}
+Age: ${age}
 Limitations: ${limitations}
 Equipment: ${equipment}
 
 Available exercises: ${JSON.stringify(exercises, null, 2)}
 
-Create exactly ${trainingDays.charAt(0)} workout days for week 1. Each workout should:
-1. Have a descriptive name and focus area
-2. Include 4-6 exercises from the available list
-3. Specify sets, reps, and rest time appropriate for the fitness level
-4. Be 30-60 minutes long
+Create exactly 3 workout days following this split:
+- Day 1: Chest + Triceps (грудь и трицепс)
+- Day 2: Back + Biceps (спина и бицепс)  
+- Day 3: Legs (ноги)
+
+Each workout should:
+1. Have a descriptive Russian name and focus area
+2. Include 5-7 exercises from the available list that match the muscle groups
+3. Specify sets, reps, and rest time appropriate for the fitness level and age
+4. Be 45-60 minutes long
 5. Consider any limitations mentioned
+6. Use exercises with matching muscleGroup from the list
 
 Return ONLY a JSON object with this structure:
 {
   "program": {
-    "name": "Program name",
-    "description": "Brief description",
-    "weeks": 4,
+    "name": "Трёхдневная сплит-программа",
+    "description": "Персональная программа тренировок на 3 дня в неделю",
+    "weeks": 12,
     "workouts": [
       {
         "day": 1,
-        "name": "Workout name",
-        "focus": "Focus area", 
-        "duration": "45 min",
+        "title": "Грудь и Трицепс",
+        "focus": "Chest + Triceps", 
+        "duration": "50 min",
+        "completed": false,
         "exercises": [
           {
-            "exerciseId": "exercise_id_from_list",
-            "sets": 3,
-            "reps": "10-12",
-            "restTime": 60,
-            "notes": "Form tips"
+            "id": "exercise_id_from_list",
+            "name": "Exercise name from list",
+            "description": "Exercise description", 
+            "muscleGroup": "chest",
+            "sets": "3 x 10-12"
           }
         ]
       }

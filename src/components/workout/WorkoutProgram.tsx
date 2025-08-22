@@ -32,44 +32,60 @@ interface WorkoutProgramProps {
   questionnaireData?: any;
 }
 
-// Default workout program
+// Default workout program with Russian content
 const defaultWorkoutProgram: WorkoutDay[] = [
   {
     day: 1,
-    title: "Upper Body Strength",
-    focus: "Chest, Back, Shoulders",
-    duration: "45 min",
+    title: "Грудь и Трицепс",
+    focus: "Грудные мышцы, Трицепсы",
+    duration: "50 мин",
     completed: false,
     exercises: [
       {
         id: "1",
-        name: "Push-ups",
-        description: "Classic bodyweight chest exercise",
-        muscleGroup: "Chest",
-        sets: "3 sets × 12-15 reps"
+        name: "Жим штанги лёжа",
+        description: "Базовое упражнение для груди",
+        muscleGroup: "Грудь",
+        sets: "3 подхода × 10-12 повторений"
       },
       {
         id: "2", 
-        name: "Pull-ups",
-        description: "Upper body pulling movement",
-        muscleGroup: "Back",
-        sets: "3 sets × 8-12 reps"
+        name: "Отжимания на брусьях",
+        description: "Упражнение для груди и трицепсов",
+        muscleGroup: "Грудь",
+        sets: "3 подхода × 8-12 повторений"
       }
     ]
   },
   {
     day: 2,
-    title: "Lower Body Power",
-    focus: "Legs, Glutes",
-    duration: "50 min",
+    title: "Спина и Бицепс",
+    focus: "Мышцы спины, Бицепсы",
+    duration: "50 мин",
+    completed: false,
+    exercises: [
+      {
+        id: "3",
+        name: "Подтягивания",
+        description: "Базовое упражнение для спины",
+        muscleGroup: "Спина",
+        sets: "3 подхода × 8-12 повторений"
+      }
+    ]
+  },
+  {
+    day: 3,
+    title: "Ноги",
+    focus: "Квадрицепсы, Ягодицы, Бицепс бедра",
+    duration: "55 мин",
     completed: false,
     exercises: [
       {
         id: "4",
-        name: "Squats",
-        description: "Fundamental leg exercise",
-        muscleGroup: "Legs",
-        sets: "4 sets × 12-15 reps"
+        name: "Приседания со штангой",
+        description: "Базовое упражнение для ног",
+        muscleGroup: "Ноги",
+        sets: "4 подхода × 10-15 повторений"
       }
     ]
   }
@@ -93,7 +109,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
       setError(null);
 
       try {
-        const response = await fetch('/functions/v1/generate-workout-program', {
+        const response = await fetch('https://izymayczjppcgmejqxus.supabase.co/functions/v1/generate-workout-program', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -133,7 +149,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
                 {t('questionnaire.generating')}
               </h2>
               <p className="text-muted-foreground">
-                AI is creating your personalized program...
+                ИИ создает вашу персональную программу...
               </p>
             </div>
             <div className="space-y-2">
@@ -161,16 +177,16 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
             className="text-muted-foreground hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {t('questionnaire.back')}
+            Назад
           </Button>
         </div>
         
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-gradient-gold mb-2">
-            {t('workout.training_program') || 'Your Training Program'}
+            Ваша программа тренировок
           </h1>
           <p className="text-muted-foreground mb-4">
-            AI-generated program based on your assessment
+            Программа создана ИИ на основе ваших ответов
           </p>
           
           {/* Overall Progress */}
@@ -178,8 +194,8 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
             <CardContent className="pt-6">
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Weekly Progress</span>
-                  <span className="font-medium">{completedWorkouts}/{totalWorkouts} workouts</span>
+                  <span className="text-muted-foreground">Прогресс недели</span>
+                  <span className="font-medium">{completedWorkouts}/{totalWorkouts} тренировок</span>
                 </div>
                 <Progress value={progressPercentage} className="h-2 bg-muted">
                   <div 
@@ -188,7 +204,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
                   />
                 </Progress>
                 <div className="text-xs text-primary font-medium">
-                  {Math.round(progressPercentage)}% Complete
+                  {Math.round(progressPercentage)}% Завершено
                 </div>
               </div>
             </CardContent>
@@ -210,7 +226,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <Badge variant={day.completed ? "secondary" : "outline"} className="bg-primary/20 text-primary border-primary/30">
-                      Day {day.day}
+                      День {day.day}
                     </Badge>
                     {day.completed && (
                       <CheckCircle2 className="h-5 w-5 text-success" />
@@ -237,7 +253,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
                   className="ml-4"
                 >
                   {day.completed ? (
-                    <>Review Workout</>
+                    <>Повторить тренировку</>
                   ) : (
                     <>
                       <Play className="mr-2 h-4 w-4" />
@@ -250,7 +266,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
             
             <CardContent>
               <div className="space-y-3">
-                <h4 className="font-medium text-primary">Exercises Preview:</h4>
+                <h4 className="font-medium text-primary">Предпросмотр упражнений:</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {day.exercises.map((exercise) => (
                     <div 
@@ -277,22 +293,22 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
-              Program Details
+              Детали программы
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center p-4 bg-muted/30 rounded-lg">
                 <div className="text-2xl font-bold text-primary mb-1">3</div>
-                <div className="text-sm text-muted-foreground">Workouts/Week</div>
+                <div className="text-sm text-muted-foreground">Тренировок/Неделя</div>
               </div>
               <div className="text-center p-4 bg-muted/30 rounded-lg">
-                <div className="text-2xl font-bold text-primary mb-1">45</div>
-                <div className="text-sm text-muted-foreground">Avg Minutes</div>
+                <div className="text-2xl font-bold text-primary mb-1">50</div>
+                <div className="text-sm text-muted-foreground">Средние минуты</div>
               </div>
               <div className="text-center p-4 bg-muted/30 rounded-lg">
                 <div className="text-2xl font-bold text-primary mb-1">12</div>
-                <div className="text-sm text-muted-foreground">Week Program</div>
+                <div className="text-sm text-muted-foreground">Недель программа</div>
               </div>
             </div>
           </CardContent>

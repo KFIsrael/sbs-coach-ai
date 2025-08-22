@@ -12,9 +12,11 @@ import {
   User,
   LogOut,
   Play,
-  MessageCircle
+  MessageCircle,
+  Languages
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageSelector } from "@/components/ui/language-selector";
 
 interface DashboardProps {
   user: { name: string; email: string };
@@ -50,6 +52,7 @@ export function Dashboard({
           <p className="text-sm text-muted-foreground">{currentDate}</p>
         </div>
         <div className="flex items-center gap-3">
+          <LanguageSelector />
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium">{user.name}</span>
@@ -96,7 +99,7 @@ export function Dashboard({
               </div>
               <div>
                 <CardTitle className="text-lg">{t('dashboard.start_workout')}</CardTitle>
-                <CardDescription>Begin today's training session</CardDescription>
+                <CardDescription>{t('dashboard.ready_to_train')}</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -109,8 +112,8 @@ export function Dashboard({
                 <Target className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <CardTitle className="text-lg">Assessment</CardTitle>
-                <CardDescription>Complete fitness questionnaire</CardDescription>
+                <CardTitle className="text-lg">{t('questionnaire.title')}</CardTitle>
+                <CardDescription>{t('questionnaire.choose_option')}</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -123,13 +126,13 @@ export function Dashboard({
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <Trophy className="h-4 w-4 text-primary" />
-              Weekly Goal
+              {t('questionnaire.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">3 of 5 workouts</span>
+                <span className="text-muted-foreground">3 из 5 {t('dashboard.workouts')}</span>
                 <span className="font-medium">60%</span>
               </div>
               <Progress value={60} className="h-2 bg-muted">
@@ -147,8 +150,8 @@ export function Dashboard({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">7 days</div>
-            <p className="text-xs text-muted-foreground mt-1">Keep it up!</p>
+            <div className="text-2xl font-bold text-success">7 {t('dashboard.days')}</div>
+            <p className="text-xs text-muted-foreground mt-1">Продолжайте!</p>
           </CardContent>
         </Card>
 
@@ -212,25 +215,25 @@ export function Dashboard({
 
       {/* Main Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Button 
-          variant="premium" 
-          size="xl" 
-          onClick={onViewPrograms}
-          className="w-full justify-start"
-        >
-          <Trophy className="mr-2 h-5 w-5" />
-          View Training Programs
-        </Button>
-        
-        <Button 
-          variant="outline_gold" 
-          size="xl" 
-          onClick={onOpenChat}
-          className="w-full justify-start"
-        >
-          <MessageCircle className="mr-2 h-5 w-5" />
-          AI Coach Chat
-        </Button>
+          <Button 
+            variant="premium" 
+            size="xl" 
+            onClick={onViewPrograms}
+            className="w-full justify-start"
+          >
+            <Trophy className="mr-2 h-5 w-5" />
+            {t('dashboard.view_programs')}
+          </Button>
+          
+          <Button 
+            variant="outline_gold" 
+            size="xl" 
+            onClick={onOpenChat}
+            className="w-full justify-start"
+          >
+            <MessageCircle className="mr-2 h-5 w-5" />
+            {t('dashboard.ai_coach')}
+          </Button>
       </div>
 
       {/* Floating Chat Button */}
