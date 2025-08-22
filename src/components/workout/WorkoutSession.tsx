@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,24 +6,33 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Timer, CheckCircle2, Play, Pause, RotateCcw, Dumbbell } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { logSet } from "@/hooks/useProgram";
 import { useToast } from "@/hooks/use-toast";
 
-interface Exercise {
+interface WorkoutSet {
+  id: string;
+  set_no: number;
+  reps: number;
+  weight_kg: number | null;
+  pct_of_5rm: number | null;
+}
+
+interface ExerciseWithSets {
   id: string;
   name: string;
-  description: string;
-  muscleGroup: string;
-  sets: string;
-  videoUrl?: string;
-  imageUrl?: string;
+  description?: string;
+  muscleGroup?: string;
+  sets: WorkoutSet[];
 }
 
 interface WorkoutDay {
+  id?: string;
   day: number;
   title: string;
   focus: string;
   duration: string;
-  exercises: Exercise[];
+  exercises: ExerciseWithSets[];
   completed: boolean;
 }
 
@@ -41,75 +50,92 @@ interface ExerciseLog {
 export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionProps) {
   const { toast } = useToast();
   const [currentExercise, setCurrentExercise] = useState(0);
-  const [exerciseLogs, setExerciseLogs] = useState<Record<string, ExerciseLog>>({});
+  const [exercises, setExercises] = useState<ExerciseWithSets[]>([]);
+  const [actualWeights, setActualWeights] = useState<Record<string, number>>({});
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [restTimer, setRestTimer] = useState(0);
 
-  const progress = ((currentExercise + 1) / workout.exercises.length) * 100;
-  const exercise = workout.exercises[currentExercise];
-  const isLastExercise = currentExercise === workout.exercises.length - 1;
+  // Загружаем упражнения с сетами
+  useEffect(() => {
+    loadWorkoutData();
+  }, []);
 
-  const getExerciseLog = (exerciseId: string): ExerciseLog => {
-    return exerciseLogs[exerciseId] || {
-      exerciseId,
-      sets: [
-        { weight: 0, reps: 0, completed: false },
-        { weight: 0, reps: 0, completed: false },
-        { weight: 0, reps: 0, completed: false }
-      ]
-    };
-  };
-
-  const updateSet = (exerciseId: string, setIndex: number, field: 'weight' | 'reps', value: number) => {
-    const log = getExerciseLog(exerciseId);
-    const updatedSets = [...log.sets];
-    updatedSets[setIndex] = { ...updatedSets[setIndex], [field]: value };
-    
-    setExerciseLogs(prev => ({
-      ...prev,
-      [exerciseId]: { ...log, sets: updatedSets }
-    }));
-  };
-
-  const markSetCompleted = (exerciseId: string, setIndex: number) => {
-    const log = getExerciseLog(exerciseId);
-    const updatedSets = [...log.sets];
-    updatedSets[setIndex] = { ...updatedSets[setIndex], completed: !updatedSets[setIndex].completed };
-    
-    setExerciseLogs(prev => ({
-      ...prev,
-      [exerciseId]: { ...log, sets: updatedSets }
-    }));
-
-    if (!updatedSets[setIndex].completed) {
-      // Start rest timer when set is completed
-      setRestTimer(90); // 90 seconds rest
-      setIsTimerRunning(true);
+  const loadWorkoutData = async () => {
+    try {
+      // Загружаем упражнения из сессии (если workout это сессия)
+      // Пока используем мок данные для примера
+      const mockExercises: ExerciseWithSets[] = workout.exercises?.map((ex: any, index: number) => ({
+        id: `ex-${index}`,
+        name: ex.name || `Упражнение ${index + 1}`,
+        description: ex.description || 'Базовое упражнение',
+        muscleGroup: ex.muscleGroup || 'Разные группы',
+        sets: [
+          { id: `set-${index}-1`, set_no: 1, reps: 15, weight_kg: 20, pct_of_5rm: null },
+          { id: `set-${index}-2`, set_no: 2, reps: 12, weight_kg: 22.5, pct_of_5rm: null },
+          { id: `set-${index}-3`, set_no: 3, reps: 10, weight_kg: 25, pct_of_5rm: null },
+        ]
+      })) || [];
       
-      const timer = setInterval(() => {
-        setRestTimer(prev => {
-          if (prev <= 1) {
-            setIsTimerRunning(false);
-            clearInterval(timer);
-            toast({
-              title: "Отдых завершен!",
-              description: "Время для следующего подхода"
-            });
-            return 0;
-          }
-          return prev - 1;
+      setExercises(mockExercises);
+    } catch (error) {
+      console.error('Error loading workout data:', error);
+    }
+  };
+
+  const handleSetComplete = async (exerciseId: string, setId: string, actualWeight: number) => {
+    try {
+      // Здесь будет логика сохранения подхода
+      const set = exercises[currentExercise]?.sets.find(s => s.id === setId);
+      if (set && workout.id) {
+        await logSet({
+          session_id: workout.id,
+          exercise_id: exerciseId,
+          set_no: set.set_no,
+          reps: set.reps,
+          weight_kg: actualWeight
         });
-      }, 1000);
+        
+        toast({
+          title: "Подход записан",
+          description: `${set.reps} повт × ${actualWeight} кг`,
+        });
+
+        // Запускаем таймер отдыха
+        setRestTimer(90);
+        setIsTimerRunning(true);
+        
+        const timer = setInterval(() => {
+          setRestTimer(prev => {
+            if (prev <= 1) {
+              setIsTimerRunning(false);
+              clearInterval(timer);
+              toast({
+                title: "Отдых завершен!",
+                description: "Время для следующего подхода"
+              });
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Error logging set:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось сохранить подход",
+        variant: "destructive",
+      });
     }
   };
 
   const handleNextExercise = () => {
-    if (isLastExercise) {
-      handleCompleteWorkout();
-    } else {
+    if (currentExercise < exercises.length - 1) {
       setCurrentExercise(prev => prev + 1);
       setRestTimer(0);
       setIsTimerRunning(false);
+    } else {
+      handleCompleteWorkout();
     }
   };
 
@@ -135,7 +161,9 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const log = getExerciseLog(exercise.id);
+  const progress = ((currentExercise + 1) / exercises.length) * 100;
+  const currentExerciseData = exercises[currentExercise];
+  const isLastExercise = currentExercise === exercises.length - 1;
 
   return (
     <div className="min-h-screen p-4">
@@ -184,134 +212,83 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
             />
           </Progress>
           <p className="text-sm text-muted-foreground">
-            Упражнение {currentExercise + 1} из {workout.exercises.length}
+            Упражнение {currentExercise + 1} из {exercises.length}
           </p>
         </div>
       </div>
 
       {/* Current Exercise */}
       <div className="max-w-2xl mx-auto">
-        {/* Full Workout Overview */}
-        <Card className="card-premium mb-6">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Dumbbell className="h-5 w-5 text-primary" />
-              Все упражнения тренировки
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {workout.exercises.map((ex, index) => (
-                <div 
-                  key={ex.id} 
-                  className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
-                    index === currentExercise 
-                      ? 'bg-primary/10 border-primary/30' 
-                      : 'bg-muted/30 border-border/50'
-                  }`}
-                >
-                  <div className="bg-primary/20 rounded-full p-2 flex-shrink-0">
-                    <Dumbbell className="h-4 w-4 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm truncate">{ex.name}</h4>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <span>{ex.muscleGroup}</span>
-                      <span>•</span>
-                      <span>{ex.sets}</span>
-                    </div>
-                  </div>
-                  {index === currentExercise && (
-                    <Badge variant="secondary" className="bg-primary/20 text-primary text-xs">
-                      Текущее
-                    </Badge>
-                  )}
-                  {index < currentExercise && (
-                    <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0" />
-                  )}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Current Exercise Details */}
-        <Card className="card-premium mb-6">
-          <CardHeader className="text-center">
-            <Badge variant="outline" className="bg-primary/20 text-primary border-primary/30 w-fit mx-auto mb-2">
-              {exercise.muscleGroup}
-            </Badge>
-            <CardTitle className="text-2xl mb-2">{exercise.name}</CardTitle>
-            <CardDescription className="text-base">
-              {exercise.description}
-            </CardDescription>
-            <div className="text-sm text-primary font-medium mt-2">
-              {exercise.sets}
-            </div>
-          </CardHeader>
-        </Card>
+        {currentExerciseData && (
+          <>
+            <Card className="card-premium mb-6">
+              <CardHeader className="text-center">
+                <Badge variant="outline" className="bg-primary/20 text-primary border-primary/30 w-fit mx-auto mb-2">
+                  {currentExerciseData.muscleGroup}
+                </Badge>
+                <CardTitle className="text-2xl mb-2">{currentExerciseData.name}</CardTitle>
+                <CardDescription className="text-base">
+                  {currentExerciseData.description}
+                </CardDescription>
+                <div className="text-sm text-primary font-medium mt-2">
+                  Система 15-12-10 повторений
+                </div>
+              </CardHeader>
+            </Card>
 
-        {/* Set Tracking */}
-        <Card className="card-premium mb-6">
-          <CardHeader>
-            <CardTitle className="text-lg">Отслеживание подходов</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {log.sets.map((set, index) => (
-              <div 
-                key={index}
-                className={`p-4 rounded-lg border transition-all ${
-                  set.completed 
-                    ? 'bg-success/10 border-success/30' 
-                    : 'bg-muted/30 border-border/50'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <Label className="text-base font-medium">Подход {index + 1}</Label>
-                  <Button
-                    variant={set.completed ? "secondary" : "outline_gold"}
-                    size="sm"
-                    onClick={() => markSetCompleted(exercise.id, index)}
-                  >
-                    {set.completed ? (
-                      <>
-                        <CheckCircle2 className="h-4 w-4 mr-1" />
-                        Выполнено
-                      </>
-                    ) : (
-                      "Отметить выполненным"
-                    )}
-                  </Button>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor={`weight-${index}`} className="text-sm">Вес (кг)</Label>
-                    <Input
-                      id={`weight-${index}`}
-                      type="number"
-                      value={set.weight || ''}
-                      onChange={(e) => updateSet(exercise.id, index, 'weight', Number(e.target.value))}
-                      className="mt-1"
-                      placeholder="0"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor={`reps-${index}`} className="text-sm">Повторения</Label>
-                    <Input
-                      id={`reps-${index}`}
-                      type="number"
-                      value={set.reps || ''}
-                      onChange={(e) => updateSet(exercise.id, index, 'reps', Number(e.target.value))}
-                      className="mt-1"
-                      placeholder="0"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+            {/* Отображение сетов */}
+            <Card className="card-premium mb-6">
+              <CardHeader>
+                <CardTitle className="text-lg">Подходы</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {currentExerciseData.sets?.map((set) => (
+                  <Card key={set.id} className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="font-medium">Подход {set.set_no}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {set.reps} повторений
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          {set.weight_kg != null ? (
+                            <div className="font-medium">{set.weight_kg} кг</div>
+                          ) : (
+                            <div className="font-medium text-orange-500">
+                              {Math.round((set.pct_of_5rm || 0) * 100)}% от 5ПМ
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            type="number"
+                            placeholder="Вес"
+                            value={actualWeights[set.id] || ''}
+                            onChange={(e) => setActualWeights(prev => ({
+                              ...prev,
+                              [set.id]: Number(e.target.value)
+                            }))}
+                            className="w-20"
+                          />
+                          <Button
+                            size="sm"
+                            onClick={() => handleSetComplete(currentExerciseData.id, set.id, actualWeights[set.id] || 0)}
+                            disabled={!actualWeights[set.id]}
+                          >
+                            ✓
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </CardContent>
+            </Card>
+          </>
+        )}
 
         {/* Navigation */}
         <div className="flex gap-4">

@@ -1,0 +1,192 @@
+import { supabase } from "@/integrations/supabase/client";
+import { setsFrom5RM } from '../lib/calc';
+import { chooseSplit, getSplitDays } from '../lib/program-helpers';
+
+type Anchor = 'chest_press' | 'vertical_pull' | 'shoulder_press' | 'leg_press' | 'hip_hinge';
+
+async function getUser() {
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) throw new Error('no user');
+  return data.user;
+}
+
+export async function generateProgram(startDateISO: string) {
+  const user = await getUser();
+
+  // 1) читаем ответы анкеты (если есть)
+  const { data: q } = await supabase
+    .from('user_questionnaire_data')
+    .select('age_range,limitations')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  const split = chooseSplit(q || {});
+
+  // 2) создаём программу на 12 недель
+  const start = new Date(startDateISO);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 7 * 12);
+
+  const { data: program, error: pErr } = await supabase
+    .from('workout_programs')
+    .insert({
+      user_id: user.id,
+      name: '12-недельная программа',
+      description: 'Автогенерация',
+      start_date: start.toISOString().slice(0, 10),
+      end_date: end.toISOString().slice(0, 10),
+      split
+    })
+    .select('*')
+    .single();
+  if (pErr) throw pErr;
+
+  // 3) предзагрузка 5ПМ
+  const { data: maxes } = await supabase
+    .from('user_test_maxes')
+    .select('anchor_key,five_rm_kg')
+    .eq('user_id', user.id);
+
+  const fiveRMMap = new Map<Anchor, number>();
+  (maxes || []).forEach(m => {
+    if (m.five_rm_kg != null) fiveRMMap.set(m.anchor_key as Anchor, Number(m.five_rm_kg));
+  });
+
+  // 4) получаем пул упражнений по группам (упрощённо берём по split_day)
+  const pools: Record<string, string[]> = {
+    PUSH: ['Грудь', 'Плечи', 'Трицепс'],
+    PULL: ['Спина', 'Бицепс'],
+    LEGS: ['Ноги', 'Икры', 'Ягодицы', 'Бицепс бедра', 'Приводящие мышцы бедра'],
+    UPPER: ['Грудь', 'Плечи', 'Спина', 'Бицепс', 'Трицепс'],
+    LOWER: ['Ноги', 'Икры', 'Ягодицы', 'Бицепс бедра', 'Приводящие мышцы бедра'],
+    FULL: ['Грудь', 'Спина', 'Ноги', 'Плечи']
+  };
+
+  const splitDays = getSplitDays(split);
+
+  for (let w = 1; w <= 12; w++) {
+    for (let d = 0; d < 3; d++) {
+      const dayType = splitDays[d];
+      const dayDate = new Date(start);
+      dayDate.setDate(start.getDate() + (w - 1) * 7 + d);
+
+      // создаём сессию
+      const { data: session, error: sErr } = await supabase
+        .from('workout_sessions')
+        .insert({
+          program_id: program.id,
+          user_id: user.id,
+          scheduled_date: dayDate.toISOString().slice(0, 10),
+          name: `Нед ${w} / День ${d + 1} (${dayType})`,
+          split_day: dayType
+        })
+        .select('*')
+        .single();
+      if (sErr) throw sErr;
+
+      // выбираем упражнения из БД по muscle_groups.name
+      const { data: muscleGroups } = await supabase
+        .from('muscle_groups')
+        .select('id,name')
+        .in('name', pools[dayType]);
+
+      if (muscleGroups && muscleGroups.length > 0) {
+        const { data: exs } = await supabase
+          .from('exercises')
+          .select('id,name,anchor_key, muscle_group_id, created_at')
+          .in('muscle_group_id', muscleGroups.map(g => g.id))
+          .limit(6); // возьмём до 6 штук на день
+
+        let order = 1;
+        for (const ex of (exs || [])) {
+          // создаём запись упражнения в сессии
+          const { data: se, error: seErr } = await supabase
+            .from('workout_exercises')
+            .insert({
+              session_id: session.id,
+              exercise_id: ex.id,
+              sets: 3,     // для совместимости с твоей схемой
+              reps: 0,     // фактические повторы по сетам ниже
+              order_number: order++
+            })
+            .select('*')
+            .single();
+          if (seErr) throw seErr;
+
+          // считаем сеты 15-12-10
+          const fiveRM = ex.anchor_key ? fiveRMMap.get(ex.anchor_key as Anchor) : undefined;
+          const sets = setsFrom5RM(fiveRM);
+
+          // вставляем 3 строки в workout_exercise_sets
+          for (const s of sets) {
+            const { error: insErr } = await supabase
+              .from('workout_exercise_sets')
+              .insert({
+                workout_exercise_id: se.id,
+                set_no: s.set_no,
+                reps: s.reps,
+                weight_kg: s.weight_kg,           // если есть 5ПМ — сюда кг
+                pct_of_5rm: s.pct_of_5rm          // если нет — сюда %
+              });
+            if (insErr) throw insErr;
+          }
+        }
+      }
+    }
+  }
+
+  return { programId: program.id };
+}
+
+export async function logSet({
+  session_id,
+  exercise_id,
+  set_no,
+  reps,
+  weight_kg
+}: {
+  session_id: string;
+  exercise_id: string;
+  set_no: number;
+  reps: number;
+  weight_kg: number;
+}) {
+  const user = (await supabase.auth.getUser()).data.user!;
+  
+  // лог
+  await supabase.from('workout_logs').insert({
+    user_id: user.id,
+    session_id,
+    exercise_id,
+    actual_sets: 1,
+    actual_reps: reps,
+    actual_weight: weight_kg
+  });
+
+  // апдейт 5ПМ при условии
+  if (reps === 5 && weight_kg != null) {
+    const { data: ex } = await supabase
+      .from('exercises')
+      .select('anchor_key')
+      .eq('id', exercise_id)
+      .single();
+    
+    if (ex?.anchor_key) {
+      const { data: cur } = await supabase
+        .from('user_test_maxes')
+        .select('five_rm_kg')
+        .eq('user_id', user.id)
+        .eq('anchor_key', ex.anchor_key)
+        .maybeSingle();
+      
+      if (!cur?.five_rm_kg || weight_kg > Number(cur.five_rm_kg)) {
+        await supabase.from('user_test_maxes').upsert({
+          user_id: user.id,
+          anchor_key: ex.anchor_key,
+          five_rm_kg: weight_kg
+        });
+        // по желанию: показать тост "5ПМ обновлён"
+      }
+    }
+  }
+}

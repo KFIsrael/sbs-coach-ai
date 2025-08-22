@@ -23,7 +23,8 @@ interface User {
   role?: string;
 }
 
-interface WorkoutDay {
+interface IndexWorkoutDay {
+  id?: string;
   day: number;
   title: string;
   focus: string;
@@ -38,7 +39,7 @@ const Index = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
   const [showChat, setShowChat] = useState(false);
-  const [currentWorkout, setCurrentWorkout] = useState<WorkoutDay | null>(null);
+  const [currentWorkout, setCurrentWorkout] = useState<IndexWorkoutDay | null>(null);
   const [questionnaireData, setQuestionnaireData] = useState<any>(null);
   const { toast } = useToast();
 
@@ -139,7 +140,7 @@ const Index = () => {
     setAppState('program_choice');
   };
 
-  const handleStartWorkout = (workout: WorkoutDay) => {
+  const handleStartWorkout = (workout: IndexWorkoutDay) => {
     setCurrentWorkout(workout);
     setAppState('workout');
   };
