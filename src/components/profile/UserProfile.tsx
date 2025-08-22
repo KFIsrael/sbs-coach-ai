@@ -1,0 +1,276 @@
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { 
+  User, 
+  ArrowLeft, 
+  Mail, 
+  MessageSquare,
+  Target,
+  Activity,
+  Calendar,
+  Dumbbell
+} from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+interface UserProfileProps {
+  user: { name: string; email: string };
+  onBack: () => void;
+}
+
+interface QuestionnaireData {
+  fitness_goal?: string;
+  fitness_level?: string;
+  age_range?: string;
+  limitations?: string;
+  equipment?: string;
+}
+
+interface Message {
+  id: string;
+  content: string;
+  created_at: string;
+  sender_id: string;
+  is_read: boolean;
+}
+
+export function UserProfile({ user, onBack }: UserProfileProps) {
+  const { t } = useLanguage();
+  const { toast } = useToast();
+  const [questionnaireData, setQuestionnaireData] = useState<QuestionnaireData | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) return;
+
+      // Fetch questionnaire data
+      const { data: questionnaire } = await supabase
+        .from('user_questionnaire_data')
+        .select('*')
+        .eq('user_id', authUser.id)
+        .single();
+
+      if (questionnaire) {
+        setQuestionnaireData(questionnaire);
+      }
+
+      // Fetch messages
+      const { data: userMessages } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('recipient_id', authUser.id)
+        .order('created_at', { ascending: false });
+
+      if (userMessages) {
+        setMessages(userMessages);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      toast({
+        title: t('common.error'),
+        description: "Ошибка загрузки данных профиля",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatGoal = (goal: string) => {
+    switch (goal) {
+      case 'weight_loss': return t('goal.weight_loss');
+      case 'muscle_gain': return t('goal.muscle_gain');
+      case 'endurance': return t('goal.endurance');
+      case 'strength': return t('goal.strength');
+      case 'general_fitness': return t('goal.general_fitness');
+      default: return goal;
+    }
+  };
+
+  const formatLevel = (level: string) => {
+    switch (level) {
+      case 'beginner': return t('level.beginner');
+      case 'intermediate': return t('level.intermediate');
+      case 'advanced': return t('level.advanced');
+      case 'expert': return t('level.expert');
+      default: return level;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-4 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">{t('common.loading')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-4">
+      {/* Header */}
+      <header className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={onBack}
+            className="hover:bg-primary/10"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-gradient-gold">{t('profile.title')}</h1>
+            <p className="text-sm text-muted-foreground">{user.name}</p>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Personal Information */}
+        <Card className="card-premium">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5 text-primary" />
+              {t('profile.personal_data')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4 text-muted-foreground" />
+              <span className="font-medium">{user.name}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Mail className="h-4 w-4 text-muted-foreground" />
+              <span>{user.email}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="bg-primary/20 text-primary">
+                Активный клиент
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Questionnaire Results */}
+        <Card className="card-premium">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5 text-primary" />
+              {t('profile.questionnaire_data')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {questionnaireData ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-medium flex items-center gap-2">
+                    <Target className="h-4 w-4" />
+                    {t('question.fitness_goal')}
+                  </h4>
+                  <p className="text-muted-foreground">
+                    {questionnaireData.fitness_goal ? formatGoal(questionnaireData.fitness_goal) : 'Не указано'}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-medium flex items-center gap-2">
+                    <Activity className="h-4 w-4" />
+                    {t('question.fitness_level')}
+                  </h4>
+                  <p className="text-muted-foreground">
+                    {questionnaireData.fitness_level ? formatLevel(questionnaireData.fitness_level) : 'Не указано'}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-medium flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    {t('question.age')}
+                  </h4>
+                  <p className="text-muted-foreground">
+                    {questionnaireData.age_range || 'Не указано'}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-medium flex items-center gap-2">
+                    <Dumbbell className="h-4 w-4" />
+                    {t('question.equipment')}
+                  </h4>
+                  <p className="text-muted-foreground">
+                    {questionnaireData.equipment || 'Не указано'}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <p className="text-muted-foreground">Анкета не заполнена</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Subscription */}
+        <Card className="card-premium">
+          <CardHeader>
+            <CardTitle>{t('profile.subscription')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">Базовый план</h4>
+                <p className="text-sm text-muted-foreground">Доступ к базовым функциям</p>
+              </div>
+              <Badge variant="secondary" className="bg-green-100 text-green-800">
+                Активен
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Messages */}
+        <Card className="card-premium">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-primary" />
+              {t('profile.messages')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {messages.length > 0 ? (
+              <div className="space-y-4">
+                {messages.map((message) => (
+                  <div key={message.id} className="p-3 bg-muted/30 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">От тренера</span>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(message.created_at).toLocaleDateString('ru-RU')}
+                      </span>
+                    </div>
+                    <p className="text-sm">{message.content}</p>
+                    {!message.is_read && (
+                      <Badge variant="secondary" className="mt-2 text-xs">
+                        Новое
+                      </Badge>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground">{t('profile.no_messages')}</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

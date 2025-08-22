@@ -8,13 +8,16 @@ import { WorkoutProgram } from "@/components/workout/WorkoutProgram";
 import { WorkoutSession } from "@/components/workout/WorkoutSession";
 import { TestWorkout } from "@/components/workout/TestWorkout";
 import { AIChat } from "@/components/chat/AIChat";
+import { UserProfile } from "@/components/profile/UserProfile";
+import { TrainerDashboard } from "@/components/trainer/TrainerDashboard";
 import heroImage from "@/assets/hero-fitness.jpg";
 
-type AppState = 'auth' | 'dashboard' | 'questionnaire' | 'program_choice' | 'programs' | 'workout' | 'test_workout';
+type AppState = 'auth' | 'dashboard' | 'questionnaire' | 'program_choice' | 'programs' | 'workout' | 'test_workout' | 'profile' | 'trainer_dashboard';
 
 interface User {
   name: string;
   email: string;
+  role?: string;
 }
 
 interface WorkoutDay {
@@ -35,7 +38,12 @@ const Index = () => {
 
   const handleAuth = (userData: User) => {
     setUser(userData);
-    setAppState('dashboard');
+    // Check if user is a trainer and redirect accordingly
+    if (userData.role === 'trainer') {
+      setAppState('trainer_dashboard');
+    } else {
+      setAppState('dashboard');
+    }
   };
 
   const handleLogout = () => {
@@ -88,7 +96,22 @@ const Index = () => {
             onStartWorkout={() => setAppState('programs')}
             onViewPrograms={() => setAppState('programs')}
             onOpenChat={() => setShowChat(true)}
+            onOpenProfile={() => setAppState('profile')}
             onLogout={handleLogout}
+          />
+        )}
+
+        {appState === 'profile' && user && (
+          <UserProfile
+            user={user}
+            onBack={() => setAppState('dashboard')}
+          />
+        )}
+
+        {appState === 'trainer_dashboard' && user && (
+          <TrainerDashboard
+            user={user}
+            onBack={() => setAppState('dashboard')}
           />
         )}
 

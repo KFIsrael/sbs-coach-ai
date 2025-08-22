@@ -6,14 +6,17 @@ import { Label } from "@/components/ui/label";
 import { Dumbbell } from "lucide-react";
 import { LanguageSelector } from "@/components/ui/language-selector";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface AuthFormProps {
-  onAuth: (userData: { email: string; name: string }) => void;
+  onAuth: (userData: { email: string; name: string; role?: string }) => void;
 }
 
 export function AuthForm({ onAuth }: AuthFormProps) {
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,12 +28,13 @@ export function AuthForm({ onAuth }: AuthFormProps) {
     // Simulate auth for now
     onAuth({ 
       email: formData.email || "demo@sbs.com", 
-      name: formData.name || "Demo User" 
+      name: formData.name || "Demo User",
+      role: "client"
     });
   };
 
   const handleDemo = () => {
-    onAuth({ email: "demo@sbs.com", name: "Demo User" });
+    onAuth({ email: "demo@sbs.com", name: "Demo User", role: "client" });
   };
 
   return (

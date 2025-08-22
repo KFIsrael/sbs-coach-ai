@@ -5,6 +5,8 @@ import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface QuestionnaireProps {
@@ -75,6 +77,7 @@ const getQuestions = (t: (key: string) => string) => [
 
 export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isCompleting, setIsCompleting] = useState(false);
@@ -92,13 +95,63 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
     }));
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (isLastQuestion) {
       setIsCompleting(true);
-      setTimeout(() => {
-        // Save questionnaire results to database
-        onComplete(answers);
-      }, 1500);
+      
+      try {
+        // Save questionnaire data to database
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          toast({
+            title: t('common.error'),
+            description: "Пользователь не найден",
+            variant: "destructive",
+          });
+          setIsCompleting(false);
+          return;
+        }
+
+        const { error } = await supabase
+          .from('user_questionnaire_data')
+          .upsert({
+            user_id: user.id,
+            fitness_goal: answers[1], // question ID 1
+            fitness_level: answers[2], // question ID 2  
+            age_range: answers[3], // question ID 3
+            limitations: answers[4], // question ID 4
+            equipment: answers[5] // question ID 5
+          });
+
+        if (error) {
+          console.error('Error saving questionnaire data:', error);
+          toast({
+            title: t('common.error'),
+            description: "Ошибка сохранения данных анкеты",
+            variant: "destructive",
+          });
+          setIsCompleting(false);
+          return;
+        }
+
+        toast({
+          title: t('common.success'),
+          description: "Данные анкеты сохранены",
+        });
+
+        // Simulate processing time
+        setTimeout(() => {
+          onComplete(answers);
+        }, 1000);
+      } catch (error) {
+        console.error('Error in handleNext:', error);
+        setIsCompleting(false);
+        toast({
+          title: t('common.error'),
+          description: "Произошла ошибка при сохранении",
+          variant: "destructive",
+        });
+      }
     } else {
       setCurrentQuestion(prev => prev + 1);
     }

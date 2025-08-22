@@ -24,6 +24,7 @@ interface DashboardProps {
   onStartWorkout: () => void;
   onViewPrograms: () => void;
   onOpenChat: () => void;
+  onOpenProfile: () => void;
   onLogout: () => void;
 }
 
@@ -33,6 +34,7 @@ export function Dashboard({
   onStartWorkout, 
   onViewPrograms, 
   onOpenChat,
+  onOpenProfile,
   onLogout 
 }: DashboardProps) {
   const { t } = useLanguage();
@@ -53,7 +55,10 @@ export function Dashboard({
         </div>
         <div className="flex items-center gap-3">
           <LanguageSelector />
-          <div className="flex items-center gap-2">
+          <div 
+            className="flex items-center gap-2 cursor-pointer hover:bg-primary/10 p-2 rounded-md transition-colors"
+            onClick={onOpenProfile}
+          >
             <User className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium">{user.name}</span>
           </div>
@@ -146,12 +151,12 @@ export function Dashboard({
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <Activity className="h-4 w-4 text-success" />
-              Streak
+              {t('placeholder.streak')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-success">7 {t('dashboard.days')}</div>
-            <p className="text-xs text-muted-foreground mt-1">Продолжайте!</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('placeholder.continue')}</p>
           </CardContent>
         </Card>
 
@@ -159,12 +164,12 @@ export function Dashboard({
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <TrendingUp className="h-4 w-4 text-primary" />
-              Improvement
+              {t('placeholder.improvement')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">+15%</div>
-            <p className="text-xs text-muted-foreground mt-1">Strength gain</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('placeholder.strength_gain')}</p>
           </CardContent>
         </Card>
       </div>
@@ -174,10 +179,10 @@ export function Dashboard({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-primary" />
-            Coming Soon
+            {t('placeholder.coming_soon')}
           </CardTitle>
           <CardDescription>
-            Advanced features being developed for you
+            {t('placeholder.advanced_features')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -187,8 +192,8 @@ export function Dashboard({
                 <Calendar className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium">Nutritionist</p>
-                <p className="text-xs text-muted-foreground">Meal planning</p>
+                <p className="text-sm font-medium">{t('placeholder.nutritionist')}</p>
+                <p className="text-xs text-muted-foreground">{t('placeholder.meal_planning')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
@@ -196,8 +201,8 @@ export function Dashboard({
                 <Activity className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium">Endocrinologist</p>
-                <p className="text-xs text-muted-foreground">Hormone optimization</p>
+                <p className="text-sm font-medium">{t('placeholder.endocrinologist')}</p>
+                <p className="text-xs text-muted-foreground">{t('placeholder.hormone_optimization')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
@@ -205,8 +210,8 @@ export function Dashboard({
                 <User className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium">Sports Doctor</p>
-                <p className="text-xs text-muted-foreground">Injury prevention</p>
+                <p className="text-sm font-medium">{t('placeholder.sports_doctor')}</p>
+                <p className="text-xs text-muted-foreground">{t('placeholder.injury_prevention')}</p>
               </div>
             </div>
           </div>

@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_trainer_assignments: {
+        Row: {
+          assigned_at: string
+          client_id: string
+          id: string
+          is_active: boolean
+          trainer_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          client_id: string
+          id?: string
+          is_active?: boolean
+          trainer_id: string
+        }
+        Update: {
+          assigned_at?: string
+          client_id?: string
+          id?: string
+          is_active?: boolean
+          trainer_id?: string
+        }
+        Relationships: []
+      }
       exercises: {
         Row: {
           created_at: string | null
@@ -48,6 +72,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_read: boolean
+          recipient_id: string
+          sender_id: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          recipient_id: string
+          sender_id: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          recipient_id?: string
+          sender_id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       muscle_groups: {
         Row: {
@@ -199,6 +253,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_questionnaire_data: {
+        Row: {
+          age_range: string | null
+          completed_at: string
+          equipment: string | null
+          fitness_goal: string | null
+          fitness_level: string | null
+          id: string
+          limitations: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_range?: string | null
+          completed_at?: string
+          equipment?: string | null
+          fitness_goal?: string | null
+          fitness_level?: string | null
+          id?: string
+          limitations?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_range?: string | null
+          completed_at?: string
+          equipment?: string | null
+          fitness_goal?: string | null
+          fitness_level?: string | null
+          id?: string
+          limitations?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       workout_exercises: {
         Row: {

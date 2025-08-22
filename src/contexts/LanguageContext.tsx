@@ -117,6 +117,35 @@ const translations = {
     'common.language': 'Language',
     'common.english': 'English',
     'common.russian': 'Русский',
+    
+    // Profile
+    'profile.title': 'Profile',
+    'profile.personal_data': 'Personal Information',
+    'profile.questionnaire_data': 'Questionnaire Results',
+    'profile.subscription': 'Subscription',
+    'profile.messages': 'Messages',
+    'profile.no_messages': 'No messages yet',
+    
+    // Trainer Dashboard
+    'trainer.dashboard': 'Trainer Dashboard',
+    'trainer.clients': 'My Clients',
+    'trainer.send_message': 'Send Message',
+    'trainer.client_programs': 'Client Programs',
+    'trainer.no_clients': 'No clients assigned yet',
+    
+    // Placeholders
+    'placeholder.nutritionist': 'Nutritionist',
+    'placeholder.meal_planning': 'Meal planning',
+    'placeholder.endocrinologist': 'Endocrinologist', 
+    'placeholder.hormone_optimization': 'Hormone optimization',
+    'placeholder.sports_doctor': 'Sports Doctor',
+    'placeholder.injury_prevention': 'Injury prevention',
+    'placeholder.streak': 'Streak',
+    'placeholder.continue': 'Keep going!',
+    'placeholder.improvement': 'Improvement',
+    'placeholder.strength_gain': 'Strength gain',
+    'placeholder.coming_soon': 'Coming Soon',
+    'placeholder.advanced_features': 'Advanced features being developed for you',
   },
   ru: {
     // Auth
@@ -226,6 +255,35 @@ const translations = {
     'common.language': 'Язык',
     'common.english': 'English',
     'common.russian': 'Русский',
+    
+    // Profile
+    'profile.title': 'Профиль',
+    'profile.personal_data': 'Личные данные',
+    'profile.questionnaire_data': 'Результаты анкеты',
+    'profile.subscription': 'Подписка',
+    'profile.messages': 'Сообщения',
+    'profile.no_messages': 'Пока нет сообщений',
+    
+    // Trainer Dashboard
+    'trainer.dashboard': 'Панель тренера',
+    'trainer.clients': 'Мои клиенты',
+    'trainer.send_message': 'Отправить сообщение',
+    'trainer.client_programs': 'Программы клиентов',
+    'trainer.no_clients': 'Пока нет назначенных клиентов',
+    
+    // Placeholders
+    'placeholder.nutritionist': 'Нутрициолог',
+    'placeholder.meal_planning': 'Планирование питания',
+    'placeholder.endocrinologist': 'Эндокринолог',
+    'placeholder.hormone_optimization': 'Оптимизация гормонов',
+    'placeholder.sports_doctor': 'Спортивный врач',
+    'placeholder.injury_prevention': 'Профилактика травм',
+    'placeholder.streak': 'Серия',
+    'placeholder.continue': 'Продолжайте!',
+    'placeholder.improvement': 'Улучшение',
+    'placeholder.strength_gain': 'Прирост силы',
+    'placeholder.coming_soon': 'Скоро',
+    'placeholder.advanced_features': 'Передовые функции разрабатываются специально для вас',
   }
 };
 

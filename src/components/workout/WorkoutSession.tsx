@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Timer, CheckCircle2, Play, Pause, RotateCcw } from "lucide-react";
+import { ArrowLeft, Timer, CheckCircle2, Play, Pause, RotateCcw, Dumbbell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Exercise {
@@ -191,6 +191,51 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
 
       {/* Current Exercise */}
       <div className="max-w-2xl mx-auto">
+        {/* Full Workout Overview */}
+        <Card className="card-premium mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Dumbbell className="h-5 w-5 text-primary" />
+              Все упражнения тренировки
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {workout.exercises.map((ex, index) => (
+                <div 
+                  key={ex.id} 
+                  className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
+                    index === currentExercise 
+                      ? 'bg-primary/10 border-primary/30' 
+                      : 'bg-muted/30 border-border/50'
+                  }`}
+                >
+                  <div className="bg-primary/20 rounded-full p-2 flex-shrink-0">
+                    <Dumbbell className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-sm truncate">{ex.name}</h4>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span>{ex.muscleGroup}</span>
+                      <span>•</span>
+                      <span>{ex.sets}</span>
+                    </div>
+                  </div>
+                  {index === currentExercise && (
+                    <Badge variant="secondary" className="bg-primary/20 text-primary text-xs">
+                      Текущее
+                    </Badge>
+                  )}
+                  {index < currentExercise && (
+                    <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Current Exercise Details */}
         <Card className="card-premium mb-6">
           <CardHeader className="text-center">
             <Badge variant="outline" className="bg-primary/20 text-primary border-primary/30 w-fit mx-auto mb-2">
