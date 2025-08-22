@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { Dashboard } from "@/components/dashboard/Dashboard";
@@ -32,9 +34,52 @@ interface WorkoutDay {
 const Index = () => {
   const [appState, setAppState] = useState<AppState>('auth');
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [currentWorkout, setCurrentWorkout] = useState<WorkoutDay | null>(null);
   const [questionnaireData, setQuestionnaireData] = useState<any>(null);
+
+  // Set up auth state listener
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setSupabaseUser(session?.user ?? null);
+        
+        if (session?.user) {
+          const userData: User = {
+            email: session.user.email || "",
+            name: session.user.user_metadata?.first_name || "User",
+            role: "client"
+          };
+          setUser(userData);
+          setAppState('dashboard');
+        } else {
+          setUser(null);
+          setAppState('auth');
+        }
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setSupabaseUser(session?.user ?? null);
+      
+      if (session?.user) {
+        const userData: User = {
+          email: session.user.email || "",
+          name: session.user.user_metadata?.first_name || "User",
+          role: "client"
+        };
+        setUser(userData);
+        setAppState('dashboard');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleAuth = (userData: User) => {
     setUser(userData);
@@ -46,8 +91,11 @@ const Index = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
+    setSession(null);
+    setSupabaseUser(null);
     setAppState('auth');
     setShowChat(false);
   };

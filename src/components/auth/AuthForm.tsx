@@ -7,6 +7,7 @@ import { Dumbbell } from "lucide-react";
 import { LanguageSelector } from "@/components/ui/language-selector";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AuthFormProps {
   onAuth: (userData: { email: string; name: string; role?: string }) => void;
@@ -23,14 +24,79 @@ export function AuthForm({ onAuth }: AuthFormProps) {
     password: ""
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate auth for now
-    onAuth({ 
-      email: formData.email || "demo@sbs.com", 
-      name: formData.name || "Demo User",
-      role: "client"
-    });
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        // Sign in
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (error) {
+          toast({
+            title: t('common.error'),
+            description: error.message,
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (data.user) {
+          onAuth({ 
+            email: data.user.email || formData.email, 
+            name: formData.name || "User",
+            role: "client"
+          });
+        }
+      } else {
+        // Sign up
+        const redirectUrl = `${window.location.origin}/`;
+        const { data, error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            emailRedirectTo: redirectUrl,
+            data: {
+              first_name: formData.name,
+            }
+          }
+        });
+
+        if (error) {
+          toast({
+            title: t('common.error'),
+            description: error.message,
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (data.user) {
+          toast({
+            title: t('common.success'),
+            description: "Регистрация успешна! Проверьте email для подтверждения.",
+          });
+          
+          onAuth({ 
+            email: data.user.email || formData.email, 
+            name: formData.name || "User",
+            role: "client"
+          });
+        }
+      }
+    } catch (error: any) {
+      toast({
+        title: t('common.error'),
+        description: error.message || "Произошла ошибка",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDemo = () => {
@@ -98,8 +164,9 @@ export function AuthForm({ onAuth }: AuthFormProps) {
               variant="premium"
               size="lg"
               className="w-full"
+              disabled={loading}
             >
-              {isLogin ? t('auth.login') : t('auth.register')}
+              {loading ? "Загрузка..." : (isLogin ? t('auth.login') : t('auth.register'))}
             </Button>
             
             <Button 

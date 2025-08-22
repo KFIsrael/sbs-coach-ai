@@ -105,10 +105,11 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
         if (!user) {
           toast({
             title: t('common.error'),
-            description: "Пользователь не найден",
+            description: "Требуется авторизация для заполнения анкеты",
             variant: "destructive",
           });
           setIsCompleting(false);
+          onBack(); // Redirect to dashboard, which will redirect to auth
           return;
         }
 
