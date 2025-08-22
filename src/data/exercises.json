@@ -1,112 +1,1987 @@
-[
-  {
-    "id": "1",
-    "name": "Push-ups",
-    "description": "Classic bodyweight exercise for chest, shoulders, and triceps",
-    "muscleGroup": "chest",
-    "targetMuscles": ["chest", "shoulders", "triceps"],
-    "category": "beginner",
-    "equipment": "bodyweight",
-    "videoUrl": "https://www.youtube.com/watch?v=IODxDxX7oi4",
-    "instructions": "Start in plank position, lower body until chest nearly touches floor, push back up"
-  },
-  {
-    "id": "2", 
-    "name": "Squats",
-    "description": "Fundamental lower body exercise targeting quads, glutes, and hamstrings",
+{
+    "id": "695010ae-b7a7-4a45-8089-e6348b7316d6",
+    "name": "Фронтальные приседания",
+    "description": "",
     "muscleGroup": "legs",
-    "targetMuscles": ["quadriceps", "glutes", "hamstrings"],
+    "targetMuscles": [
+      "Квадрицепсы",
+      "Ягодицы",
+      "Бицепс бедра"
+    ],
     "category": "beginner",
-    "equipment": "bodyweight",
-    "videoUrl": "https://www.youtube.com/watch?v=aclHkVaku9U",
-    "instructions": "Stand with feet shoulder-width apart, lower down as if sitting in chair, return to standing"
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите спину ровной, колени направляйте по линии носков, опускайтесь до параллели и поднимайтесь на выдохе."
   },
   {
-    "id": "3",
-    "name": "Plank",
-    "description": "Core strengthening exercise that engages entire body",
-    "muscleGroup": "core",
-    "targetMuscles": ["core", "shoulders", "glutes"],
-    "category": "beginner", 
-    "equipment": "bodyweight",
-    "videoUrl": "https://www.youtube.com/watch?v=ASdvN_XEl_c",
-    "instructions": "Hold body in straight line from head to heels, engage core throughout"
+    "id": "71b3e531-a224-40d2-ad13-9047c906dc15",
+    "name": "Приседания со штангой (классические)",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Квадрицепсы",
+      "Ягодицы",
+      "Бицепс бедра",
+      "Разгибатели спины"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите спину ровной, колени направляйте по линии носков, опускайтесь до параллели и поднимайтесь на выдохе."
   },
   {
-    "id": "4",
-    "name": "Burpees",
-    "description": "Full-body explosive exercise combining squat, plank, and jump",
-    "muscleGroup": "full_body",
-    "targetMuscles": ["legs", "chest", "core", "shoulders"],
-    "category": "intermediate",
-    "equipment": "bodyweight",
-    "videoUrl": "https://www.youtube.com/watch?v=TU8QYVW0gDU", 
-    "instructions": "Squat down, jump back to plank, do push-up, jump feet to hands, jump up with arms overhead"
+    "id": "dbb7cb10-97a5-43b6-b857-81094c194ceb",
+    "name": "Жим ногами, узкая постановка, низко",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Квадрицепсы",
+      "Икроножные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр для жима ногами",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Стопы ровно на платформе, опускайте платформу подконтрольно и выжимайте без переразгибания коленей."
   },
   {
-    "id": "5",
-    "name": "Pull-ups",
-    "description": "Upper body pulling exercise for back, biceps, and shoulders",
-    "muscleGroup": "back",
-    "targetMuscles": ["lats", "biceps", "rhomboids"],
-    "category": "intermediate",
-    "equipment": "pull_up_bar",
-    "videoUrl": "https://www.youtube.com/watch?v=eGo4IYlbE5g",
-    "instructions": "Hang from bar, pull body up until chin clears bar, lower with control"
+    "id": "cd7dbe46-d377-4f96-8eff-3afc8cb096ea",
+    "name": "Жим ногами, узкая постановка, высоко",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Квадрицепсы",
+      "Ягодицы",
+      "Бицепс бедра",
+      "Икроножные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр для жима ногами",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Стопы ровно на платформе, опускайте платформу подконтрольно и выжимайте без переразгибания коленей."
   },
   {
-    "id": "6",
-    "name": "Dumbbell Bench Press",
-    "description": "Classic chest exercise using dumbbells for balanced development",
+    "id": "8413ec14-a074-44a1-a012-422457a727de",
+    "name": "Жим ногами, широкая постановка, низко",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Квадрицепсы",
+      "Приводящие мышцы бедра",
+      "Ягодицы",
+      "Бицепс бедра"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр для жима ногами",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Стопы ровно на платформе, опускайте платформу подконтрольно и выжимайте без переразгибания коленей."
+  },
+  {
+    "id": "e0938485-4ce2-4aff-928a-c643b2f34a64",
+    "name": "Жим ногами, широкая постановка, высоко",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Ягодицы",
+      "Бицепс бедра",
+      "Квадрицепсы",
+      "Приводящие мышцы бедра"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр для жима ногами",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Стопы ровно на платформе, опускайте платформу подконтрольно и выжимайте без переразгибания коленей."
+  },
+  {
+    "id": "82829930-7293-4f36-a6d2-ae2d968e9ebb",
+    "name": "Выпады вперёд с гантелями",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Квадрицепсы",
+      "Ягодицы",
+      "Бицепс бедра"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "7b612c1f-a9e0-4167-b941-e6661fafa465",
+    "name": "Выпады вперёд со штангой",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Квадрицепсы",
+      "Ягодицы",
+      "Бицепс бедра"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "7e4084bb-51b3-40bc-8d80-b035171e96dd",
+    "name": "Выпады назад с гантелями",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Ягодицы",
+      "Квадрицепсы",
+      "Бицепс бедра"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "fae8dea1-929e-40bc-be07-648aab02fe82",
+    "name": "Выпады назад со штангой",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Ягодицы",
+      "Квадрицепсы",
+      "Бицепс бедра"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "aeb5da57-aba7-48cb-a520-06081590d732",
+    "name": "Выпады боковые с гантелями",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Приводящие мышцы бедра",
+      "Ягодицы",
+      "Квадрицепсы"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "79c0e182-5a26-4226-a16c-500459fe2eb2",
+    "name": "Выпады боковые со штангой",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Приводящие мышцы бедра",
+      "Ягодицы",
+      "Квадрицепсы"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "9905aedb-c82b-49c2-8595-b75b670568a3",
+    "name": "Румынская тяга",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Бицепс бедра",
+      "Ягодицы",
+      "Разгибатели спины",
+      "Трапециевидные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "a820974e-b7d0-4f0d-ac96-6b830f666e46",
+    "name": "Болгарские сплит-приседания",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Квадрицепсы",
+      "Ягодицы",
+      "Бицепс бедра"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите спину ровной, колени направляйте по линии носков, опускайтесь до параллели и поднимайтесь на выдохе."
+  },
+  {
+    "id": "0fa172a2-247e-4393-93ad-fe8461c21bc8",
+    "name": "Подъём на носки стоя в тренажёре",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Икроножные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите колени выпрямленными, работайте в полной амплитуде, фиксируйте верхнюю точку."
+  },
+  {
+    "id": "e2f911d3-d01a-4409-b970-90c42b814df3",
+    "name": "Подъём на носки стоя со штангой",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Икроножные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите колени выпрямленными, работайте в полной амплитуде, фиксируйте верхнюю точку."
+  },
+  {
+    "id": "30693a97-5b02-4b5b-83f1-ac2d9a88d057",
+    "name": "Подъём на носки сидя в тренажёре",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Икроножные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите колени выпрямленными, работайте в полной амплитуде, фиксируйте верхнюю точку."
+  },
+  {
+    "id": "ddf02aba-958b-4923-a917-850712873c20",
+    "name": "Подъём на носки сидя с штангой",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Икроножные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите колени выпрямленными, работайте в полной амплитуде, фиксируйте верхнюю точку."
+  },
+  {
+    "id": "b1e8f953-4272-467b-9584-11d34182e52a",
+    "name": "Сгибание ног лёжа в тренажёре",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Бицепс бедра"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "d98f9f06-6095-46a7-992b-1b3a8c0efc16",
+    "name": "Сгибание ног сидя в тренажёре",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Бицепс бедра"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "60d9226f-7625-49d3-8cf8-8e66e92080e5",
+    "name": "Сгибание ног стоя в тренажёре",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Бицепс бедра"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "87ae48db-ab64-44a0-afb6-d3225794ad58",
+    "name": "Ягодичный мостик со штангой",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Ягодицы",
+      "Бицепс бедра",
+      "Квадрицепсы"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Пятки под коленями, при подъёме напряжение в ягодицах, фиксируйте верх на 1–2 сек."
+  },
+  {
+    "id": "af070835-834a-4ff3-8f33-e61e9ddeac78",
+    "name": "Ягодичный мостик в тренажёре",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Ягодицы",
+      "Бицепс бедра",
+      "Квадрицепсы"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Пятки под коленями, при подъёме напряжение в ягодицах, фиксируйте верх на 1–2 сек."
+  },
+  {
+    "id": "13af4250-a418-43da-a021-ea5ffa7bfe5c",
+    "name": "Зашагивания с гантелями",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Квадрицепсы",
+      "Ягодицы",
+      "Бицепс бедра",
+      "Икроножные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "94ec54ea-262d-4468-993b-f3ccd1d0d6db",
+    "name": "Зашагивания со штангой",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Квадрицепсы",
+      "Ягодицы",
+      "Бицепс бедра",
+      "Икроножные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "bc65d03d-0df1-4b87-9c95-826bb66a0dfd",
+    "name": "Разгибание ног, носки параллельно",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Квадрицепсы"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "8c4402f6-e54b-4eab-889c-d9329c965680",
+    "name": "Разгибание ног, носки наружу",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Квадрицепсы"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "c4cd2055-3424-4dab-816b-3065ebb9434b",
+    "name": "Разгибание ног, носки внутрь",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Квадрицепсы"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "af904458-0431-44a5-b43b-f7eabb1cf1c0",
+    "name": "Жим штанги лёжа на горизонтальной скамье",
+    "description": "",
     "muscleGroup": "chest",
-    "targetMuscles": ["chest", "triceps", "shoulders"],
-    "category": "intermediate",
-    "equipment": "dumbbells",
-    "videoUrl": "https://www.youtube.com/watch?v=VmB1G1K7v94",
-    "instructions": "Lie on bench, press dumbbells from chest level to full extension, lower with control"
+    "targetMuscles": [
+      "Большая грудная мышца"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
   },
   {
-    "id": "7",
-    "name": "Deadlifts",
-    "description": "Compound movement targeting posterior chain and full body strength",
+    "id": "e8e24b1b-674f-40d1-8929-4fbd98ffdde7",
+    "name": "Жим штанги лёжа на наклонной скамье вверх",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Верх грудных"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "f1119da1-e8c0-47c1-9b77-205e5cfa9a39",
+    "name": "Жим штанги лёжа на наклонной скамье вниз (обратный угол)",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Ниж грудных"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "265d772f-122f-4c92-b791-63ca2f4aad90",
+    "name": "Жим гантелей на горизонтальной скамье",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Большая грудная мышца"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "c8acf068-7972-4263-8af6-fa090e1047e5",
+    "name": "Жим гантелей на наклонной скамье вверх",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Верх грудных"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "cc06db6e-3ac7-424e-844b-9dbba27789f7",
+    "name": "Отжимания на брусьях с наклоном вперёд",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Ниж грудных",
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "собственный вес",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите корпус прямым, опускайтесь до 90° в локтях и выжимайте себя вверх на выдохе."
+  },
+  {
+    "id": "1df175d3-fe1a-460f-8f19-346139144134",
+    "name": "Разводка гантелей на горизонтальной скамье",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Большая грудная мышца"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "a20e164b-91bd-4b88-8fe1-e5b1ff41f1fa",
+    "name": "Разводка гантелей на наклонной скамье вверх",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Верх грудных"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "11fcff37-bd79-4755-88a5-51dbf0b31c56",
+    "name": "Жим в хаммере (горизонтальный угол)",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Большая грудная мышца"
+    ],
+    "category": "beginner",
+    "equipment": "Hammer Strength",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "74dafcc4-6207-4a0b-bc1f-0c86328bfed8",
+    "name": "Жим в хаммере (наклон вверх)",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Верх грудных"
+    ],
+    "category": "beginner",
+    "equipment": "Hammer Strength",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "a04a9577-6d8d-4c77-9f96-839caa05166f",
+    "name": "Жим в хаммере (наклон вниз)",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Ниж грудных"
+    ],
+    "category": "beginner",
+    "equipment": "Hammer Strength",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "c736c88c-ac0d-48df-bd0c-d6fc81790c0f",
+    "name": "Пуловер с гантелью",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Грудные",
+      "Широчайшие мышцы спины"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Сохраняйте лёгкий сгиб в локтях, ведите снаряд по дуге за голову и возвращайте, не прогибая поясницу."
+  },
+  {
+    "id": "d337dcd3-8725-4f98-bf7c-49c4813c8b0f",
+    "name": "Пуловер со штангой",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Грудные",
+      "Широчайшие мышцы спины"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Сохраняйте лёгкий сгиб в локтях, ведите снаряд по дуге за голову и возвращайте, не прогибая поясницу."
+  },
+  {
+    "id": "bb4bea84-207f-40f7-b510-4c4a5ba007bf",
+    "name": "Пуловер в тренажёре",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Грудные",
+      "Широчайшие мышцы спины"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Сохраняйте лёгкий сгиб в локтях, ведите снаряд по дуге за голову и возвращайте, не прогибая поясницу."
+  },
+  {
+    "id": "71d4ca80-9d1e-4d96-9002-b5fd35a7883a",
+    "name": "Кроссоверы с верхних блоков",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Ниж грудных"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "50fe1cbd-04c8-4191-bedd-a4d4b2d44b22",
+    "name": "Кроссоверы с нижних блоков",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Верх грудных"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "3f31c4ab-b825-4e54-8f39-ce95bca8ace8",
+    "name": "Жим в Смите на горизонтальной скамье",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Большая грудная мышца"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр Смит",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "997385ad-8a15-4445-aa47-3dc285806850",
+    "name": "Жим в Смите на наклонной скамье вверх",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Верх грудных"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр Смит",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "894efa97-d957-4ecd-9752-9b31d7fa6d70",
+    "name": "Жим в Смите на наклонной скамье вниз",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Ниж грудных"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр Смит",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "91f4b02b-2a5e-4bb0-a08c-7162990274cd",
+    "name": "Отжимания с ногами на возвышении",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Верх грудных"
+    ],
+    "category": "beginner",
+    "equipment": "собственный вес",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите корпус прямым, опускайтесь до 90° в локтях и выжимайте себя вверх на выдохе."
+  },
+  {
+    "id": "55004007-62ba-4d24-9001-85515c15f8e4",
+    "name": "Отжимания «алмазные»",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Грудные",
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "собственный вес",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите корпус прямым, опускайтесь до 90° в локтях и выжимайте себя вверх на выдохе."
+  },
+  {
+    "id": "172b26d4-da62-4af1-ab2f-4983ee5ed6c4",
+    "name": "Сведения в тренажёре Peck-Deck",
+    "description": "",
+    "muscleGroup": "chest",
+    "targetMuscles": [
+      "Большая грудная мышца"
+    ],
+    "category": "beginner",
+    "equipment": "Peck-Deck",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: chest."
+  },
+  {
+    "id": "90134d2f-75cf-4147-889a-cdbd539084dc",
+    "name": "Жим штанги узким хватом",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "c6221073-f596-48bd-be2a-1ef23ee1bff0",
+    "name": "Жим гантелей узким хватом",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "d7282c72-fa66-40a8-83a7-7bb8c88110f1",
+    "name": "Жим в Смите узким хватом",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр Смит",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "7b8fef54-5d28-490c-aa3d-ccb63b141fc6",
+    "name": "Отжимания на брусьях с вертикальным корпусом",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "собственный вес",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите корпус прямым, опускайтесь до 90° в локтях и выжимайте себя вверх на выдохе."
+  },
+  {
+    "id": "51db492c-a837-462e-bc1f-9af0e0407406",
+    "name": "Французский жим лёжа со штангой",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Стабилизируйте плечи, сгибайте/разгибайте локти без разведения, работайте в полной амплитуде."
+  },
+  {
+    "id": "f0f8a2c7-e39e-463a-977d-9e9005ba509b",
+    "name": "Французский жим лёжа с гантелями",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Стабилизируйте плечи, сгибайте/разгибайте локти без разведения, работайте в полной амплитуде."
+  },
+  {
+    "id": "99e8ba59-f930-46d1-ae86-51360d42e72c",
+    "name": "Французский жим стоя со штангой",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Стабилизируйте плечи, сгибайте/разгибайте локти без разведения, работайте в полной амплитуде."
+  },
+  {
+    "id": "19733cde-bbc2-4cb6-ac29-3d66d68d5571",
+    "name": "Французский жим стоя с гантелями",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Стабилизируйте плечи, сгибайте/разгибайте локти без разведения, работайте в полной амплитуде."
+  },
+  {
+    "id": "5b32bffe-84f0-4c69-86fa-f40e5e9b6445",
+    "name": "Разгибания на блоке с канатной рукоятью",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "d459bf51-67e6-4b5d-8c7e-5c2800901f83",
+    "name": "Разгибания на блоке с прямой рукоятью",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "c59f58ad-2d6b-45c2-bff0-8d15250e9fe4",
+    "name": "Разгибания на блоке с V-рукоятью",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "563acbfa-ee35-4c84-b90b-6608cef1f3f6",
+    "name": "Кикбэки одной рукой без опоры",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "b8d1abea-c496-4f3a-9526-f59e16bed4d5",
+    "name": "Кикбэки одной рукой с опорой",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "3dacdf84-6f96-4874-94be-f1e2d7cc124d",
+    "name": "Кикбэки двумя руками",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "79881d9e-3d5f-4a1b-9d60-e9ed1ff3d145",
+    "name": "Разгибания из-за головы одной рукой стоя",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "4257d5b6-4f36-44a2-88b2-926a79846aa4",
+    "name": "Разгибания из-за головы одной рукой сидя",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "bc5359ec-4a27-45ce-9875-10091bc445bc",
+    "name": "Разгибания из-за головы двумя руками стоя",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "42167d31-dd3e-43b4-ac00-286ff13e6936",
+    "name": "Разгибания из-за головы двумя руками сидя",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "cb8debba-4336-4510-9b5d-d20ab03b4de1",
+    "name": "Алмазные отжимания",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "собственный вес",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите корпус прямым, опускайтесь до 90° в локтях и выжимайте себя вверх на выдохе."
+  },
+  {
+    "id": "2eb77ea8-a553-4783-b1fd-a072e4a7f985",
+    "name": "Жим Арнольда с акцентом на трицепс",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "cdbe4692-3413-421e-918c-dc6a5e468562",
+    "name": "Разгибания в кроссовере одной рукой",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "f7bc7663-f45f-4361-bfda-f6756a5b15c9",
+    "name": "Разгибания в кроссовере двумя руками",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "ff43fdfa-69c8-4001-84af-67e6c2b211a4",
+    "name": "Обратные отжимания без веса",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "собственный вес",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите корпус прямым, опускайтесь до 90° в локтях и выжимайте себя вверх на выдохе."
+  },
+  {
+    "id": "28a92bee-1215-4b05-8521-ac62f47f922a",
+    "name": "Обратные отжимания с весом",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Трицепс"
+    ],
+    "category": "beginner",
+    "equipment": "собственный вес",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите корпус прямым, опускайтесь до 90° в локтях и выжимайте себя вверх на выдохе."
+  },
+  {
+    "id": "422e9774-53c6-4c3e-a2c3-b88038b49cd9",
+    "name": "Подъём штанги с прямым грифом",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "3c871c41-dbfd-4950-b089-8fba499c8316",
+    "name": "Подъём штанги с изогнутым грифом (EZ-гриф)",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "54726bb7-815e-4df2-8cd2-f1363a571401",
+    "name": "Подъём гантелей стоя с супинацией",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "feb3bea4-5e79-46c8-ac7a-c4b0bbdf55e3",
+    "name": "Подъём гантелей сидя с супинацией",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "2caad64d-04c7-4ad1-b84b-5a32c20de7e4",
+    "name": "Молотковые сгибания стоя попеременно",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс",
+      "Брахиалис"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите локти прижатыми, сгибайте руки без раскачивания корпуса, контролируйте опускание."
+  },
+  {
+    "id": "d7775d29-95dd-475b-8e5a-b0f22e6f2fec",
+    "name": "Молотковые сгибания стоя одновременно",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс",
+      "Брахиалис"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите локти прижатыми, сгибайте руки без раскачивания корпуса, контролируйте опускание."
+  },
+  {
+    "id": "36caf09c-7a3c-43dc-a0d2-3362f069bbe9",
+    "name": "Молотковые сгибания сидя",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс",
+      "Брахиалис"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Держите локти прижатыми, сгибайте руки без раскачивания корпуса, контролируйте опускание."
+  },
+  {
+    "id": "f107814d-e94b-4636-878e-29589165a6ea",
+    "name": "Подъём на нижнем блоке с прямой рукоятью",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "d9e26ad9-44fa-4406-8521-9a77b84aeb44",
+    "name": "Подъём на нижнем блоке с канатной рукоятью",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "07c65138-cf4a-40c7-8242-0df865649a4a",
+    "name": "Подъём на верхнем блоке (сгибание рук к голове)",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "ceab215c-1ed8-4328-b80a-aafc62a034d3",
+    "name": "Концентрированный подъём с опорой на бедро",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "8de9827d-fd07-41b3-975d-f2a1091df237",
+    "name": "Концентрированный подъём без опоры",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "b958df17-c302-41ef-8a9d-01a9b9c34f38",
+    "name": "Обратный подъём штанги",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс",
+      "Мышцы предплечья"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "999151dc-fb27-400d-8dc0-591d7b3cd006",
+    "name": "Обратный подъём гантелей",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс",
+      "Мышцы предплечья"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "1bc747e6-2e72-467d-ad01-dac19f4b6bd9",
+    "name": "Подъём штанги на скамье Скотта",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "ae23f07a-4d71-4097-b6d3-5cbe90b8ad73",
+    "name": "Подъём гантелей на скамье Скотта",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "d244d3c2-aff1-4067-9a8d-888dcc57996e",
+    "name": "Подъём гантелей лёжа на наклонной скамье",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "945db8b5-c0c4-49ab-b188-64bdc348e563",
+    "name": "Подъём гантелей сидя на наклонной скамье",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "ac0ad7b4-56d4-4636-8a6d-a9bd7f3e2623",
+    "name": "Сгибания в кроссовере одной рукой",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "f330feac-2c83-4e75-b622-ee886885dbc3",
+    "name": "Сгибания в кроссовере двумя руками",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "645267d4-d8e2-4d2a-b927-9e6f8d3a2c8a",
+    "name": "Подъём с резиной стоя",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "эспандер/резина",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "de26f058-7087-4312-a858-d8e908860657",
+    "name": "Подъём с резиной на коленях",
+    "description": "",
+    "muscleGroup": "arms",
+    "targetMuscles": [
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "эспандер/резина",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: arms."
+  },
+  {
+    "id": "373a3779-2896-4633-ae2b-67e3bdd24223",
+    "name": "Подтягивания широким хватом прямым",
+    "description": "",
     "muscleGroup": "back",
-    "targetMuscles": ["hamstrings", "glutes", "erector_spinae", "traps"],
-    "category": "advanced",
-    "equipment": "barbell",
-    "videoUrl": "https://www.youtube.com/watch?v=op9kVnSso6Q",
-    "instructions": "Hip hinge movement, keep bar close to body, drive through heels to stand tall"
-  },
-  {
-    "id": "8",
-    "name": "Mountain Climbers", 
-    "description": "Dynamic cardio exercise targeting core and cardiovascular system",
-    "muscleGroup": "cardio",
-    "targetMuscles": ["core", "shoulders", "legs"],
+    "targetMuscles": [
+      "Широчайшие мышцы спины"
+    ],
     "category": "beginner",
-    "equipment": "bodyweight",
-    "videoUrl": "https://www.youtube.com/watch?v=nmwgirgXLYM",
-    "instructions": "Start in plank, alternate bringing knees to chest in running motion"
+    "equipment": "собственный вес",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполните подтягивание контролируя корпус, не раскачиваясь; подбородок выше перекладины, медленное опускание."
   },
   {
-    "id": "9",
-    "name": "Lunges",
-    "description": "Unilateral leg exercise for strength and stability",
-    "muscleGroup": "legs", 
-    "targetMuscles": ["quadriceps", "glutes", "hamstrings"],
+    "id": "9aa7db50-fa40-46b2-a2df-4ed0d463cf53",
+    "name": "Подтягивания узким хватом прямым",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины"
+    ],
     "category": "beginner",
-    "equipment": "bodyweight",
-    "videoUrl": "https://www.youtube.com/watch?v=QE8gF2AcSfg",
-    "instructions": "Step forward into lunge, lower back knee toward ground, return to standing"
+    "equipment": "собственный вес",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполните подтягивание контролируя корпус, не раскачиваясь; подбородок выше перекладины, медленное опускание."
   },
   {
-    "id": "10",
-    "name": "Overhead Press",
-    "description": "Vertical pressing movement for shoulders and triceps",
+    "id": "bbb21edb-b8b8-452a-a12d-4c05558beed0",
+    "name": "Подтягивания широким хватом обратным",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины",
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "собственный вес",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполните подтягивание контролируя корпус, не раскачиваясь; подбородок выше перекладины, медленное опускание."
+  },
+  {
+    "id": "1e728da3-636f-4303-8ac8-410625d16790",
+    "name": "Подтягивания узким хватом обратным",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины",
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "собственный вес",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполните подтягивание контролируя корпус, не раскачиваясь; подбородок выше перекладины, медленное опускание."
+  },
+  {
+    "id": "b2d9c3f2-31f9-465a-97f6-ddb173df56fe",
+    "name": "Тяга штанги в наклоне прямым хватом",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины",
+      "Трапециевидные мышцы",
+      "Ромбовидные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "3939de9e-c2fe-4ff9-a209-2eb17b06fa90",
+    "name": "Тяга штанги в наклоне обратным хватом",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины",
+      "Бицепс"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "d2aa46a9-147f-49ee-8d94-0000414b79b3",
+    "name": "Тяга Т-грифа нейтральным хватом",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины",
+      "Трапециевидные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "a5172326-81be-4362-ad7e-bb806b4adfba",
+    "name": "Тяга Т-грифа широким хватом",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины",
+      "Ромбовидные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "f1e20fec-9cc2-42c8-9ba4-1ebb6e048b29",
+    "name": "Тяга гантели с опорой на скамью",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "d7a230af-f26a-4cb5-beeb-4c1bed81aa57",
+    "name": "Тяга гантели без опоры",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "b4289231-e031-4585-9dd7-9475cffd4466",
+    "name": "Горизонтальная тяга широким хватом",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины",
+      "Ромбовидные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "51eb5f47-f047-4426-b5ec-62ed752bc702",
+    "name": "Горизонтальная тяга узким хватом",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "141de3af-010f-4d42-a4e3-3039cf42f796",
+    "name": "Вертикальная тяга широким хватом",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "f71a0c54-4e9c-4095-b19b-027684cfec59",
+    "name": "Вертикальная тяга узким параллельным хватом",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "c304370b-31a4-4c23-a31c-dfbb835723b9",
+    "name": "Шраги со штангой",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Трапециевидные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Плечи поднимайте вверх и чуть назад, фиксируйте верхнюю точку и опускайте подконтрольно."
+  },
+  {
+    "id": "7d1cad37-bee6-4131-b532-d1c496fbea41",
+    "name": "Шраги с гантелями",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Трапециевидные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Плечи поднимайте вверх и чуть назад, фиксируйте верхнюю точку и опускайте подконтрольно."
+  },
+  {
+    "id": "e727be1e-a2eb-4dd5-af4d-b24146950f15",
+    "name": "Шраги в тренажёре",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Трапециевидные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Плечи поднимайте вверх и чуть назад, фиксируйте верхнюю точку и опускайте подконтрольно."
+  },
+  {
+    "id": "866f5886-0525-424e-97d1-b22c80f901c1",
+    "name": "Пуловер в блоке",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Сохраняйте лёгкий сгиб в локтях, ведите снаряд по дуге за голову и возвращайте, не прогибая поясницу."
+  },
+  {
+    "id": "350a4a89-34f2-4942-8d8e-78332b77dc75",
+    "name": "Пуловер с гантелью",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Сохраняйте лёгкий сгиб в локтях, ведите снаряд по дуге за голову и возвращайте, не прогибая поясницу."
+  },
+  {
+    "id": "205b04b8-c9b1-4a5e-8737-e329355b9db6",
+    "name": "Гиперэкстензия без веса",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Разгибатели спины"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: back."
+  },
+  {
+    "id": "ddb01592-0949-466c-b14b-e53dc0ebf049",
+    "name": "Гиперэкстензия с весом",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Разгибатели спины"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: back."
+  },
+  {
+    "id": "c554725a-3810-4b30-a4c3-d6cab07b61a3",
+    "name": "Тяга за голову широким хватом",
+    "description": "",
+    "muscleGroup": "back",
+    "targetMuscles": [
+      "Широчайшие мышцы спины",
+      "Задняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "638f48d4-8cbe-4d84-9083-3ee52a2ccd6e",
+    "name": "Жим штанги стоя перед собой",
+    "description": "",
     "muscleGroup": "shoulders",
-    "targetMuscles": ["shoulders", "triceps", "core"],
-    "category": "intermediate", 
-    "equipment": "dumbbells",
-    "videoUrl": "https://www.youtube.com/watch?v=qEwKCR5JCog",
-    "instructions": "Press weights from shoulder level to overhead, lower with control"
+    "targetMuscles": [
+      "Передняя дельтовидная",
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "6936ba84-06ed-4b7c-b37a-b4e3fd11a4a3",
+    "name": "Жим штанги сидя перед собой",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная",
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "77a3524e-5e23-4030-a9f7-c1aabec31cc3",
+    "name": "Жим штанги стоя из-за головы",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "c97a760a-3a15-4470-9a34-45b6cb73d79b",
+    "name": "Жим штанги сидя из-за головы",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "06958c0f-949c-4194-b2f7-63c0d3d3883b",
+    "name": "Жим гантелей стоя перед собой",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная",
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "2d2a289c-6ebe-4207-ab26-6c9baac5a0b6",
+    "name": "Жим гантелей сидя перед собой",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная",
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "a22bbd69-b513-42b7-8965-360ce7f44e7f",
+    "name": "Махи в стороны стоя с гантелями",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "8f9c23c2-e606-4c3a-85fe-a9774c9096ee",
+    "name": "Махи в стороны сидя с гантелями",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "583fb95e-260f-4926-9836-eb7bea1ce762",
+    "name": "Махи в стороны в тренажёре",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "2462343a-d8f2-4220-87ea-2da740a19e81",
+    "name": "Махи в наклоне стоя с гантелями",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Задняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "f676df02-5ebc-4647-8aa4-500352f75ef2",
+    "name": "Махи в наклоне сидя с гантелями",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Задняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "dbbf177d-96d8-48e3-a1fe-ea816be82c4f",
+    "name": "Махи в наклоне в Peck-Deck",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Задняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "Peck-Deck",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "570b1ea1-1b48-48ed-b45d-7f89e9bc9727",
+    "name": "Тяга к подбородку со штангой",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная",
+      "Средняя дельтовидная",
+      "Трапециевидные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "ca365dfa-1246-4bf9-9c53-58c60690db92",
+    "name": "Тяга к подбородку с гантелями",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная",
+      "Средняя дельтовидная",
+      "Трапециевидные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "b771bf55-b833-4154-ac72-c1b0e4310e7b",
+    "name": "Тяга к подбородку в блоке",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная",
+      "Средняя дельтовидная",
+      "Трапециевидные мышцы"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните колени, держите спину нейтральной, ведите снаряд вдоль ног и поднимайтесь усилием бёдер."
+  },
+  {
+    "id": "ff284808-ca20-45bb-8d1d-bab92702ad23",
+    "name": "Жим Арнольда сидя",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная",
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "ebbff282-4add-4edf-9f23-09a9004493e0",
+    "name": "Жим Арнольда стоя",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная",
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "9506914d-28d7-4600-ba52-3fde933206ea",
+    "name": "Разводки в Peck-Deck для задних дельт",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Задняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "Peck-Deck",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните локти, сводите рукояти контролируя амплитуду, избегайте резких движений."
+  },
+  {
+    "id": "ebf9f9a5-c098-494b-884b-97acd7e9a69e",
+    "name": "Фронтальные подъёмы со штангой",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "штанга",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "89c85906-cb59-4c8b-890c-9e9e0a137395",
+    "name": "Фронтальные подъёмы с гантелями",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "6185750b-80e4-48b2-8d02-5f341bd839d7",
+    "name": "Фронтальные подъёмы в блоке",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "блочный тренажёр",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "20adb538-e566-430d-9135-c3166b694e59",
+    "name": "Обратные разводки в Peck-Deck",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Задняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "Peck-Deck",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Слегка согните локти, сводите рукояти контролируя амплитуду, избегайте резких движений."
+  },
+  {
+    "id": "1692fcb1-9c8c-4177-be95-f6ffd4ab4622",
+    "name": "Обратные разводки с гантелями",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Задняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "гантели",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "537dc977-d5f9-4b3f-bd5e-143f31abdbd9",
+    "name": "Жим в тренажёре Хаммер",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная",
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "Hammer Strength",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "eeb365e8-2359-41d3-a6f6-045d96bb0690",
+    "name": "Жим в тренажёре Смит",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Передняя дельтовидная",
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр Смит",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "9a2a8c22-c487-42b5-8690-213a1597e4b1",
+    "name": "Подъёмы через стороны стоя",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Средняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "36c58976-615c-40f3-a016-34406e280e9c",
+    "name": "Подъёмы через стороны в наклоне",
+    "description": "",
+    "muscleGroup": "shoulders",
+    "targetMuscles": [
+      "Задняя дельтовидная"
+    ],
+    "category": "beginner",
+    "equipment": "прочее",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: shoulders."
+  },
+  {
+    "id": "fefc64ab-7081-4fba-880e-5498b7febbce",
+    "name": "Сведение ног",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Приводящие мышцы бедра"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр для ног",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
+  },
+  {
+    "id": "6a79482a-c828-4ba6-87f8-d71c522ac206",
+    "name": "Разведение ног",
+    "description": "",
+    "muscleGroup": "legs",
+    "targetMuscles": [
+      "Ягодицы"
+    ],
+    "category": "beginner",
+    "equipment": "тренажёр для ног",
+    "videoUrl": "https://designpavlov.ru/sbs",
+    "instructions": "Выполняйте упражнение подконтрольно, с правильной техникой и полноценной амплитудой для группы: legs."
   }
 ]
