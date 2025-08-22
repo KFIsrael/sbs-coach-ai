@@ -1,0 +1,112 @@
+[
+  {
+    "id": "1",
+    "name": "Push-ups",
+    "description": "Classic bodyweight exercise for chest, shoulders, and triceps",
+    "muscleGroup": "chest",
+    "targetMuscles": ["chest", "shoulders", "triceps"],
+    "category": "beginner",
+    "equipment": "bodyweight",
+    "videoUrl": "https://www.youtube.com/watch?v=IODxDxX7oi4",
+    "instructions": "Start in plank position, lower body until chest nearly touches floor, push back up"
+  },
+  {
+    "id": "2", 
+    "name": "Squats",
+    "description": "Fundamental lower body exercise targeting quads, glutes, and hamstrings",
+    "muscleGroup": "legs",
+    "targetMuscles": ["quadriceps", "glutes", "hamstrings"],
+    "category": "beginner",
+    "equipment": "bodyweight",
+    "videoUrl": "https://www.youtube.com/watch?v=aclHkVaku9U",
+    "instructions": "Stand with feet shoulder-width apart, lower down as if sitting in chair, return to standing"
+  },
+  {
+    "id": "3",
+    "name": "Plank",
+    "description": "Core strengthening exercise that engages entire body",
+    "muscleGroup": "core",
+    "targetMuscles": ["core", "shoulders", "glutes"],
+    "category": "beginner", 
+    "equipment": "bodyweight",
+    "videoUrl": "https://www.youtube.com/watch?v=ASdvN_XEl_c",
+    "instructions": "Hold body in straight line from head to heels, engage core throughout"
+  },
+  {
+    "id": "4",
+    "name": "Burpees",
+    "description": "Full-body explosive exercise combining squat, plank, and jump",
+    "muscleGroup": "full_body",
+    "targetMuscles": ["legs", "chest", "core", "shoulders"],
+    "category": "intermediate",
+    "equipment": "bodyweight",
+    "videoUrl": "https://www.youtube.com/watch?v=TU8QYVW0gDU", 
+    "instructions": "Squat down, jump back to plank, do push-up, jump feet to hands, jump up with arms overhead"
+  },
+  {
+    "id": "5",
+    "name": "Pull-ups",
+    "description": "Upper body pulling exercise for back, biceps, and shoulders",
+    "muscleGroup": "back",
+    "targetMuscles": ["lats", "biceps", "rhomboids"],
+    "category": "intermediate",
+    "equipment": "pull_up_bar",
+    "videoUrl": "https://www.youtube.com/watch?v=eGo4IYlbE5g",
+    "instructions": "Hang from bar, pull body up until chin clears bar, lower with control"
+  },
+  {
+    "id": "6",
+    "name": "Dumbbell Bench Press",
+    "description": "Classic chest exercise using dumbbells for balanced development",
+    "muscleGroup": "chest",
+    "targetMuscles": ["chest", "triceps", "shoulders"],
+    "category": "intermediate",
+    "equipment": "dumbbells",
+    "videoUrl": "https://www.youtube.com/watch?v=VmB1G1K7v94",
+    "instructions": "Lie on bench, press dumbbells from chest level to full extension, lower with control"
+  },
+  {
+    "id": "7",
+    "name": "Deadlifts",
+    "description": "Compound movement targeting posterior chain and full body strength",
+    "muscleGroup": "back",
+    "targetMuscles": ["hamstrings", "glutes", "erector_spinae", "traps"],
+    "category": "advanced",
+    "equipment": "barbell",
+    "videoUrl": "https://www.youtube.com/watch?v=op9kVnSso6Q",
+    "instructions": "Hip hinge movement, keep bar close to body, drive through heels to stand tall"
+  },
+  {
+    "id": "8",
+    "name": "Mountain Climbers", 
+    "description": "Dynamic cardio exercise targeting core and cardiovascular system",
+    "muscleGroup": "cardio",
+    "targetMuscles": ["core", "shoulders", "legs"],
+    "category": "beginner",
+    "equipment": "bodyweight",
+    "videoUrl": "https://www.youtube.com/watch?v=nmwgirgXLYM",
+    "instructions": "Start in plank, alternate bringing knees to chest in running motion"
+  },
+  {
+    "id": "9",
+    "name": "Lunges",
+    "description": "Unilateral leg exercise for strength and stability",
+    "muscleGroup": "legs", 
+    "targetMuscles": ["quadriceps", "glutes", "hamstrings"],
+    "category": "beginner",
+    "equipment": "bodyweight",
+    "videoUrl": "https://www.youtube.com/watch?v=QE8gF2AcSfg",
+    "instructions": "Step forward into lunge, lower back knee toward ground, return to standing"
+  },
+  {
+    "id": "10",
+    "name": "Overhead Press",
+    "description": "Vertical pressing movement for shoulders and triceps",
+    "muscleGroup": "shoulders",
+    "targetMuscles": ["shoulders", "triceps", "core"],
+    "category": "intermediate", 
+    "equipment": "dumbbells",
+    "videoUrl": "https://www.youtube.com/watch?v=qEwKCR5JCog",
+    "instructions": "Press weights from shoulder level to overhead, lower with control"
+  }
+]

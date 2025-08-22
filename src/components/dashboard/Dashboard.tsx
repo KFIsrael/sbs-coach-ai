@@ -14,6 +14,7 @@ import {
   Play,
   MessageCircle
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DashboardProps {
   user: { name: string; email: string };
@@ -32,6 +33,7 @@ export function Dashboard({
   onOpenChat,
   onLogout 
 }: DashboardProps) {
+  const { t } = useLanguage();
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
@@ -70,10 +72,10 @@ export function Dashboard({
             <div className="flex items-start justify-between">
               <div>
                 <CardTitle className="text-xl text-gradient-gold">
-                  Welcome back, {user.name}! 💪
+                  {t('dashboard.welcome')}, {user.name}! 💪
                 </CardTitle>
                 <CardDescription className="text-base mt-2">
-                  Ready to crush your fitness goals today?
+                  {t('dashboard.ready_to_train')}
                 </CardDescription>
               </div>
               <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
@@ -93,7 +95,7 @@ export function Dashboard({
                 <Play className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <CardTitle className="text-lg">Start Workout</CardTitle>
+                <CardTitle className="text-lg">{t('dashboard.start_workout')}</CardTitle>
                 <CardDescription>Begin today's training session</CardDescription>
               </div>
             </div>

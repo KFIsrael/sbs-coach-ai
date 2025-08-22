@@ -5,77 +5,81 @@ import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface QuestionnaireProps {
   onComplete: (data: any) => void;
   onBack: () => void;
 }
 
-const questions = [
+const getQuestions = (t: (key: string) => string) => [
   {
     id: 1,
-    title: "What's your primary fitness goal?",
+    title: t("question.fitness_goal"),
     type: "single",
     options: [
-      { value: "weight_loss", label: "Weight Loss" },
-      { value: "muscle_gain", label: "Muscle Gain" },
-      { value: "endurance", label: "Improve Endurance" },
-      { value: "strength", label: "Build Strength" },
-      { value: "general_fitness", label: "General Fitness" }
+      { value: "weight_loss", label: t("goal.weight_loss") },
+      { value: "muscle_gain", label: t("goal.muscle_gain") },
+      { value: "endurance", label: t("goal.endurance") },
+      { value: "strength", label: t("goal.strength") },
+      { value: "general_fitness", label: t("goal.general_fitness") }
     ]
   },
   {
     id: 2,
-    title: "What's your current fitness level?",
+    title: t("question.fitness_level"),
     type: "single",
     options: [
-      { value: "beginner", label: "Beginner - Just starting out" },
-      { value: "intermediate", label: "Intermediate - Some experience" },
-      { value: "advanced", label: "Advanced - Regular training" },
-      { value: "expert", label: "Expert - Competitive level" }
+      { value: "beginner", label: t("level.beginner") },
+      { value: "intermediate", label: t("level.intermediate") },
+      { value: "advanced", label: t("level.advanced") },
+      { value: "expert", label: t("level.expert") }
     ]
   },
   {
     id: 3,
-    title: "How many days per week can you train?",
+    title: t("question.training_days"),
     type: "single",
     options: [
-      { value: "2", label: "2 days per week" },
-      { value: "3", label: "3 days per week" },
-      { value: "4", label: "4 days per week" },
-      { value: "5", label: "5 days per week" },
-      { value: "6+", label: "6+ days per week" }
+      { value: "2", label: t("days.2") },
+      { value: "3", label: t("days.3") },
+      { value: "4", label: t("days.4") },
+      { value: "5", label: t("days.5") },
+      { value: "6+", label: t("days.6+") }
     ]
   },
   {
     id: 4,
-    title: "Do you have any injuries or physical limitations?",
+    title: t("question.limitations"),
     type: "single",
     options: [
-      { value: "none", label: "No limitations" },
-      { value: "back", label: "Back problems" },
-      { value: "knee", label: "Knee issues" },
-      { value: "shoulder", label: "Shoulder problems" },
-      { value: "other", label: "Other limitations" }
+      { value: "none", label: t("limitations.none") },
+      { value: "back", label: t("limitations.back") },
+      { value: "knee", label: t("limitations.knee") },
+      { value: "shoulder", label: t("limitations.shoulder") },
+      { value: "other", label: t("limitations.other") }
     ]
   },
   {
     id: 5,
-    title: "What equipment do you have access to?",
+    title: t("question.equipment"),
     type: "single",
     options: [
-      { value: "full_gym", label: "Full gym access" },
-      { value: "home_basic", label: "Basic home equipment" },
-      { value: "bodyweight", label: "Bodyweight only" },
-      { value: "dumbbells", label: "Dumbbells/bands" }
+      { value: "full_gym", label: t("equipment.full_gym") },
+      { value: "home_basic", label: t("equipment.home_basic") },
+      { value: "bodyweight", label: t("equipment.bodyweight") },
+      { value: "dumbbells", label: t("equipment.dumbbells") }
     ]
   }
 ];
 
 export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
+  const { t } = useLanguage();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isCompleting, setIsCompleting] = useState(false);
+  
+  const questions = getQuestions(t);
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
   const isLastQuestion = currentQuestion === questions.length - 1;
@@ -117,17 +121,17 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
             <div className="mb-6">
               <CheckCircle className="h-16 w-16 text-primary mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-gradient-gold mb-2">
-                Assessment Complete!
+                {t('questionnaire.assessment_complete')}
               </h2>
               <p className="text-muted-foreground">
-                Creating your personalized training program...
+                {t('questionnaire.generating')}
               </p>
             </div>
             <div className="space-y-2">
               <Progress value={100} className="h-2 bg-muted">
                 <div className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all w-full" />
               </Progress>
-              <p className="text-sm text-primary font-medium">Generating program...</p>
+              <p className="text-sm text-primary font-medium">{t('questionnaire.generating')}</p>
             </div>
           </CardContent>
         </Card>
@@ -146,7 +150,7 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
             className="text-muted-foreground hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+            {t('questionnaire.back')}
           </Button>
           <span className="text-sm text-muted-foreground">
             {currentQuestion + 1} of {questions.length}
@@ -169,7 +173,7 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
               {question.title}
             </CardTitle>
             <CardDescription>
-              Choose the option that best describes you
+              {t('questionnaire.choose_option')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -211,10 +215,10 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
             className="min-w-32"
           >
             {isLastQuestion ? (
-              <>Complete</>
+              <>{t('questionnaire.complete')}</>
             ) : (
               <>
-                Next
+                {t('questionnaire.next')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </>
             )}

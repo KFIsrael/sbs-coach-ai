@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Calendar, Clock, Target, Play, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Target, Play, CheckCircle2, Loader2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import exercisesData from "@/data/exercises.json";
 
 interface Exercise {
   id: string;
@@ -27,16 +29,17 @@ interface WorkoutDay {
 interface WorkoutProgramProps {
   onBack: () => void;
   onStartWorkout: (day: WorkoutDay) => void;
+  questionnaireData?: any;
 }
 
-// Mock workout program data
-const workoutProgram: WorkoutDay[] = [
+// Default workout program
+const defaultWorkoutProgram: WorkoutDay[] = [
   {
     day: 1,
     title: "Upper Body Strength",
     focus: "Chest, Back, Shoulders",
     duration: "45 min",
-    completed: true,
+    completed: false,
     exercises: [
       {
         id: "1",
@@ -51,13 +54,6 @@ const workoutProgram: WorkoutDay[] = [
         description: "Upper body pulling movement",
         muscleGroup: "Back",
         sets: "3 sets × 8-12 reps"
-      },
-      {
-        id: "3",
-        name: "Overhead Press",
-        description: "Shoulder strength builder",
-        muscleGroup: "Shoulders", 
-        sets: "3 sets × 10-12 reps"
       }
     ]
   },
@@ -66,7 +62,7 @@ const workoutProgram: WorkoutDay[] = [
     title: "Lower Body Power",
     focus: "Legs, Glutes",
     duration: "50 min",
-    completed: true,
+    completed: false,
     exercises: [
       {
         id: "4",
@@ -74,42 +70,82 @@ const workoutProgram: WorkoutDay[] = [
         description: "Fundamental leg exercise",
         muscleGroup: "Legs",
         sets: "4 sets × 12-15 reps"
-      },
-      {
-        id: "5",
-        name: "Deadlifts",
-        description: "Full body strength movement",
-        muscleGroup: "Back, Legs",
-        sets: "3 sets × 8-10 reps"
-      }
-    ]
-  },
-  {
-    day: 3,
-    title: "Core & Conditioning",
-    focus: "Core, Cardio",
-    duration: "40 min",
-    completed: false,
-    exercises: [
-      {
-        id: "6",
-        name: "Plank",
-        description: "Core stability exercise",
-        muscleGroup: "Core",
-        sets: "3 sets × 30-60 sec"
-      },
-      {
-        id: "7",
-        name: "Mountain Climbers",
-        description: "Dynamic core and cardio",
-        muscleGroup: "Core, Cardio",
-        sets: "3 sets × 20 reps"
       }
     ]
   }
 ];
 
-export function WorkoutProgram({ onBack, onStartWorkout }: WorkoutProgramProps) {
+export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: WorkoutProgramProps) {
+  const { t } = useLanguage();
+  const [workoutProgram, setWorkoutProgram] = useState<WorkoutDay[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const generateProgram = async () => {
+      if (!questionnaireData) {
+        // Use default program if no questionnaire data
+        setWorkoutProgram(defaultWorkoutProgram);
+        return;
+      }
+
+      setIsGenerating(true);
+      setError(null);
+
+      try {
+        const response = await fetch('/functions/v1/generate-workout-program', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            questionnaireData,
+            exercises: exercisesData
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to generate program');
+        }
+
+        const data = await response.json();
+        setWorkoutProgram(data.program.workouts);
+      } catch (err) {
+        console.error('Error generating program:', err);
+        setError('Failed to generate workout program. Using default program.');
+        setWorkoutProgram(defaultWorkoutProgram);
+      } finally {
+        setIsGenerating(false);
+      }
+    };
+
+    generateProgram();
+  }, [questionnaireData]);
+
+  if (isGenerating) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="card-premium max-w-md w-full text-center">
+          <CardContent className="pt-8 pb-8">
+            <div className="mb-6">
+              <Loader2 className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
+              <h2 className="text-2xl font-bold text-gradient-gold mb-2">
+                {t('questionnaire.generating')}
+              </h2>
+              <p className="text-muted-foreground">
+                AI is creating your personalized program...
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Progress value={100} className="h-2 bg-muted">
+                <div className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all w-full" />
+              </Progress>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   const completedWorkouts = workoutProgram.filter(day => day.completed).length;
   const totalWorkouts = workoutProgram.length;
   const progressPercentage = (completedWorkouts / totalWorkouts) * 100;
@@ -125,13 +161,13 @@ export function WorkoutProgram({ onBack, onStartWorkout }: WorkoutProgramProps) 
             className="text-muted-foreground hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+            {t('questionnaire.back')}
           </Button>
         </div>
         
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-gradient-gold mb-2">
-            Your Training Program
+            {t('workout.training_program') || 'Your Training Program'}
           </h1>
           <p className="text-muted-foreground mb-4">
             AI-generated program based on your assessment
@@ -190,7 +226,7 @@ export function WorkoutProgram({ onBack, onStartWorkout }: WorkoutProgramProps) 
                     </div>
                     <div className="flex items-center gap-1">
                       <Target className="h-4 w-4" />
-                      {day.exercises.length} exercises
+                      {day.exercises.length} {t('workout.exercises')}
                     </div>
                   </div>
                 </div>
@@ -205,7 +241,7 @@ export function WorkoutProgram({ onBack, onStartWorkout }: WorkoutProgramProps) 
                   ) : (
                     <>
                       <Play className="mr-2 h-4 w-4" />
-                      Start Workout
+                      {t('workout.start_workout')}
                     </>
                   )}
                 </Button>

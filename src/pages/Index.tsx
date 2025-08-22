@@ -3,12 +3,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { Dashboard } from "@/components/dashboard/Dashboard";
 import { Questionnaire } from "@/components/questionnaire/Questionnaire";
+import { ProgramChoice } from "@/components/workout/ProgramChoice";
 import { WorkoutProgram } from "@/components/workout/WorkoutProgram";
 import { WorkoutSession } from "@/components/workout/WorkoutSession";
 import { AIChat } from "@/components/chat/AIChat";
 import heroImage from "@/assets/hero-fitness.jpg";
 
-type AppState = 'auth' | 'dashboard' | 'questionnaire' | 'programs' | 'workout';
+type AppState = 'auth' | 'dashboard' | 'questionnaire' | 'program_choice' | 'programs' | 'workout';
 
 interface User {
   name: string;
@@ -29,6 +30,7 @@ const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [showChat, setShowChat] = useState(false);
   const [currentWorkout, setCurrentWorkout] = useState<WorkoutDay | null>(null);
+  const [questionnaireData, setQuestionnaireData] = useState<any>(null);
 
   const handleAuth = (userData: User) => {
     setUser(userData);
@@ -43,7 +45,8 @@ const Index = () => {
 
   const handleQuestionnaireComplete = (data: any) => {
     console.log('Questionnaire data:', data);
-    setAppState('dashboard');
+    setQuestionnaireData(data);
+    setAppState('program_choice');
   };
 
   const handleStartWorkout = (workout: WorkoutDay) => {
@@ -90,10 +93,19 @@ const Index = () => {
           />
         )}
 
+        {appState === 'program_choice' && (
+          <ProgramChoice
+            onBack={() => setAppState('questionnaire')}
+            onAIGeneration={() => setAppState('programs')}
+            onTestWorkout={() => setAppState('programs')}
+          />
+        )}
+
         {appState === 'programs' && (
           <WorkoutProgram
-            onBack={() => setAppState('dashboard')}
+            onBack={() => setAppState('program_choice')}
             onStartWorkout={handleStartWorkout}
+            questionnaireData={questionnaireData}
           />
         )}
 
