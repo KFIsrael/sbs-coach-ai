@@ -75,13 +75,24 @@ export function ProgramChoice({ onBack, onAIGeneration, onTestWorkout }: Program
                 <Zap className="h-8 w-8 text-primary" />
               </div>
               <CardTitle className="text-xl text-gradient-gold">
-                Создать программу
+                Создать программу без тестовой тренировки
               </CardTitle>
               <CardDescription className="text-sm">
-                12-недельная программа с расчетом весов по 5ПМ
+                Программа на основе анамнеза с расчетом в % от 5ПМ
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="p-4 bg-background/50 rounded-lg border border-border/50">
+                <p className="text-sm text-muted-foreground mb-3">
+                  <strong>Как это работает:</strong>
+                </p>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• Программа создается на основе ваших ответов в анкете</li>
+                  <li>• Веса рассчитываются в процентах от вашего 5ПМ</li>
+                  <li>• Подходит если вы знаете свои возможности</li>
+                  <li>• Быстрый старт тренировок</li>
+                </ul>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="start-date">Дата начала</Label>
                 <Input
@@ -101,12 +112,6 @@ export function ProgramChoice({ onBack, onAIGeneration, onTestWorkout }: Program
               >
                 {loading ? 'Генерирую...' : 'Создать программу'}
               </Button>
-              <ul className="space-y-1 text-xs text-muted-foreground">
-                <li>• Учитывает уровень подготовки</li>
-                <li>• Система 15-12-10 повторений</li>
-                <li>• Расчет весов по 5ПМ</li>
-                <li>• 3 тренировки в неделю</li>
-              </ul>
             </CardContent>
           </Card>
 
@@ -117,20 +122,31 @@ export function ProgramChoice({ onBack, onAIGeneration, onTestWorkout }: Program
                 <FlaskConical className="h-8 w-8 text-accent" />
               </div>
               <CardTitle className="text-xl text-gradient-gold">
-                {t('program_choice.test_workout')}
+                Пройти тестовую тренировку
               </CardTitle>
               <CardDescription className="text-sm">
-                {t('program_choice.test_description')}
+                Определим ваши точные рабочие веса
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-background/50 rounded-lg border border-border/50">
+                <p className="text-sm text-muted-foreground mb-3">
+                  <strong>Как это работает:</strong>
+                </p>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• Проведем тестовую тренировку</li>
+                  <li>• Определим ваши реальные 5ПМ</li>
+                  <li>• Создадим программу с точными весами</li>
+                  <li>• Максимально персонализированный подход</li>
+                </ul>
+              </div>
               <Button 
                 variant="outline" 
                 className="w-full border-accent hover:bg-accent hover:text-accent-foreground"
                 onClick={onTestWorkout}
               >
                 <FlaskConical className="h-4 w-4 mr-2" />
-                {t('program_choice.test_workout')}
+                Начать тестовую тренировку
               </Button>
             </CardContent>
           </Card>

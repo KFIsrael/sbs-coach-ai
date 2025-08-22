@@ -169,6 +169,7 @@ const Index = () => {
   const handleQuestionnaireComplete = (data: any) => {
     console.log('Questionnaire data:', data);
     setQuestionnaireData(data);
+    // После заполнения анкеты сразу переходим к выбору программы
     setAppState('program_choice');
   };
 
@@ -238,7 +239,7 @@ const Index = () => {
 
         {appState === 'program_choice' && (
           <ProgramChoice
-            onBack={() => setAppState('questionnaire')}
+            onBack={() => setAppState('dashboard')}
             onAIGeneration={() => setAppState('programs')}
             onTestWorkout={() => setAppState('test_workout')}
           />
