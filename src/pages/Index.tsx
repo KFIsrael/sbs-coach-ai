@@ -46,13 +46,19 @@ const Index = () => {
   // Check if user has completed questionnaire
   const checkUserQuestionnaire = async (userId: string): Promise<boolean> => {
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('user_questionnaire_data')
-        .select('id')
+        .select('id, completed_at')
         .eq('user_id', userId)
         .maybeSingle();
       
-      return !!data;
+      if (error) {
+        console.error('Error checking questionnaire:', error);
+        return false;
+      }
+      
+      // Check if data exists and completed_at is not null
+      return !!(data && data.completed_at);
     } catch (error) {
       console.error('Error checking questionnaire:', error);
       return false;
@@ -206,7 +212,7 @@ const Index = () => {
 
         {appState === 'dashboard' && user && (
           <Dashboard
-            user={user}
+            user={{ ...user, id: supabaseUser?.id }}
             onStartQuestionnaire={() => setAppState('questionnaire')}
             onStartWorkout={() => setAppState('programs')}
             onViewPrograms={() => setAppState('programs')}

@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -13,19 +14,31 @@ import {
   LogOut,
   Play,
   MessageCircle,
-  Languages
+  Languages,
+  CheckCircle
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSelector } from "@/components/ui/language-selector";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DashboardProps {
-  user: { name: string; email: string };
+  user: { name: string; email: string; id?: string; };
   onStartQuestionnaire: () => void;
   onStartWorkout: () => void;
   onViewPrograms: () => void;
   onOpenChat: () => void;
   onOpenProfile: () => void;
   onLogout: () => void;
+}
+
+interface QuestionnaireData {
+  fitness_goal: string;
+  fitness_level: string;
+  age_range: string;
+  limitations: string;
+  equipment: string;
+  body_type: string;
+  completed_at: string;
 }
 
 export function Dashboard({ 
@@ -38,12 +51,68 @@ export function Dashboard({
   onLogout 
 }: DashboardProps) {
   const { t } = useLanguage();
+  const [questionnaireData, setQuestionnaireData] = useState<QuestionnaireData | null>(null);
+  const [hasQuestionnaire, setHasQuestionnaire] = useState(false);
+  
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   });
+
+  // Load questionnaire data
+  useEffect(() => {
+    const loadQuestionnaireData = async () => {
+      if (!user.id) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('user_questionnaire_data')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+          
+        if (data && !error) {
+          setQuestionnaireData(data);
+          setHasQuestionnaire(true);
+        }
+      } catch (error) {
+        console.error('Error loading questionnaire data:', error);
+      }
+    };
+
+    loadQuestionnaireData();
+  }, [user.id]);
+
+  const getGoalLabel = (goal: string) => {
+    const goals: Record<string, string> = {
+      strength: 'Увеличить силу',
+      muscle_gain: 'Набрать мышечную массу', 
+      fat_loss: 'Сжечь жир',
+      general_fitness: 'Общая физподготовка'
+    };
+    return goals[goal] || goal;
+  };
+
+  const getLevelLabel = (level: string) => {
+    const levels: Record<string, string> = {
+      beginner: 'Новичок',
+      intermediate: 'Средний',
+      advanced: 'Продвинутый'
+    };
+    return levels[level] || level;
+  };
+
+  const getEquipmentLabel = (equipment: string) => {
+    const equipments: Record<string, string> = {
+      full_gym: 'Полный доступ к залу',
+      home_basic: 'Только гантели + штанга',
+      bodyweight: 'Только резины/собственный вес',
+      minimal: 'Минимум (турник/брусья)'
+    };
+    return equipments[equipment] || equipment;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-4">
@@ -110,20 +179,83 @@ export function Dashboard({
           </CardHeader>
         </Card>
 
-        <Card className="card-premium hover:shadow-gold cursor-pointer transition-all duration-300 hover:scale-105" onClick={onStartQuestionnaire}>
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-3">
-              <div className="bg-accent rounded-full p-2">
-                <Target className="h-5 w-5 text-primary-foreground" />
+        {!hasQuestionnaire ? (
+          <Card className="card-premium hover:shadow-gold cursor-pointer transition-all duration-300 hover:scale-105" onClick={onStartQuestionnaire}>
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3">
+                <div className="bg-accent rounded-full p-2">
+                  <Target className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">{t('questionnaire.title')}</CardTitle>
+                  <CardDescription>{t('questionnaire.choose_option')}</CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle className="text-lg">{t('questionnaire.title')}</CardTitle>
-                <CardDescription>{t('questionnaire.choose_option')}</CardDescription>
+            </CardHeader>
+          </Card>
+        ) : (
+          <Card className="card-premium border-success/20 bg-success/5">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3">
+                <div className="bg-success rounded-full p-2">
+                  <CheckCircle className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg text-success">Анкета завершена</CardTitle>
+                  <CardDescription>Ваш профиль тренировок настроен</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+        )}
+      </div>
+
+      {/* Questionnaire Data Section */}
+      {hasQuestionnaire && questionnaireData && (
+        <Card className="card-premium mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5 text-primary" />
+              Ваш профиль тренировок
+            </CardTitle>
+            <CardDescription>
+              Данные из анкеты • Заполнено {new Date(questionnaireData.completed_at).toLocaleDateString('ru-RU')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="p-3 bg-background/50 rounded-lg border border-border/50">
+                <p className="text-sm font-medium text-muted-foreground mb-1">Цель</p>
+                <p className="text-base font-semibold">{getGoalLabel(questionnaireData.fitness_goal)}</p>
+              </div>
+              <div className="p-3 bg-background/50 rounded-lg border border-border/50">
+                <p className="text-sm font-medium text-muted-foreground mb-1">Уровень</p>
+                <p className="text-base font-semibold">{getLevelLabel(questionnaireData.fitness_level)}</p>
+              </div>
+              <div className="p-3 bg-background/50 rounded-lg border border-border/50">
+                <p className="text-sm font-medium text-muted-foreground mb-1">Возраст</p>
+                <p className="text-base font-semibold">{questionnaireData.age_range}</p>
+              </div>
+              <div className="p-3 bg-background/50 rounded-lg border border-border/50">
+                <p className="text-sm font-medium text-muted-foreground mb-1">Оборудование</p>
+                <p className="text-base font-semibold">{getEquipmentLabel(questionnaireData.equipment)}</p>
+              </div>
+              <div className="p-3 bg-background/50 rounded-lg border border-border/50">
+                <p className="text-sm font-medium text-muted-foreground mb-1">Ограничения</p>
+                <p className="text-base font-semibold">
+                  {questionnaireData.limitations === 'none' ? 'Нет ограничений' : questionnaireData.limitations}
+                </p>
+              </div>
+              <div className="p-3 bg-background/50 rounded-lg border border-border/50">
+                <p className="text-sm font-medium text-muted-foreground mb-1">Телосложение</p>
+                <p className="text-base font-semibold">
+                  {questionnaireData.body_type === 'normal' ? 'Нормальное' : questionnaireData.body_type}
+                </p>
               </div>
             </div>
-          </CardHeader>
+          </CardContent>
         </Card>
-      </div>
+      )}
 
       {/* Progress Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
