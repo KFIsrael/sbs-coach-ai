@@ -219,12 +219,13 @@ const Index = () => {
             onOpenChat={() => setShowChat(true)}
             onOpenProfile={() => setAppState('profile')}
             onLogout={handleLogout}
+            onTestWorkout={() => setAppState('test_workout')}
           />
         )}
 
         {appState === 'profile' && user && (
           <UserProfile
-            user={user}
+            user={{ ...user, id: supabaseUser?.id }}
             onBack={() => setAppState('dashboard')}
           />
         )}

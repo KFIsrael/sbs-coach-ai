@@ -11,14 +11,15 @@ import {
   Target,
   Activity,
   Calendar,
-  Dumbbell
+  Dumbbell,
+  Edit
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface UserProfileProps {
-  user: { name: string; email: string };
+  user: { name: string; email: string; id?: string; };
   onBack: () => void;
 }
 
@@ -28,6 +29,8 @@ interface QuestionnaireData {
   age_range?: string;
   limitations?: string;
   equipment?: string;
+  body_type?: string; 
+  completed_at?: string;
 }
 
 interface Message {
@@ -59,7 +62,7 @@ export function UserProfile({ user, onBack }: UserProfileProps) {
         .from('user_questionnaire_data')
         .select('*')
         .eq('user_id', authUser.id)
-        .single();
+        .maybeSingle();
 
       if (questionnaire) {
         setQuestionnaireData(questionnaire);
@@ -87,25 +90,33 @@ export function UserProfile({ user, onBack }: UserProfileProps) {
     }
   };
 
-  const formatGoal = (goal: string) => {
-    switch (goal) {
-      case 'weight_loss': return t('goal.weight_loss');
-      case 'muscle_gain': return t('goal.muscle_gain');
-      case 'endurance': return t('goal.endurance');
-      case 'strength': return t('goal.strength');
-      case 'general_fitness': return t('goal.general_fitness');
-      default: return goal;
-    }
+  const getGoalLabel = (goal: string) => {
+    const goals: Record<string, string> = {
+      strength: 'Увеличить силу',
+      muscle_gain: 'Набрать мышечную массу', 
+      fat_loss: 'Сжечь жир',
+      general_fitness: 'Общая физподготовка'
+    };
+    return goals[goal] || goal;
   };
 
-  const formatLevel = (level: string) => {
-    switch (level) {
-      case 'beginner': return t('level.beginner');
-      case 'intermediate': return t('level.intermediate');
-      case 'advanced': return t('level.advanced');
-      case 'expert': return t('level.expert');
-      default: return level;
-    }
+  const getLevelLabel = (level: string) => {
+    const levels: Record<string, string> = {
+      beginner: 'Новичок',
+      intermediate: 'Средний',
+      advanced: 'Продвинутый'
+    };
+    return levels[level] || level;
+  };
+
+  const getEquipmentLabel = (equipment: string) => {
+    const equipments: Record<string, string> = {
+      full_gym: 'Полный доступ к залу',
+      home_basic: 'Только гантели + штанга',
+      bodyweight: 'Только резины/собственный вес',
+      minimal: 'Минимум (турник/брусья)'
+    };
+    return equipments[equipment] || equipment;
   };
 
   if (loading) {
@@ -168,48 +179,69 @@ export function UserProfile({ user, onBack }: UserProfileProps) {
         {/* Questionnaire Results */}
         <Card className="card-premium">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-primary" />
-              {t('profile.questionnaire_data')}
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-primary" />
+                Ваш профиль тренировок
+              </CardTitle>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  // TODO: Implement edit functionality
+                  toast({
+                    title: "В разработке",
+                    description: "Функция редактирования профиля будет доступна в следующих обновлениях",
+                  });
+                }}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Изменить
+              </Button>
+            </div>
+            {questionnaireData?.completed_at && (
+              <CardDescription>
+                Заполнено {new Date(questionnaireData.completed_at).toLocaleDateString('ru-RU')}
+              </CardDescription>
+            )}
           </CardHeader>
           <CardContent>
             {questionnaireData ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium flex items-center gap-2">
-                    <Target className="h-4 w-4" />
-                    {t('question.fitness_goal')}
-                  </h4>
-                  <p className="text-muted-foreground">
-                    {questionnaireData.fitness_goal ? formatGoal(questionnaireData.fitness_goal) : 'Не указано'}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="p-3 bg-background/50 rounded-lg border border-border/50">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Цель</p>
+                  <p className="text-base font-semibold">
+                    {questionnaireData.fitness_goal ? getGoalLabel(questionnaireData.fitness_goal) : 'Не указано'}
                   </p>
                 </div>
-                <div className="space-y-2">
-                  <h4 className="font-medium flex items-center gap-2">
-                    <Activity className="h-4 w-4" />
-                    {t('question.fitness_level')}
-                  </h4>
-                  <p className="text-muted-foreground">
-                    {questionnaireData.fitness_level ? formatLevel(questionnaireData.fitness_level) : 'Не указано'}
+                <div className="p-3 bg-background/50 rounded-lg border border-border/50">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Уровень</p>
+                  <p className="text-base font-semibold">
+                    {questionnaireData.fitness_level ? getLevelLabel(questionnaireData.fitness_level) : 'Не указано'}
                   </p>
                 </div>
-                <div className="space-y-2">
-                  <h4 className="font-medium flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    {t('question.age')}
-                  </h4>
-                  <p className="text-muted-foreground">
+                <div className="p-3 bg-background/50 rounded-lg border border-border/50">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Возраст</p>
+                  <p className="text-base font-semibold">
                     {questionnaireData.age_range || 'Не указано'}
                   </p>
                 </div>
-                <div className="space-y-2">
-                  <h4 className="font-medium flex items-center gap-2">
-                    <Dumbbell className="h-4 w-4" />
-                    {t('question.equipment')}
-                  </h4>
-                  <p className="text-muted-foreground">
-                    {questionnaireData.equipment || 'Не указано'}
+                <div className="p-3 bg-background/50 rounded-lg border border-border/50">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Оборудование</p>
+                  <p className="text-base font-semibold">
+                    {questionnaireData.equipment ? getEquipmentLabel(questionnaireData.equipment) : 'Не указано'}
+                  </p>
+                </div>
+                <div className="p-3 bg-background/50 rounded-lg border border-border/50">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Ограничения</p>
+                  <p className="text-base font-semibold">
+                    {questionnaireData.limitations === 'none' ? 'Нет ограничений' : questionnaireData.limitations || 'Не указано'}
+                  </p>
+                </div>
+                <div className="p-3 bg-background/50 rounded-lg border border-border/50">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">Телосложение</p>
+                  <p className="text-base font-semibold">
+                    {questionnaireData.body_type === 'normal' ? 'Нормальное' : questionnaireData.body_type || 'Не указано'}
                   </p>
                 </div>
               </div>
