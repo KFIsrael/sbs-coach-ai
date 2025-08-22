@@ -119,28 +119,35 @@ export function Dashboard({
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-4">
       {/* Header */}
-      <header className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gradient-gold">Sport Body System</h1>
-          <p className="text-sm text-muted-foreground">{currentDate}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <LanguageSelector />
-          <div 
-            className="flex items-center gap-2 cursor-pointer hover:bg-primary/10 p-2 rounded-md transition-colors"
-            onClick={onOpenProfile}
-          >
-            <User className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">{user.name}</span>
+      <header className="mb-8">
+        {/* Top row - Logo and Logout */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-gradient-gold truncate">Sport Body System</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">{currentDate}</p>
           </div>
           <Button 
             variant="ghost" 
             size="icon"
             onClick={onLogout}
-            className="hover:bg-destructive/10 hover:text-destructive"
+            className="hover:bg-destructive/10 hover:text-destructive flex-shrink-0 ml-2"
           >
             <LogOut className="h-4 w-4" />
           </Button>
+        </div>
+        
+        {/* Bottom row - Language and Profile */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <LanguageSelector />
+          </div>
+          <div 
+            className="flex items-center gap-2 cursor-pointer hover:bg-primary/10 p-2 rounded-md transition-colors min-w-0 flex-1 justify-end"
+            onClick={onOpenProfile}
+          >
+            <User className="h-4 w-4 text-primary flex-shrink-0" />
+            <span className="text-sm font-medium truncate">{user.name}</span>
+          </div>
         </div>
       </header>
 
@@ -148,16 +155,16 @@ export function Dashboard({
       <div className="mb-8">
         <Card className="card-premium bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
           <CardHeader>
-            <div className="flex items-start justify-between">
-              <div>
-                <CardTitle className="text-xl text-gradient-gold">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <CardTitle className="text-lg sm:text-xl text-gradient-gold">
                   {t('dashboard.welcome')}, {user.name}! 💪
                 </CardTitle>
-                <CardDescription className="text-base mt-2">
+                <CardDescription className="text-sm sm:text-base mt-2">
                   {t('dashboard.ready_to_train')}
                 </CardDescription>
               </div>
-              <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
+              <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 self-start">
                 Active
               </Badge>
             </div>
@@ -166,45 +173,45 @@ export function Dashboard({
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <Card className="card-premium hover:shadow-gold cursor-pointer transition-all duration-300 hover:scale-105" onClick={onStartWorkout}>
+      <div className="grid grid-cols-1 gap-4 mb-8">
+        <Card className="card-premium hover:shadow-gold cursor-pointer transition-all duration-300 hover:scale-[1.02]" onClick={onStartWorkout}>
           <CardHeader className="pb-3">
             <div className="flex items-center gap-3">
-              <div className="bg-primary rounded-full p-2">
+              <div className="bg-primary rounded-full p-2 flex-shrink-0">
                 <Play className="h-5 w-5 text-primary-foreground" />
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <CardTitle className="text-lg">{t('dashboard.start_workout')}</CardTitle>
-                <CardDescription>{t('dashboard.ready_to_train')}</CardDescription>
+                <CardDescription className="text-sm">{t('dashboard.ready_to_train')}</CardDescription>
               </div>
             </div>
           </CardHeader>
         </Card>
 
         {!hasQuestionnaire ? (
-          <Card className="card-premium hover:shadow-gold cursor-pointer transition-all duration-300 hover:scale-105" onClick={onStartQuestionnaire}>
+          <Card className="card-premium hover:shadow-gold cursor-pointer transition-all duration-300 hover:scale-[1.02]" onClick={onStartQuestionnaire}>
             <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
-                <div className="bg-accent rounded-full p-2">
+                <div className="bg-accent rounded-full p-2 flex-shrink-0">
                   <Target className="h-5 w-5 text-primary-foreground" />
                 </div>
-                <div>
+                <div className="flex-1 min-w-0">
                   <CardTitle className="text-lg">{t('questionnaire.title')}</CardTitle>
-                  <CardDescription>{t('questionnaire.choose_option')}</CardDescription>
+                  <CardDescription className="text-sm">{t('questionnaire.choose_option')}</CardDescription>
                 </div>
               </div>
             </CardHeader>
           </Card>
         ) : (
-          <Card className="card-premium hover:shadow-gold cursor-pointer transition-all duration-300 hover:scale-105" onClick={onTestWorkout}>
+          <Card className="card-premium hover:shadow-gold cursor-pointer transition-all duration-300 hover:scale-[1.02]" onClick={onTestWorkout}>
             <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
-                <div className="bg-accent rounded-full p-2">
+                <div className="bg-accent rounded-full p-2 flex-shrink-0">
                   <Target className="h-5 w-5 text-primary-foreground" />
                 </div>
-                <div>
+                <div className="flex-1 min-w-0">
                   <CardTitle className="text-lg">Тестовая тренировка</CardTitle>
-                  <CardDescription>Обновить рабочие веса и программу</CardDescription>
+                  <CardDescription className="text-sm">Обновить рабочие веса и программу</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -273,30 +280,30 @@ export function Dashboard({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
-              <div className="bg-primary/20 rounded p-1">
+              <div className="bg-primary/20 rounded p-1 flex-shrink-0">
                 <Calendar className="h-4 w-4 text-primary" />
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">{t('placeholder.nutritionist')}</p>
                 <p className="text-xs text-muted-foreground">{t('placeholder.meal_planning')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
-              <div className="bg-primary/20 rounded p-1">
+              <div className="bg-primary/20 rounded p-1 flex-shrink-0">
                 <Activity className="h-4 w-4 text-primary" />
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">{t('placeholder.endocrinologist')}</p>
                 <p className="text-xs text-muted-foreground">{t('placeholder.hormone_optimization')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
-              <div className="bg-primary/20 rounded p-1">
+              <div className="bg-primary/20 rounded p-1 flex-shrink-0">
                 <User className="h-4 w-4 text-primary" />
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">{t('placeholder.sports_doctor')}</p>
                 <p className="text-xs text-muted-foreground">{t('placeholder.injury_prevention')}</p>
               </div>
@@ -306,25 +313,25 @@ export function Dashboard({
       </Card>
 
       {/* Main Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
           <Button 
             variant="premium" 
             size="xl" 
             onClick={onViewPrograms}
-            className="w-full justify-start"
+            className="w-full justify-center sm:justify-start"
           >
-            <Trophy className="mr-2 h-5 w-5" />
-            {t('dashboard.view_programs')}
+            <Trophy className="mr-2 h-5 w-5 flex-shrink-0" />
+            <span>{t('dashboard.view_programs')}</span>
           </Button>
           
           <Button 
             variant="outline_gold" 
             size="xl" 
             onClick={onOpenChat}
-            className="w-full justify-start"
+            className="w-full justify-center sm:justify-start"
           >
-            <MessageCircle className="mr-2 h-5 w-5" />
-            {t('dashboard.ai_coach')}
+            <MessageCircle className="mr-2 h-5 w-5 flex-shrink-0" />
+            <span>{t('dashboard.ai_coach')}</span>
           </Button>
       </div>
     </div>

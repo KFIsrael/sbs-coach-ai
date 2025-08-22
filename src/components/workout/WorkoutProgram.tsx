@@ -222,62 +222,69 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
             }`}
           >
             <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Badge variant={day.completed ? "secondary" : "outline"} className="bg-primary/20 text-primary border-primary/30">
-                      День {day.day}
-                    </Badge>
-                    {day.completed && (
-                      <CheckCircle2 className="h-5 w-5 text-success" />
-                    )}
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Badge variant={day.completed ? "secondary" : "outline"} className="bg-primary/20 text-primary border-primary/30">
+                        День {day.day}
+                      </Badge>
+                      {day.completed && (
+                        <CheckCircle2 className="h-5 w-5 text-success" />
+                      )}
+                    </div>
+                    <CardTitle className="text-lg sm:text-xl mb-1">{day.title}</CardTitle>
+                    <CardDescription className="text-sm sm:text-base">{day.focus}</CardDescription>
+                    
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-3 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4 flex-shrink-0" />
+                        <span>{day.duration}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Target className="h-4 w-4 flex-shrink-0" />
+                        <span>{day.exercises.length} {t('workout.exercises')}</span>
+                      </div>
+                    </div>
                   </div>
-                  <CardTitle className="text-xl mb-1">{day.title}</CardTitle>
-                  <CardDescription className="text-base">{day.focus}</CardDescription>
                   
-                  <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      {day.duration}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Target className="h-4 w-4" />
-                      {day.exercises.length} {t('workout.exercises')}
-                    </div>
-                  </div>
+                  <Button 
+                    variant={day.completed ? "outline_gold" : "premium"}
+                    onClick={() => onStartWorkout(day)}
+                    className="w-full sm:w-auto flex-shrink-0"
+                    size="sm"
+                  >
+                    {day.completed ? (
+                      <span className="text-sm">Повторить</span>
+                    ) : (
+                      <>
+                        <Play className="mr-2 h-4 w-4" />
+                        <span className="text-sm">{t('workout.start_workout')}</span>
+                      </>
+                    )}
+                  </Button>
                 </div>
-                
-                <Button 
-                  variant={day.completed ? "outline_gold" : "premium"}
-                  onClick={() => onStartWorkout(day)}
-                  className="ml-4"
-                >
-                  {day.completed ? (
-                    <>Повторить тренировку</>
-                  ) : (
-                    <>
-                      <Play className="mr-2 h-4 w-4" />
-                      {t('workout.start_workout')}
-                    </>
-                  )}
-                </Button>
               </div>
             </CardHeader>
             
             <CardContent>
               <div className="space-y-3">
-                <h4 className="font-medium text-primary">Предпросмотр упражнений:</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <h4 className="font-medium text-primary text-sm sm:text-base">Предпросмотр упражнений:</h4>
+                <div className="grid grid-cols-1 gap-3">
                   {day.exercises.map((exercise) => (
                     <div 
                       key={exercise.id}
-                      className="bg-muted/30 rounded-lg p-3 space-y-1"
+                      className="bg-muted/30 rounded-lg p-3 space-y-2"
                     >
-                      <div className="font-medium text-sm">{exercise.name}</div>
-                      <div className="text-xs text-muted-foreground">{exercise.sets}</div>
-                      <Badge variant="outline" className="text-xs">
-                        {exercise.muscleGroup}
-                      </Badge>
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-sm truncate">{exercise.name}</div>
+                          <div className="text-xs text-muted-foreground">{exercise.sets}</div>
+                        </div>
+                        <Badge variant="outline" className="text-xs self-start sm:self-center flex-shrink-0">
+                          {exercise.muscleGroup}
+                        </Badge>
+                      </div>
                     </div>
                   ))}
                 </div>
