@@ -254,11 +254,14 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          {set.weight_kg != null ? (
+                         {set.weight_kg != null ? (
                             <div className="font-medium">{set.weight_kg} кг</div>
                           ) : (
-                            <div className="font-medium text-orange-500">
-                              {Math.round((set.pct_of_5rm || 0) * 100)}% от 5ПМ
+                            <div className="text-sm text-orange-500">
+                              <div className="font-medium">{Math.round((set.pct_of_5rm || 0) * 100)}% от 5ПМ</div>
+                              <div className="text-xs text-muted-foreground">
+                                Пройдите тестовую тренировку для точных весов
+                              </div>
                             </div>
                           )}
                         </div>

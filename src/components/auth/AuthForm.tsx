@@ -74,20 +74,22 @@ export function AuthForm({ onAuth }: AuthFormProps) {
           return;
         }
 
-        if (data.user && !data.session) {
-          // Email confirmation required
-          setEmailPendingConfirmation(formData.email);
-          toast({
-            title: "Проверьте почту!",
-            description: `На ${formData.email} отправлено письмо с подтверждением. Перейдите по ссылке в письме.`,
+        // Registration successful - show success message
+        toast({
+          title: t('common.success'),
+          description: "Регистрация успешна! Добро пожаловать!",
+        });
+        
+        // Auto login after successful registration
+        if (!data.session && data.user) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: formData.email,
+            password: formData.password,
           });
-          setIsLogin(true); // Switch to login mode
-        } else if (data.session) {
-          // Auto-confirmed, let onAuthStateChange handle navigation
-          toast({
-            title: t('common.success'),
-            description: "Регистрация успешна!",
-          });
+          
+          if (signInError) {
+            console.error('Auto sign-in error:', signInError);
+          }
         }
       }
     } catch (error: any) {
@@ -126,8 +128,8 @@ export function AuthForm({ onAuth }: AuthFormProps) {
         });
       } else {
         toast({
-          title: "Письмо отправлено",
-          description: `Новое письмо с подтверждением отправлено на ${emailNotConfirmed}`,
+          title: "Попробуйте войти",
+          description: "Попробуйте войти с вашими данными",
         });
       }
     } catch (error: any) {
@@ -161,34 +163,6 @@ export function AuthForm({ onAuth }: AuthFormProps) {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Email confirmation reminder */}
-          {emailPendingConfirmation && isLogin && (
-            <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-300">
-              <div className="text-sm font-medium mb-1">Требуется подтверждение</div>
-              <div className="text-xs">
-                Письмо отправлено на {emailPendingConfirmation}. Перейдите по ссылке в письме, затем войдите.
-              </div>
-            </div>
-          )}
-
-          {/* Email not confirmed error with resend button */}
-          {emailNotConfirmed && isLogin && (
-            <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-700 dark:text-red-300">
-              <div className="text-sm font-medium mb-2">Email не подтвержден</div>
-              <div className="text-xs mb-3">
-                Проверьте почту {emailNotConfirmed} и перейдите по ссылке подтверждения.
-              </div>
-              <Button
-                onClick={handleResendConfirmation}
-                disabled={resendingEmail}
-                size="sm"
-                variant="outline"
-                className="text-xs h-7 border-red-500/50 hover:bg-red-500/10"
-              >
-                {resendingEmail ? "Отправка..." : "Отправить повторно"}
-              </Button>
-            </div>
-          )}
           
           {!isLogin && (
             <div className="space-y-2">

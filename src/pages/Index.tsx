@@ -43,6 +43,22 @@ const Index = () => {
   const [questionnaireData, setQuestionnaireData] = useState<any>(null);
   const { toast } = useToast();
 
+  // Check if user has completed questionnaire
+  const checkUserQuestionnaire = async (userId: string): Promise<boolean> => {
+    try {
+      const { data } = await supabase
+        .from('user_questionnaire_data')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle();
+      
+      return !!data;
+    } catch (error) {
+      console.error('Error checking questionnaire:', error);
+      return false;
+    }
+  };
+
   // Set up auth state listener
   useEffect(() => {
     // Handle email confirmation tokens in URL hash
@@ -80,12 +96,20 @@ const Index = () => {
             role: "client"
           };
           setUser(userData);
-          setAppState('dashboard');
           
-          // Show success toast for email confirmation
-          if (event === 'SIGNED_IN' && session.user.email_confirmed_at) {
+          // Check if user has completed questionnaire
+          checkUserQuestionnaire(session.user.id).then(hasQuestionnaire => {
+            if (hasQuestionnaire) {
+              setAppState('dashboard');
+            } else {
+              setAppState('questionnaire');
+            }
+          });
+          
+          // Show success toast for sign in
+          if (event === 'SIGNED_IN') {
             toast({
-              title: "Email подтвержден!",
+              title: "Добро пожаловать!",
               description: "Добро пожаловать в SBS Fitness!",
             });
           }
@@ -109,7 +133,15 @@ const Index = () => {
           role: "client"
         };
         setUser(userData);
-        setAppState('dashboard');
+        
+        // Check if user has completed questionnaire
+        checkUserQuestionnaire(session.user.id).then(hasQuestionnaire => {
+          if (hasQuestionnaire) {
+            setAppState('dashboard');
+          } else {
+            setAppState('questionnaire');
+          }
+        });
       }
     });
 
