@@ -260,6 +260,7 @@ export type Database = {
       user_questionnaire_data: {
         Row: {
           age_range: string | null
+          body_type: string | null
           completed_at: string
           equipment: string | null
           fitness_goal: string | null
@@ -271,6 +272,7 @@ export type Database = {
         }
         Insert: {
           age_range?: string | null
+          body_type?: string | null
           completed_at?: string
           equipment?: string | null
           fitness_goal?: string | null
@@ -282,6 +284,7 @@ export type Database = {
         }
         Update: {
           age_range?: string | null
+          body_type?: string | null
           completed_at?: string
           equipment?: string | null
           fitness_goal?: string | null

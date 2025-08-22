@@ -270,6 +270,7 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
           age_range: answers[3], // question ID 3
           limitations: answers[4] === "other" ? textInputs[4] || answers[4] : answers[4], // question ID 4
           equipment: answers[5], // question ID 5
+          body_type: answers[6], // question ID 6
           updated_at: now,
           completed_at: now
         }, {
