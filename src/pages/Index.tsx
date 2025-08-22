@@ -44,6 +44,28 @@ const Index = () => {
 
   // Set up auth state listener
   useEffect(() => {
+    // Handle email confirmation tokens in URL hash
+    const handleEmailConfirmation = async () => {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      if (hashParams.get('type') === 'signup' && hashParams.get('access_token')) {
+        try {
+          const { data, error } = await supabase.auth.getSession();
+          if (data.session && !error) {
+            // Clean the URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+            toast({
+              title: "Email подтвержден!",
+              description: "Добро пожаловать в SBS Fitness!",
+            });
+          }
+        } catch (error) {
+          console.error('Error handling email confirmation:', error);
+        }
+      }
+    };
+
+    handleEmailConfirmation();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state changed:', event, session);

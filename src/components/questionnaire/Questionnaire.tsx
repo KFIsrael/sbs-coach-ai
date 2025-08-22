@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -81,8 +82,18 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isCompleting, setIsCompleting] = useState(false);
+  const [isDemoUser, setIsDemoUser] = useState(false);
   
   const questions = getQuestions(t);
+
+  // Check if user is in demo mode
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsDemoUser(user?.email === "demo@sbs.com");
+    };
+    checkUser();
+  }, []);
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
   const isLastQuestion = currentQuestion === questions.length - 1;
@@ -125,6 +136,7 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
           return;
         }
 
+        const now = new Date().toISOString();
         const { error } = await supabase
           .from('user_questionnaire_data')
           .upsert({
@@ -133,7 +145,9 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
             fitness_level: answers[2], // question ID 2  
             age_range: answers[3], // question ID 3
             limitations: answers[4], // question ID 4
-            equipment: answers[5] // question ID 5
+            equipment: answers[5], // question ID 5
+            updated_at: now,
+            completed_at: now
           }, {
             onConflict: 'user_id'
           });
@@ -142,7 +156,7 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
           console.error('Error saving questionnaire data:', error);
           toast({
             title: t('common.error'),
-            description: "Ошибка сохранения данных анкеты",
+            description: `Ошибка сохранения: ${error.message}`,
             variant: "destructive",
           });
           setIsCompleting(false);
@@ -221,9 +235,16 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('questionnaire.back')}
           </Button>
-          <span className="text-sm text-muted-foreground">
-            {currentQuestion + 1} of {questions.length}
-          </span>
+          <div className="flex items-center gap-3">
+            {isDemoUser && (
+              <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-600 dark:text-amber-400">
+                Демо режим — сохранение отключено
+              </Badge>
+            )}
+            <span className="text-sm text-muted-foreground">
+              {currentQuestion + 1} of {questions.length}
+            </span>
+          </div>
         </div>
         
         <Progress value={progress} className="h-2 bg-muted mb-6">

@@ -19,6 +19,8 @@ export function AuthForm({ onAuth }: AuthFormProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [emailPendingConfirmation, setEmailPendingConfirmation] = useState("");
+  const [emailNotConfirmed, setEmailNotConfirmed] = useState("");
+  const [resendingEmail, setResendingEmail] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -38,6 +40,10 @@ export function AuthForm({ onAuth }: AuthFormProps) {
         });
 
         if (error) {
+          // Check for email not confirmed error
+          if (error.message.includes('Email not confirmed')) {
+            setEmailNotConfirmed(formData.email);
+          }
           toast({
             title: t('common.error'),
             description: error.message,
@@ -99,6 +105,42 @@ export function AuthForm({ onAuth }: AuthFormProps) {
     onAuth({ email: "demo@sbs.com", name: "Demo User", role: "demo" });
   };
 
+  const handleResendConfirmation = async () => {
+    if (!emailNotConfirmed) return;
+    
+    setResendingEmail(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: emailNotConfirmed,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`
+        }
+      });
+
+      if (error) {
+        toast({
+          title: t('common.error'),
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Письмо отправлено",
+          description: `Новое письмо с подтверждением отправлено на ${emailNotConfirmed}`,
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: t('common.error'),
+        description: error.message || "Ошибка отправки письма",
+        variant: "destructive",
+      });
+    } finally {
+      setResendingEmail(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="absolute top-4 right-4">
@@ -126,6 +168,25 @@ export function AuthForm({ onAuth }: AuthFormProps) {
               <div className="text-xs">
                 Письмо отправлено на {emailPendingConfirmation}. Перейдите по ссылке в письме, затем войдите.
               </div>
+            </div>
+          )}
+
+          {/* Email not confirmed error with resend button */}
+          {emailNotConfirmed && isLogin && (
+            <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-700 dark:text-red-300">
+              <div className="text-sm font-medium mb-2">Email не подтвержден</div>
+              <div className="text-xs mb-3">
+                Проверьте почту {emailNotConfirmed} и перейдите по ссылке подтверждения.
+              </div>
+              <Button
+                onClick={handleResendConfirmation}
+                disabled={resendingEmail}
+                size="sm"
+                variant="outline"
+                className="text-xs h-7 border-red-500/50 hover:bg-red-500/10"
+              >
+                {resendingEmail ? "Отправка..." : "Отправить повторно"}
+              </Button>
             </div>
           )}
           
