@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
 import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/hooks/use-toast";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { Dashboard } from "@/components/dashboard/Dashboard";
 import { Questionnaire } from "@/components/questionnaire/Questionnaire";
@@ -39,11 +40,13 @@ const Index = () => {
   const [showChat, setShowChat] = useState(false);
   const [currentWorkout, setCurrentWorkout] = useState<WorkoutDay | null>(null);
   const [questionnaireData, setQuestionnaireData] = useState<any>(null);
+  const { toast } = useToast();
 
   // Set up auth state listener
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state changed:', event, session);
         setSession(session);
         setSupabaseUser(session?.user ?? null);
         
@@ -55,6 +58,14 @@ const Index = () => {
           };
           setUser(userData);
           setAppState('dashboard');
+          
+          // Show success toast for email confirmation
+          if (event === 'SIGNED_IN' && session.user.email_confirmed_at) {
+            toast({
+              title: "Email подтвержден!",
+              description: "Добро пожаловать в SBS Fitness!",
+            });
+          }
         } else {
           setUser(null);
           setAppState('auth');
@@ -64,6 +75,7 @@ const Index = () => {
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session);
       setSession(session);
       setSupabaseUser(session?.user ?? null);
       
@@ -79,7 +91,7 @@ const Index = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [toast]);
 
   const handleAuth = (userData: User) => {
     // Only handle demo users here - real auth goes through onAuthStateChange

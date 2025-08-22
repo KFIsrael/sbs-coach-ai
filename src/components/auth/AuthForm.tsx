@@ -18,6 +18,7 @@ export function AuthForm({ onAuth }: AuthFormProps) {
   const { toast } = useToast();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [emailPendingConfirmation, setEmailPendingConfirmation] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -69,9 +70,10 @@ export function AuthForm({ onAuth }: AuthFormProps) {
 
         if (data.user && !data.session) {
           // Email confirmation required
+          setEmailPendingConfirmation(formData.email);
           toast({
-            title: t('common.success'),
-            description: "Регистрация успешна! Проверьте email для подтверждения и войдите заново.",
+            title: "Проверьте почту!",
+            description: `На ${formData.email} отправлено письмо с подтверждением. Перейдите по ссылке в письме.`,
           });
           setIsLogin(true); // Switch to login mode
         } else if (data.session) {
@@ -117,6 +119,16 @@ export function AuthForm({ onAuth }: AuthFormProps) {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Email confirmation reminder */}
+          {emailPendingConfirmation && isLogin && (
+            <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-300">
+              <div className="text-sm font-medium mb-1">Требуется подтверждение</div>
+              <div className="text-xs">
+                Письмо отправлено на {emailPendingConfirmation}. Перейдите по ссылке в письме, затем войдите.
+              </div>
+            </div>
+          )}
+          
           {!isLogin && (
             <div className="space-y-2">
               <Label htmlFor="name">{t('auth.name')}</Label>
