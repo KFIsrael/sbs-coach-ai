@@ -82,13 +82,12 @@ const Index = () => {
   }, []);
 
   const handleAuth = (userData: User) => {
-    setUser(userData);
-    // Check if user is a trainer and redirect accordingly
-    if (userData.role === 'trainer') {
-      setAppState('trainer_dashboard');
-    } else {
+    // Only handle demo users here - real auth goes through onAuthStateChange
+    if (userData.role === 'demo') {
+      setUser(userData);
       setAppState('dashboard');
     }
+    // For real users, onAuthStateChange will handle the navigation
   };
 
   const handleLogout = async () => {

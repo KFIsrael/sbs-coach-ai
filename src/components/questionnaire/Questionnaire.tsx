@@ -100,16 +100,28 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
       setIsCompleting(true);
       
       try {
-        // Save questionnaire data to database
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
+        // Check authentication before saving
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        
+        if (authError || !user) {
           toast({
             title: t('common.error'),
-            description: "Требуется авторизация для заполнения анкеты",
+            description: "Необходимо войти в систему для сохранения анкеты",
             variant: "destructive",
           });
           setIsCompleting(false);
-          onBack(); // Redirect to dashboard, which will redirect to auth
+          onBack(); // Return to dashboard, which will redirect to auth
+          return;
+        }
+
+        // Check if it's a demo user (they can't save to database)
+        if (user.email === "demo@sbs.com") {
+          toast({
+            title: "Демо режим",
+            description: "В демо режиме данные не сохраняются. Войдите через email/пароль для полного доступа.",
+            variant: "destructive",
+          });
+          setIsCompleting(false);
           return;
         }
 
@@ -122,6 +134,8 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
             age_range: answers[3], // question ID 3
             limitations: answers[4], // question ID 4
             equipment: answers[5] // question ID 5
+          }, {
+            onConflict: 'user_id'
           });
 
         if (error) {

@@ -30,8 +30,8 @@ export function AuthForm({ onAuth }: AuthFormProps) {
 
     try {
       if (isLogin) {
-        // Sign in
-        const { data, error } = await supabase.auth.signInWithPassword({
+        // Sign in - let onAuthStateChange handle navigation
+        const { error } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
         });
@@ -42,18 +42,10 @@ export function AuthForm({ onAuth }: AuthFormProps) {
             description: error.message,
             variant: "destructive",
           });
-          return;
         }
-
-        if (data.user) {
-          onAuth({ 
-            email: data.user.email || formData.email, 
-            name: formData.name || "User",
-            role: "client"
-          });
-        }
+        // Don't call onAuth - let Index.tsx onAuthStateChange handle navigation
       } else {
-        // Sign up
+        // Sign up - show success message, don't navigate
         const redirectUrl = `${window.location.origin}/`;
         const { data, error } = await supabase.auth.signUp({
           email: formData.email,
@@ -75,16 +67,18 @@ export function AuthForm({ onAuth }: AuthFormProps) {
           return;
         }
 
-        if (data.user) {
+        if (data.user && !data.session) {
+          // Email confirmation required
           toast({
             title: t('common.success'),
-            description: "Регистрация успешна! Проверьте email для подтверждения.",
+            description: "Регистрация успешна! Проверьте email для подтверждения и войдите заново.",
           });
-          
-          onAuth({ 
-            email: data.user.email || formData.email, 
-            name: formData.name || "User",
-            role: "client"
+          setIsLogin(true); // Switch to login mode
+        } else if (data.session) {
+          // Auto-confirmed, let onAuthStateChange handle navigation
+          toast({
+            title: t('common.success'),
+            description: "Регистрация успешна!",
           });
         }
       }
@@ -100,7 +94,7 @@ export function AuthForm({ onAuth }: AuthFormProps) {
   };
 
   const handleDemo = () => {
-    onAuth({ email: "demo@sbs.com", name: "Demo User", role: "client" });
+    onAuth({ email: "demo@sbs.com", name: "Demo User", role: "demo" });
   };
 
   return (
