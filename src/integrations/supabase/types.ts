@@ -40,6 +40,7 @@ export type Database = {
       }
       exercises: {
         Row: {
+          anchor_key: string | null
           created_at: string | null
           description: string | null
           id: string
@@ -48,6 +49,7 @@ export type Database = {
           target_muscles: string[] | null
         }
         Insert: {
+          anchor_key?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
@@ -56,6 +58,7 @@ export type Database = {
           target_muscles?: string[] | null
         }
         Update: {
+          anchor_key?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
@@ -290,6 +293,62 @@ export type Database = {
         }
         Relationships: []
       }
+      user_test_maxes: {
+        Row: {
+          anchor_key: string
+          five_rm_kg: number | null
+          measured_at: string | null
+          user_id: string
+        }
+        Insert: {
+          anchor_key: string
+          five_rm_kg?: number | null
+          measured_at?: string | null
+          user_id: string
+        }
+        Update: {
+          anchor_key?: string
+          five_rm_kg?: number | null
+          measured_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      workout_exercise_sets: {
+        Row: {
+          id: string
+          pct_of_5rm: number | null
+          reps: number
+          set_no: number
+          weight_kg: number | null
+          workout_exercise_id: string
+        }
+        Insert: {
+          id?: string
+          pct_of_5rm?: number | null
+          reps: number
+          set_no: number
+          weight_kg?: number | null
+          workout_exercise_id: string
+        }
+        Update: {
+          id?: string
+          pct_of_5rm?: number | null
+          reps?: number
+          set_no?: number
+          weight_kg?: number | null
+          workout_exercise_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_exercise_sets_workout_exercise_id_fkey"
+            columns: ["workout_exercise_id"]
+            isOneToOne: false
+            referencedRelation: "workout_exercises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workout_exercises: {
         Row: {
           created_at: string | null
@@ -412,6 +471,7 @@ export type Database = {
           end_date: string | null
           id: string
           name: string
+          split: string | null
           start_date: string | null
           updated_at: string | null
           user_id: string
@@ -423,6 +483,7 @@ export type Database = {
           end_date?: string | null
           id?: string
           name: string
+          split?: string | null
           start_date?: string | null
           updated_at?: string | null
           user_id: string
@@ -434,6 +495,7 @@ export type Database = {
           end_date?: string | null
           id?: string
           name?: string
+          split?: string | null
           start_date?: string | null
           updated_at?: string | null
           user_id?: string
@@ -449,6 +511,7 @@ export type Database = {
           name: string | null
           program_id: string | null
           scheduled_date: string
+          split_day: string | null
           user_id: string
         }
         Insert: {
@@ -459,6 +522,7 @@ export type Database = {
           name?: string | null
           program_id?: string | null
           scheduled_date: string
+          split_day?: string | null
           user_id: string
         }
         Update: {
@@ -469,6 +533,7 @@ export type Database = {
           name?: string | null
           program_id?: string | null
           scheduled_date?: string
+          split_day?: string | null
           user_id?: string
         }
         Relationships: [
