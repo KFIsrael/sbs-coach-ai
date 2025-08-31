@@ -27,6 +27,12 @@ interface UserProfileProps {
   onAccountDeleted?: () => void;
 }
 
+interface TestMaxData {
+  anchor_key: string;
+  five_rm_kg: number;
+  measured_at: string;
+}
+
 interface QuestionnaireData {
   fitness_goal?: string;
   fitness_level?: string;
@@ -49,6 +55,7 @@ export function UserProfile({ user, onBack, onAccountDeleted }: UserProfileProps
   const { t } = useLanguage();
   const { toast } = useToast();
   const [questionnaireData, setQuestionnaireData] = useState<QuestionnaireData | null>(null);
+  const [testMaxes, setTestMaxes] = useState<TestMaxData[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
@@ -73,6 +80,17 @@ export function UserProfile({ user, onBack, onAccountDeleted }: UserProfileProps
 
       if (questionnaire) {
         setQuestionnaireData(questionnaire);
+      }
+
+      // Fetch test maxes (5МП)
+      const { data: maxes } = await supabase
+        .from('user_test_maxes')
+        .select('anchor_key, five_rm_kg, measured_at')
+        .eq('user_id', authUser.id)
+        .order('measured_at', { ascending: false });
+
+      if (maxes) {
+        setTestMaxes(maxes);
       }
 
       // Fetch messages
@@ -145,6 +163,17 @@ export function UserProfile({ user, onBack, onAccountDeleted }: UserProfileProps
       setShowDeleteDialog(false);
       setConfirmDelete("");
     }
+  };
+
+  const getExerciseLabel = (anchorKey: string) => {
+    const exercises: Record<string, string> = {
+      chest_press: 'Жим лежа',
+      leg_press: 'Приседания',
+      hip_hinge: 'Становая тяга',
+      shoulder_press: 'Жим стоя',
+      vertical_pull: 'Тяга в наклоне'
+    };
+    return exercises[anchorKey] || anchorKey;
   };
 
   const getGoalLabel = (goal: string) => {
@@ -230,6 +259,67 @@ export function UserProfile({ user, onBack, onAccountDeleted }: UserProfileProps
                 Активный клиент
               </Badge>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Test Maxes (5МП) */}
+        <Card className="card-premium">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Dumbbell className="h-5 w-5 text-primary" />
+                Ваши результаты 5МП
+              </CardTitle>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  toast({
+                    title: "Обновление результатов",
+                    description: "Пройдите тестовую тренировку заново, чтобы обновить результаты",
+                  });
+                }}
+              >
+                <Activity className="h-4 w-4 mr-2" />
+                Обновить
+              </Button>
+            </div>
+            <CardDescription>
+              5МП - максимальный вес для выполнения 5 повторений с правильной техникой
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {testMaxes.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {testMaxes.map((max) => (
+                  <div key={max.anchor_key} className="p-4 bg-background/50 rounded-lg border border-border/50">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {getExerciseLabel(max.anchor_key)}
+                      </p>
+                      <Badge variant="secondary" className="bg-primary/20 text-primary text-xs">
+                        5МП
+                      </Badge>
+                    </div>
+                    <p className="text-2xl font-bold text-primary mb-1">
+                      {max.five_rm_kg} кг
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      <Calendar className="h-3 w-3 inline mr-1" />
+                      {new Date(max.measured_at).toLocaleDateString('ru-RU')}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Dumbbell className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground mb-2">Результаты 5МП не найдены</p>
+                <p className="text-sm text-muted-foreground">
+                  Пройдите тестовую тренировку, чтобы определить ваши максимумы
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
