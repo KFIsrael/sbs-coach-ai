@@ -109,33 +109,41 @@ export function UserProfile({ user, onBack, onAccountDeleted }: UserProfileProps
 
     setDeleting(true);
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (!authUser) return;
-
-      // For now, we'll just sign out the user and inform them to contact support
-      // In a production app, you'd want an edge function with admin rights to actually delete the user
-      await supabase.auth.signOut();
-
-      toast({
-        title: "Запрос на удаление отправлен",
-        description: "Ваша сессия завершена. Для окончательного удаления аккаунта обратитесь в службу поддержки.",
+      console.log('Calling delete-user-account function...');
+      
+      // Call the edge function to completely delete the account
+      const { data, error } = await supabase.functions.invoke('delete-user-account', {
+        body: {},
       });
 
-      // Call the callback to handle logout
+      if (error) {
+        throw new Error(error.message || 'Failed to delete account');
+      }
+
+      console.log('Account deletion successful:', data);
+
+      toast({
+        title: "Аккаунт удален",
+        description: "Ваш аккаунт и все данные были полностью удалены из системы.",
+      });
+
+      // The user is already signed out by the server, so we just need to update the UI
       if (onAccountDeleted) {
         onAccountDeleted();
       } else {
         onBack();
       }
     } catch (error: any) {
-      console.error('Error during account deletion process:', error);
+      console.error('Error during account deletion:', error);
       toast({
         title: "Ошибка",
-        description: error.message || "Не удалось обработать запрос на удаление",
+        description: error.message || "Не удалось удалить аккаунт",
         variant: "destructive",
       });
     } finally {
       setDeleting(false);
+      setShowDeleteDialog(false);
+      setConfirmDelete("");
     }
   };
 
