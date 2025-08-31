@@ -18,9 +18,6 @@ export function AuthForm({ onAuth }: AuthFormProps) {
   const { toast } = useToast();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [emailPendingConfirmation, setEmailPendingConfirmation] = useState("");
-  const [emailNotConfirmed, setEmailNotConfirmed] = useState("");
-  const [resendingEmail, setResendingEmail] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -41,21 +38,11 @@ export function AuthForm({ onAuth }: AuthFormProps) {
         });
 
         if (error) {
-          // Check for email not confirmed error
-          if (error.message.includes('Email not confirmed')) {
-            setEmailNotConfirmed(formData.email);
-            toast({
-              title: "Требуется подтверждение email",
-              description: "Пожалуйста, проверьте вашу почту и перейдите по ссылке для подтверждения аккаунта.",
-              variant: "destructive",
-            });
-          } else {
-            toast({
-              title: t('common.error'),
-              description: error.message,
-              variant: "destructive",
-            });
-          }
+          toast({
+            title: t('common.error'),
+            description: error.message,
+            variant: "destructive",
+          });
         }
         // Don't call onAuth - let Index.tsx onAuthStateChange handle navigation
       } else {
@@ -82,15 +69,17 @@ export function AuthForm({ onAuth }: AuthFormProps) {
           return;
         }
 
-        // Registration successful - show success message
+        // Registration successful - show success message and auto-login
         toast({
           title: t('common.success'),
-          description: "Регистрация успешна! Проверьте почту для подтверждения аккаунта, затем войдите.",
+          description: "Регистрация успешна! Добро пожаловать!",
         });
         
-        // Switch to login mode after registration
-        setIsLogin(true);
-        setEmailPendingConfirmation(formData.email);
+        // Auto login after successful registration since email confirmation is disabled
+        if (!data.session && data.user) {
+          console.log('Auto-logging in user after registration');
+          // onAuthStateChange will handle the navigation automatically
+        }
       }
     } catch (error: any) {
       toast({
@@ -105,42 +94,6 @@ export function AuthForm({ onAuth }: AuthFormProps) {
 
   const handleDemo = () => {
     onAuth({ email: "demo@sbs.com", name: "Demo User", role: "demo" });
-  };
-
-  const handleResendConfirmation = async () => {
-    if (!emailNotConfirmed) return;
-    
-    setResendingEmail(true);
-    try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: emailNotConfirmed,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`
-        }
-      });
-
-      if (error) {
-        toast({
-          title: t('common.error'),
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Попробуйте войти",
-          description: "Попробуйте войти с вашими данными",
-        });
-      }
-    } catch (error: any) {
-      toast({
-        title: t('common.error'),
-        description: error.message || "Ошибка отправки письма",
-        variant: "destructive",
-      });
-    } finally {
-      setResendingEmail(false);
-    }
   };
 
   return (
@@ -163,34 +116,6 @@ export function AuthForm({ onAuth }: AuthFormProps) {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {emailNotConfirmed && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-              <p className="text-sm text-yellow-800 mb-2">
-                Аккаунт создан, но требует подтверждения email: {emailNotConfirmed}
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleResendConfirmation}
-                disabled={resendingEmail}
-                className="text-xs"
-              >
-                {resendingEmail ? "Отправка..." : "Отправить письмо повторно"}
-              </Button>
-            </div>
-          )}
-
-          {emailPendingConfirmation && (
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-              <p className="text-sm text-blue-800">
-                Письмо с подтверждением отправлено на: {emailPendingConfirmation}
-              </p>
-              <p className="text-xs text-blue-600 mt-1">
-                Проверьте почту и перейдите по ссылке для подтверждения аккаунта.
-              </p>
-            </div>
-          )}
-          
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <>
