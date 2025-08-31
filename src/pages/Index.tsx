@@ -255,7 +255,7 @@ const Index = () => {
         {appState === 'trainer_dashboard' && user && (
           <TrainerDashboard
             user={user}
-            onBack={() => setAppState('dashboard')}
+            onBack={() => setAppState('auth')}
           />
         )}
 
@@ -289,12 +289,7 @@ const Index = () => {
           />
         )}
 
-        {appState === 'trainer_dashboard' && user && (
-          <TrainerDashboard
-            user={user}
-            onBack={() => setAppState('auth')}
-          />
-        )}
+        {appState === 'workout' && currentWorkout && (
           <WorkoutSession
             workout={currentWorkout}
             onBack={() => setAppState('dashboard')}

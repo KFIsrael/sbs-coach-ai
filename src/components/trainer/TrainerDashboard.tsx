@@ -171,6 +171,18 @@ export function TrainerDashboard({ user, onBack }: TrainerDashboardProps) {
     }
   };
 
+  if (viewMode === 'program_manager' && selectedClientForPrograms) {
+    return (
+      <ClientProgramManager
+        client={selectedClientForPrograms}
+        onBack={() => {
+          setViewMode('list');
+          setSelectedClientForPrograms(null);
+        }}
+      />
+    );
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-4 flex items-center justify-center">
@@ -301,12 +313,22 @@ export function TrainerDashboard({ user, onBack }: TrainerDashboardProps) {
                       )}
                       
                       <div className="flex gap-2 pt-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => {
+                            setSelectedClientForPrograms(client);
+                            setViewMode('program_manager');
+                          }}
+                        >
+                          <Settings className="h-4 w-4 mr-1" />
+                          Программы ({client.program_count || 0})
+                        </Button>
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button 
                               variant="outline" 
-                              size="sm" 
-                              className="flex-1"
+                              size="sm"
                               onClick={() => setSelectedClient(client)}
                             >
                               <MessageSquare className="h-4 w-4 mr-1" />
