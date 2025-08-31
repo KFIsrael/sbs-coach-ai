@@ -239,7 +239,7 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
         setCurrentSet(1);
         setCurrentWeight('');
         setActualReps('5');
-        setShowInstructions(true);
+        setShowInstructions(false); // Не показываем инструкции для следующих упражнений
         startRestTimer();
       }
     } else {
@@ -309,8 +309,8 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
       </div>
 
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* Instructions Card */}
-        {showInstructions && (
+        {/* Instructions Card - показываем только для первого упражнения или по запросу */}
+        {showInstructions && currentExercise === 0 && (
           <Card className="card-premium border-l-4 border-l-primary">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-primary">
@@ -358,7 +358,7 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
         )}
 
         {/* Exercise Card */}
-        {!showInstructions && (
+        {(!showInstructions || currentExercise > 0) && (
           <Card className="card-premium">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl text-gradient-gold mb-2">
@@ -456,7 +456,7 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
         )}
 
         {/* Progress Overview */}
-        {!showInstructions && (
+        {(!showInstructions || currentExercise > 0) && (
           <Card className="card-premium">
             <CardHeader>
               <CardTitle className="text-lg">Прогресс тестирования</CardTitle>
