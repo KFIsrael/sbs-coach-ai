@@ -59,6 +59,7 @@ export function Dashboard({
   const [monthlyStats, setMonthlyStats] = useState({ completed: 0, percentage: 0 });
   const [currentStreak, setCurrentStreak] = useState(0);
   const [weeklyImprovement, setWeeklyImprovement] = useState(0);
+  const [currentWeekVolume, setCurrentWeekVolume] = useState(0);
   
   const currentDate = new Date().toLocaleDateString('ru-RU', { 
     weekday: 'long', 
@@ -107,6 +108,7 @@ export function Dashboard({
         const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
         const lastDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
 
+        console.log('Loading monthly stats...');
         const { data: monthlyWorkouts } = await supabase
           .from('workout_sessions')
           .select('id')
@@ -115,9 +117,11 @@ export function Dashboard({
           .gte('scheduled_date', firstDayOfMonth.toISOString().split('T')[0])
           .lte('scheduled_date', lastDayOfMonth.toISOString().split('T')[0]);
 
+        console.log('Monthly workouts data:', monthlyWorkouts);
         const monthlyCount = monthlyWorkouts?.length || 0;
         const monthlyPercentage = Math.round((monthlyCount / 12) * 100);
         setMonthlyStats({ completed: monthlyCount, percentage: monthlyPercentage });
+        console.log('Monthly stats updated:', { completed: monthlyCount, percentage: monthlyPercentage });
 
         // Calculate current streak
         const { data: allWorkouts } = await supabase
@@ -145,7 +149,9 @@ export function Dashboard({
           setCurrentStreak(streak);
         }
 
-        // Calculate weekly improvement
+        // Calculate weekly improvement - сравнение с прошлой неделей
+        const twoWeeksAgo = new Date();
+        twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
         
@@ -155,13 +161,14 @@ export function Dashboard({
           .eq('user_id', user.id)
           .gte('completed_at', oneWeekAgo.toISOString());
 
-        const { data: allWorkoutLogs } = await supabase
+        const { data: previousWeekWorkouts } = await supabase
           .from('workout_logs')
-          .select('actual_weight, actual_sets, actual_reps, completed_at')
+          .select('actual_weight, actual_sets, actual_reps')
           .eq('user_id', user.id)
-          .not('actual_weight', 'is', null);
+          .gte('completed_at', twoWeeksAgo.toISOString())
+          .lt('completed_at', oneWeekAgo.toISOString());
 
-        if (currentWeekWorkouts && allWorkoutLogs) {
+        if (currentWeekWorkouts && previousWeekWorkouts) {
           // Вычисляем общий объем за текущую неделю
           const currentWeekVolume = currentWeekWorkouts.reduce((total, log) => {
             if (log.actual_weight && log.actual_sets && log.actual_reps) {
@@ -170,24 +177,29 @@ export function Dashboard({
             return total;
           }, 0);
 
-          // Находим лучшую неделю за всё время
-          const weeklyVolumes: { [key: string]: number } = {};
-          
-          allWorkoutLogs.forEach(log => {
-            if (log.actual_weight && log.actual_sets && log.actual_reps && log.completed_at) {
-              const weekKey = getWeekKey(new Date(log.completed_at));
-              if (!weeklyVolumes[weekKey]) {
-                weeklyVolumes[weekKey] = 0;
-              }
-              weeklyVolumes[weekKey] += log.actual_weight * log.actual_sets * log.actual_reps;
+          // Вычисляем общий объем за прошлую неделю
+          const previousWeekVolume = previousWeekWorkouts.reduce((total, log) => {
+            if (log.actual_weight && log.actual_sets && log.actual_reps) {
+              return total + (log.actual_weight * log.actual_sets * log.actual_reps);
             }
-          });
+            return total;
+          }, 0);
 
-          const bestWeekVolume = Math.max(...Object.values(weeklyVolumes), 0);
+          console.log('Current week volume:', currentWeekVolume);
+          console.log('Previous week volume:', previousWeekVolume);
           
-          if (bestWeekVolume > 0) {
-            const improvement = Math.round(((currentWeekVolume / bestWeekVolume) * 100) - 100);
+          // Устанавливаем текущий объем для отображения
+          setCurrentWeekVolume(currentWeekVolume);
+          
+          if (previousWeekVolume > 0) {
+            const improvement = Math.round(((currentWeekVolume / previousWeekVolume) * 100) - 100);
             setWeeklyImprovement(improvement);
+            console.log('Weekly improvement:', improvement);
+          } else if (currentWeekVolume > 0) {
+            // Если прошлой недели нет данных, но есть текущая - показываем как положительный рост
+            setWeeklyImprovement(100);
+          } else {
+            setWeeklyImprovement(0);
           }
         }
 
@@ -408,14 +420,19 @@ export function Dashboard({
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <TrendingUp className="h-4 w-4 text-primary" />
-              Улучшение
+              Нагрузка за неделю
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${weeklyImprovement >= 0 ? 'text-success' : 'text-destructive'}`}>
-              {weeklyImprovement >= 0 ? '+' : ''}{weeklyImprovement}%
+            <div className="space-y-2">
+              <div className="text-lg font-bold text-foreground">
+                {currentWeekVolume > 0 ? `${Math.round(currentWeekVolume)} кг` : '0 кг'}
+              </div>
+              <div className={`text-sm font-medium ${weeklyImprovement >= 0 ? 'text-success' : 'text-destructive'}`}>
+                {weeklyImprovement >= 0 ? '+' : ''}{weeklyImprovement}% к прошлой неделе
+              </div>
+              <p className="text-xs text-muted-foreground">общий тоннаж тренировок</p>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">объём нагрузки за неделю</p>
           </CardContent>
         </Card>
       </div>
