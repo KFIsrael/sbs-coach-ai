@@ -52,14 +52,14 @@ export async function generateProgram(startDateISO: string) {
     if (m.five_rm_kg != null) fiveRMMap.set(m.anchor_key as Anchor, Number(m.five_rm_kg));
   });
 
-  // 4) получаем пул упражнений по группам (упрощённо берём по split_day)
+  // 4) получаем пул упражнений по группам (соответствует реальным названиям в БД)
   const pools: Record<string, string[]> = {
-    PUSH: ['Грудь', 'Плечи', 'Трицепс'],
-    PULL: ['Спина', 'Бицепс'],
-    LEGS: ['Ноги', 'Икры', 'Ягодицы', 'Бицепс бедра', 'Приводящие мышцы бедра'],
-    UPPER: ['Грудь', 'Плечи', 'Спина', 'Бицепс', 'Трицепс'],
-    LOWER: ['Ноги', 'Икры', 'Ягодицы', 'Бицепс бедра', 'Приводящие мышцы бедра'],
-    FULL: ['Грудь', 'Спина', 'Ноги', 'Плечи']
+    PUSH: ['Грудь', 'Плечи', 'Руки'], // Грудь, плечи и руки (трицепс в жимах)
+    PULL: ['Спина', 'Руки'], // Спина и руки (бицепс в тягах)
+    LEGS: ['Ноги'], // Все упражнения для ног
+    UPPER: ['Грудь', 'Плечи', 'Спина', 'Руки'], // Весь верх тела
+    LOWER: ['Ноги'], // Весь низ тела
+    FULL: ['Грудь', 'Спина', 'Ноги', 'Плечи'] // Основные группы для фулл-боди
   };
 
   const splitDays = getSplitDays(split);
@@ -96,21 +96,26 @@ export async function generateProgram(startDateISO: string) {
         .single();
       if (sErr) throw sErr;
 
-      // выбираем упражнения из БД по muscle_groups.name
+      // выбираем упражнения из БД по muscle_groups.name с рандомизацией
       const { data: muscleGroups } = await supabase
         .from('muscle_groups')
         .select('id,name')
         .in('name', pools[dayType]);
 
       if (muscleGroups && muscleGroups.length > 0) {
-        const { data: exs } = await supabase
+        // Получаем все упражнения для этих групп мышц
+        const { data: allExercises } = await supabase
           .from('exercises')
           .select('id,name,anchor_key, muscle_group_id, created_at')
-          .in('muscle_group_id', muscleGroups.map(g => g.id))
-          .limit(6); // возьмём до 6 штук на день
+          .in('muscle_group_id', muscleGroups.map(g => g.id));
+
+        // Рандомизируем и выбираем 5-6 упражнений
+        const exs = allExercises ? 
+          [...allExercises].sort(() => 0.5 - Math.random()).slice(0, 6) :
+          [];
 
         let order = 1;
-        for (const ex of (exs || [])) {
+        for (const ex of exs) {
           // создаём запись упражнения в сессии
           const { data: se, error: seErr } = await supabase
             .from('workout_exercises')
@@ -148,6 +153,42 @@ export async function generateProgram(startDateISO: string) {
   }
 
   return { programId: program.id };
+}
+
+export async function regenerateProgram(startDateISO: string, selectedSplit?: string) {
+  const user = await getUser();
+
+  // 1) Завершаем текущую программу (если есть)
+  const { data: currentProgram } = await supabase
+    .from('workout_programs')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (currentProgram) {
+    // Устанавливаем дату окончания текущей программы на вчерашний день
+    const yesterday = new Date(startDateISO);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    await supabase
+      .from('workout_programs')
+      .update({ end_date: yesterday.toISOString().slice(0, 10) })
+      .eq('id', currentProgram.id);
+  }
+
+  // 2) Создаем новую программу с выбранным сплитом
+  const { data: q } = await supabase
+    .from('user_questionnaire_data')
+    .select('age_range,limitations')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  const split = selectedSplit || chooseSplit(q || {});
+
+  // 3) Генерируем новую программу
+  return generateProgram(startDateISO);
 }
 
 export async function logSet({

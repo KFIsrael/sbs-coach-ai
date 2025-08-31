@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Calendar, Clock, Target, Play, CheckCircle2, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Target, Play, CheckCircle2, Loader2, ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+import { RegenerateProgramDialog } from "./RegenerateProgramDialog";
 import { 
   format, 
   startOfMonth, 
@@ -65,6 +66,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
   const [nextWorkout, setNextWorkout] = useState<{ date: Date; workout: WorkoutDay } | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [programId, setProgramId] = useState<string | null>(null);
+  const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
 
   useEffect(() => {
     const loadProgram = async () => {
@@ -428,6 +430,14 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
             <ArrowLeft className="h-4 w-4 mr-2" />
             Назад
           </Button>
+          <Button 
+            variant="outline"
+            onClick={() => setShowRegenerateDialog(true)}
+            className="text-primary border-primary hover:bg-primary/10"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Обновить программу
+          </Button>
         </div>
         
         <div className="text-center mb-6">
@@ -558,6 +568,18 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
           </CardContent>
         </Card>
       </div>
+
+      {/* Regenerate Program Dialog */}
+      <RegenerateProgramDialog 
+        isOpen={showRegenerateDialog}
+        onClose={() => setShowRegenerateDialog(false)}
+        onSuccess={() => {
+          // Refresh the program data
+          setWorkoutProgram([]);
+          setIsGenerating(true);
+          window.location.reload(); // Simple reload to refresh all data
+        }}
+      />
     </div>
   );
 }
