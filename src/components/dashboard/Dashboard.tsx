@@ -51,41 +51,141 @@ export function Dashboard({
   onOpenChat,
   onOpenProfile,
   onLogout,
-  onTestWorkout
+  onTestWorkout 
 }: DashboardProps) {
   const { t } = useLanguage();
   const [questionnaireData, setQuestionnaireData] = useState<QuestionnaireData | null>(null);
-  const [hasQuestionnaire, setHasQuestionnaire] = useState(false);
+  const [hasQuestionnaire, setHasQuestionnaire] = useState<boolean>(false);
+  const [monthlyStats, setMonthlyStats] = useState({ completed: 0, percentage: 0 });
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [weeklyImprovement, setWeeklyImprovement] = useState(0);
   
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  const currentDate = new Date().toLocaleDateString('ru-RU', { 
+    weekday: 'long', 
+    day: 'numeric', 
+    month: 'long' 
   });
 
-  // Load questionnaire data
+  // Helper function to get week key
+  const getWeekKey = (date: Date) => {
+    const year = date.getFullYear();
+    const week = Math.ceil((date.getTime() - new Date(year, 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000));
+    return `${year}-W${week}`;
+  };
+
+  // Load user questionnaire data and stats
   useEffect(() => {
-    const loadQuestionnaireData = async () => {
+    const loadUserData = async () => {
       if (!user.id) return;
-      
+
       try {
-        const { data, error } = await supabase
+        // Load questionnaire data
+        const { data: questionnaire } = await supabase
           .from('user_questionnaire_data')
           .select('*')
           .eq('user_id', user.id)
           .maybeSingle();
-          
-        if (data && !error) {
-          setQuestionnaireData(data);
-          setHasQuestionnaire(true);
+        
+        if (questionnaire) {
+          setQuestionnaireData(questionnaire);
+          setHasQuestionnaire(!!questionnaire.completed_at);
         }
+
+        // Calculate monthly workout stats
+        const currentMonth = new Date();
+        const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+        const lastDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+
+        const { data: monthlyWorkouts } = await supabase
+          .from('workout_sessions')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('is_completed', true)
+          .gte('scheduled_date', firstDayOfMonth.toISOString().split('T')[0])
+          .lte('scheduled_date', lastDayOfMonth.toISOString().split('T')[0]);
+
+        const monthlyCount = monthlyWorkouts?.length || 0;
+        const monthlyPercentage = Math.round((monthlyCount / 12) * 100);
+        setMonthlyStats({ completed: monthlyCount, percentage: monthlyPercentage });
+
+        // Calculate current streak
+        const { data: allWorkouts } = await supabase
+          .from('workout_sessions')
+          .select('scheduled_date, is_completed')
+          .eq('user_id', user.id)
+          .eq('is_completed', true)
+          .order('scheduled_date', { ascending: false });
+
+        if (allWorkouts && allWorkouts.length > 0) {
+          let streak = 0;
+          const today = new Date();
+          
+          for (let i = 0; i < allWorkouts.length; i++) {
+            const workoutDate = new Date(allWorkouts[i].scheduled_date);
+            const dayDiff = Math.floor((today.getTime() - workoutDate.getTime()) / (1000 * 3600 * 24));
+            
+            // Если тренировка была в последние 3 дня (учитываем выходные)
+            if (dayDiff <= 3) {
+              streak++;
+            } else {
+              break;
+            }
+          }
+          setCurrentStreak(streak);
+        }
+
+        // Calculate weekly improvement
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        
+        const { data: currentWeekWorkouts } = await supabase
+          .from('workout_logs')
+          .select('actual_weight, actual_sets, actual_reps')
+          .eq('user_id', user.id)
+          .gte('completed_at', oneWeekAgo.toISOString());
+
+        const { data: allWorkoutLogs } = await supabase
+          .from('workout_logs')
+          .select('actual_weight, actual_sets, actual_reps, completed_at')
+          .eq('user_id', user.id)
+          .not('actual_weight', 'is', null);
+
+        if (currentWeekWorkouts && allWorkoutLogs) {
+          // Вычисляем общий объем за текущую неделю
+          const currentWeekVolume = currentWeekWorkouts.reduce((total, log) => {
+            if (log.actual_weight && log.actual_sets && log.actual_reps) {
+              return total + (log.actual_weight * log.actual_sets * log.actual_reps);
+            }
+            return total;
+          }, 0);
+
+          // Находим лучшую неделю за всё время
+          const weeklyVolumes: { [key: string]: number } = {};
+          
+          allWorkoutLogs.forEach(log => {
+            if (log.actual_weight && log.actual_sets && log.actual_reps && log.completed_at) {
+              const weekKey = getWeekKey(new Date(log.completed_at));
+              if (!weeklyVolumes[weekKey]) {
+                weeklyVolumes[weekKey] = 0;
+              }
+              weeklyVolumes[weekKey] += log.actual_weight * log.actual_sets * log.actual_reps;
+            }
+          });
+
+          const bestWeekVolume = Math.max(...Object.values(weeklyVolumes), 0);
+          
+          if (bestWeekVolume > 0) {
+            const improvement = Math.round(((currentWeekVolume / bestWeekVolume) * 100) - 100);
+            setWeeklyImprovement(improvement);
+          }
+        }
+
       } catch (error) {
-        console.error('Error loading questionnaire data:', error);
+        console.error('Error loading dashboard data:', error);
       }
     };
 
-    loadQuestionnaireData();
+    loadUserData();
   }, [user.id]);
 
   const getGoalLabel = (goal: string) => {
@@ -229,17 +329,17 @@ export function Dashboard({
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <Trophy className="h-4 w-4 text-primary" />
-              {t('questionnaire.title')}
+              Фитнес оценка
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">3 из 5 {t('dashboard.workouts')}</span>
-                <span className="font-medium">60%</span>
+                <span className="text-muted-foreground">{monthlyStats.completed} из 12 тренировок в месяц</span>
+                <span className="font-medium">{monthlyStats.percentage}%</span>
               </div>
-              <Progress value={60} className="h-2 bg-muted">
-                <div className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all" style={{ width: '60%' }} />
+              <Progress value={monthlyStats.percentage} className="h-2 bg-muted">
+                <div className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all" style={{ width: `${Math.min(monthlyStats.percentage, 100)}%` }} />
               </Progress>
             </div>
           </CardContent>
@@ -249,12 +349,12 @@ export function Dashboard({
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <Activity className="h-4 w-4 text-success" />
-              {t('placeholder.streak')}
+              Серия
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">7 {t('dashboard.days')}</div>
-            <p className="text-xs text-muted-foreground mt-1">{t('placeholder.continue')}</p>
+            <div className="text-2xl font-bold text-success">{currentStreak}</div>
+            <p className="text-xs text-muted-foreground mt-1">тренировок подряд</p>
           </CardContent>
         </Card>
 
@@ -262,12 +362,14 @@ export function Dashboard({
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <TrendingUp className="h-4 w-4 text-primary" />
-              {t('placeholder.improvement')}
+              Улучшение
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">+15%</div>
-            <p className="text-xs text-muted-foreground mt-1">{t('placeholder.strength_gain')}</p>
+            <div className={`text-2xl font-bold ${weeklyImprovement >= 0 ? 'text-success' : 'text-destructive'}`}>
+              {weeklyImprovement >= 0 ? '+' : ''}{weeklyImprovement}%
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">объём нагрузки за неделю</p>
           </CardContent>
         </Card>
       </div>
