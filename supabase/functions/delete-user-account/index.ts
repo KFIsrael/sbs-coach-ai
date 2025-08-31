@@ -20,6 +20,19 @@ Deno.serve(async (req) => {
       throw new Error('Authorization header missing');
     }
 
+    // Extract JWT token from Bearer header
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Decode JWT to get user ID (simple base64 decode of payload)
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const userId = payload.sub;
+    
+    if (!userId) {
+      throw new Error('Invalid token - no user ID found');
+    }
+
+    console.log('Deleting data for user:', userId);
+
     // Create supabase client with service role key for admin operations
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -31,28 +44,6 @@ Deno.serve(async (req) => {
         }
       }
     );
-
-    // Create regular client to get current user
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: {
-            authorization: authHeader,
-          },
-        },
-      }
-    );
-
-    // Get current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      console.error('Error getting user:', userError);
-      throw new Error('User not found or unauthorized');
-    }
-
-    console.log('Deleting data for user:', user.id);
 
     // Delete user data from all related tables
     const tablesToClean = [
@@ -70,7 +61,7 @@ Deno.serve(async (req) => {
       const { error } = await supabaseAdmin
         .from(table)
         .delete()
-        .eq('user_id', user.id);
+        .eq('user_id', userId);
       
       if (error) {
         console.error(`Error deleting from ${table}:`, error);
@@ -80,7 +71,7 @@ Deno.serve(async (req) => {
 
     // Delete user from auth.users (this requires admin privileges)
     console.log('Deleting user from auth.users...');
-    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(user.id);
+    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
     
     if (deleteError) {
       console.error('Error deleting user from auth:', deleteError);
