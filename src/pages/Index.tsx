@@ -90,7 +90,7 @@ const Index = () => {
     handleEmailConfirmation();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log('Auth state changed:', event, session);
         setSession(session);
         setSupabaseUser(session?.user ?? null);
@@ -103,25 +103,27 @@ const Index = () => {
           };
           setUser(userData);
           
-          // Check user role and redirect accordingly
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('user_id', session.user.id)
-            .single();
-          
-          if (profile?.role === 'trainer') {
-            setAppState('trainer_dashboard');
-          } else {
-            // Check if user has completed questionnaire
-            checkUserQuestionnaire(session.user.id).then(hasQuestionnaire => {
+          // Defer Supabase calls to prevent deadlock
+          setTimeout(async () => {
+            // Check user role and redirect accordingly
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('user_id', session.user.id)
+              .single();
+            
+            if (profile?.role === 'trainer') {
+              setAppState('trainer_dashboard');
+            } else {
+              // Check if user has completed questionnaire
+              const hasQuestionnaire = await checkUserQuestionnaire(session.user.id);
               if (hasQuestionnaire) {
                 setAppState('dashboard');
               } else {
                 setAppState('questionnaire');
               }
-            });
-          }
+            }
+          }, 0);
           
           // Show success toast for sign in
           if (event === 'SIGNED_IN') {
