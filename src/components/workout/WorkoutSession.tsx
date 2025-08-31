@@ -87,6 +87,8 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
       // Здесь будет логика сохранения подхода
       const set = exercises[currentExercise]?.sets.find(s => s.id === setId);
       if (set && workout.id) {
+        console.log('Logging set:', { session_id: workout.id, exercise_id: exerciseId, set_no: set.set_no, reps: set.reps, weight_kg: actualWeight });
+        
         await logSet({
           session_id: workout.id,
           exercise_id: exerciseId,
@@ -94,6 +96,8 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
           reps: set.reps,
           weight_kg: actualWeight
         });
+        
+        console.log('Set logged successfully');
         
         toast({
           title: "Подход записан",
@@ -149,6 +153,8 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
 
   const handleCompleteWorkout = async () => {
     try {
+      console.log('Completing workout with ID:', workout.id);
+      
       // Обновляем статус тренировки в базе данных
       if (workout.id) {
         const { error } = await supabase
@@ -165,6 +171,8 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
           });
           return;
         }
+        
+        console.log('Workout status updated successfully');
       }
       
       toast({
