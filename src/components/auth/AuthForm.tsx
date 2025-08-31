@@ -69,17 +69,30 @@ export function AuthForm({ onAuth }: AuthFormProps) {
           return;
         }
 
-        // Registration successful - show success message and auto-login
+        // Registration successful - show success message
         toast({
           title: t('common.success'),
           description: "Регистрация успешна! Добро пожаловать!",
         });
         
-        // Auto login after successful registration since email confirmation is disabled
+        // If no session created (email confirmation required), auto-login
         if (!data.session && data.user) {
           console.log('Auto-logging in user after registration');
-          // onAuthStateChange will handle the navigation automatically
+          const { error: loginError } = await supabase.auth.signInWithPassword({
+            email: formData.email,
+            password: formData.password,
+          });
+          
+          if (loginError) {
+            console.error('Auto-login error:', loginError);
+            toast({
+              title: t('common.error'),
+              description: "Регистрация прошла успешно, но не удалось войти автоматически. Попробуйте войти вручную.",
+              variant: "destructive",
+            });
+          }
         }
+        // If session exists, onAuthStateChange will handle navigation automatically
       }
     } catch (error: any) {
       toast({
