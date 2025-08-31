@@ -104,6 +104,17 @@ const Index = () => {
         
         console.log('Profile data:', profile, 'Error:', profileError);
         
+        // Загружаем данные анкеты если есть
+        const { data: questionnaire } = await supabase
+          .from('user_questionnaire_data')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (questionnaire) {
+          setQuestionnaireData(questionnaire);
+        }
+        
         if (profile?.role === 'trainer') {
           console.log('Setting state to trainer_dashboard');
           setAppState('trainer_dashboard');
@@ -243,9 +254,31 @@ const Index = () => {
     setAppState('dashboard');
   };
 
-  const handleTestWorkoutComplete = (results: any) => {
+  const handleTestWorkoutComplete = async (results: any) => {
     console.log('Test workout results:', results);
-    setAppState('dashboard');
+    
+    try {
+      // Автоматически генерируем программу после тестовой тренировки
+      const { generateProgram } = await import('@/hooks/useProgram');
+      await generateProgram(new Date().toISOString());
+      
+      toast({
+        title: "Тестирование завершено!",
+        description: "Программа тренировок создана на основе ваших результатов",
+      });
+      
+      // Переходим к просмотру созданной программы
+      setAppState('programs');
+    } catch (error: any) {
+      console.error('Error generating program:', error);
+      toast({
+        title: "Ошибка",
+        description: error.message || "Не удалось создать программу",
+        variant: "destructive",
+      });
+      // В случае ошибки возвращаемся на главный экран
+      setAppState('dashboard');
+    }
   };
 
   return (
@@ -309,7 +342,7 @@ const Index = () => {
 
         {appState === 'test_workout' && (
           <TestWorkout
-            onBack={() => setAppState('program_choice')}
+            onBack={() => setAppState('dashboard')}
             onComplete={handleTestWorkoutComplete}
           />
         )}
