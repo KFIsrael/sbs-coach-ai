@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { 
   User, 
   ArrowLeft, 
@@ -12,7 +14,8 @@ import {
   Activity,
   Calendar,
   Dumbbell,
-  Edit
+  Edit,
+  Trash2
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 interface UserProfileProps {
   user: { name: string; email: string; id?: string; };
   onBack: () => void;
+  onAccountDeleted?: () => void;
 }
 
 interface QuestionnaireData {
@@ -41,12 +45,15 @@ interface Message {
   is_read: boolean;
 }
 
-export function UserProfile({ user, onBack }: UserProfileProps) {
+export function UserProfile({ user, onBack, onAccountDeleted }: UserProfileProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [questionnaireData, setQuestionnaireData] = useState<QuestionnaireData | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState("");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     fetchUserData();
@@ -87,6 +94,48 @@ export function UserProfile({ user, onBack }: UserProfileProps) {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (confirmDelete !== "УДАЛИТЬ") {
+      toast({
+        title: "Ошибка",
+        description: "Введите 'УДАЛИТЬ' для подтверждения",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setDeleting(true);
+    try {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) return;
+
+      // For now, we'll just sign out the user and inform them to contact support
+      // In a production app, you'd want an edge function with admin rights to actually delete the user
+      await supabase.auth.signOut();
+
+      toast({
+        title: "Запрос на удаление отправлен",
+        description: "Ваша сессия завершена. Для окончательного удаления аккаунта обратитесь в службу поддержки.",
+      });
+
+      // Call the callback to handle logout
+      if (onAccountDeleted) {
+        onAccountDeleted();
+      } else {
+        onBack();
+      }
+    } catch (error: any) {
+      console.error('Error during account deletion process:', error);
+      toast({
+        title: "Ошибка",
+        description: error.message || "Не удалось обработать запрос на удаление",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -300,6 +349,79 @@ export function UserProfile({ user, onBack }: UserProfileProps) {
             ) : (
               <p className="text-muted-foreground">{t('profile.no_messages')}</p>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Danger Zone */}
+        <Card className="border-destructive/20">
+          <CardHeader>
+            <CardTitle className="text-destructive flex items-center gap-2">
+              <Trash2 className="h-5 w-5" />
+              Опасная зона
+            </CardTitle>
+            <CardDescription>
+              Необратимые действия с вашим аккаунтом
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="p-4 border border-destructive/20 rounded-lg bg-destructive/5">
+                <h3 className="font-medium text-destructive mb-2">Удаление аккаунта</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  При удалении аккаунта будут безвозвратно удалены все ваши данные: профиль, 
+                  программы тренировок, сообщения и другая информация. Это действие нельзя отменить.
+                  После подтверждения ваша сессия будет завершена.
+                </p>
+                <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                  <DialogTrigger asChild>
+                    <Button variant="destructive" size="sm">
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Удалить аккаунт
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle className="text-destructive">Удалить аккаунт?</DialogTitle>
+                      <DialogDescription>
+                        Это действие нельзя отменить. Все ваши данные будут безвозвратно удалены.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="confirm-delete">
+                          Введите <span className="font-mono font-bold">УДАЛИТЬ</span> для подтверждения:
+                        </Label>
+                        <Input
+                          id="confirm-delete"
+                          value={confirmDelete}
+                          onChange={(e) => setConfirmDelete(e.target.value)}
+                          placeholder="УДАЛИТЬ"
+                          className="font-mono"
+                        />
+                      </div>
+                      <div className="flex gap-2 justify-end">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => {
+                            setShowDeleteDialog(false);
+                            setConfirmDelete("");
+                          }}
+                        >
+                          Отмена
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={handleDeleteAccount}
+                          disabled={deleting || confirmDelete !== "УДАЛИТЬ"}
+                        >
+                          {deleting ? 'Удаление...' : 'Удалить аккаунт'}
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -249,6 +249,7 @@ const Index = () => {
           <UserProfile
             user={{ ...user, id: supabaseUser?.id }}
             onBack={() => setAppState('dashboard')}
+            onAccountDeleted={handleLogout}
           />
         )}
 
