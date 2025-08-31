@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Calendar, Clock, Target, Play, CheckCircle2, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import exercisesData from "@/data/exercises.json";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   format, 
   startOfMonth, 
@@ -26,31 +26,27 @@ import {
 import { ru } from "date-fns/locale";
 
 interface Exercise {
-  id: string;
   name: string;
-  description: string;
-  muscleGroup: string;
-  sets: string;
-  videoUrl?: string;
-  imageUrl?: string;
+  sets: Array<{
+    reps: number;
+    weight: string;
+    completed: boolean;
+  }>;
 }
 
 interface WorkoutDay {
-  day: number;
-  title: string;
-  focus: string;
-  duration: string;
+  id: string;
+  name: string;
+  description: string;
   exercises: Exercise[];
-  completed: boolean;
   date?: Date;
-  muscleGroup: string;
-}
-
-interface CalendarWorkout {
-  date: Date;
-  title: string;
-  muscleGroup: string;
-  workoutIndex: number;
+  // Compatibility fields for Index.tsx
+  day: number; // Required field
+  title: string; // Required field
+  focus: string; // Required field
+  duration: string; // Required field
+  completed: boolean; // Required field
+  muscleGroup?: string;
 }
 
 interface WorkoutProgramProps {
@@ -58,131 +54,6 @@ interface WorkoutProgramProps {
   onStartWorkout: (day: WorkoutDay) => void;
   questionnaireData?: any;
 }
-
-// Default workout program with Russian content
-const defaultWorkoutProgram: WorkoutDay[] = [
-  {
-    day: 1,
-    title: "Грудь и Трицепс",
-    focus: "Грудные мышцы, Трицепсы",
-    duration: "50 мин",
-    completed: false,
-    muscleGroup: "Грудь + Трицепс",
-    exercises: [
-      {
-        id: "1",
-        name: "Жим штанги лёжа",
-        description: "Базовое упражнение для груди",
-        muscleGroup: "Грудь",
-        sets: "3 подхода × 10-12 повторений"
-      },
-      {
-        id: "2", 
-        name: "Отжимания на брусьях",
-        description: "Упражнение для груди и трицепсов",
-        muscleGroup: "Грудь",
-        sets: "3 подхода × 8-12 повторений"
-      }
-    ]
-  },
-  {
-    day: 2,
-    title: "Спина и Бицепс",
-    focus: "Мышцы спины, Бицепсы",
-    duration: "50 мин",
-    completed: false,
-    muscleGroup: "Спина + Бицепс",
-    exercises: [
-      {
-        id: "3",
-        name: "Подтягивания",
-        description: "Базовое упражнение для спины",
-        muscleGroup: "Спина",
-        sets: "3 подхода × 8-12 повторений"
-      }
-    ]
-  },
-  {
-    day: 3,
-    title: "Ноги",
-    focus: "Квадрицепсы, Ягодицы, Бицепс бедра",
-    duration: "55 мин",
-    completed: false,
-    muscleGroup: "Ноги",
-    exercises: [
-      {
-        id: "4",
-        name: "Приседания со штангой",
-        description: "Базовое упражнение для ног",
-        muscleGroup: "Ноги",
-        sets: "4 подхода × 10-15 повторений"
-      }
-    ]
-  }
-];
-
-// Функция для генерации дат тренировок (понедельник, среда, пятница)
-const generateWorkoutDates = (startDate: Date, weeksCount: number = 4): Date[] => {
-  const workoutDates: Date[] = [];
-  const currentDate = new Date(startDate);
-  
-  // Найти ближайший понедельник
-  const dayOfWeek = getDay(currentDate);
-  const daysUntilMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek) % 7;
-  const nextMonday = addDays(currentDate, daysUntilMonday);
-  
-  for (let week = 0; week < weeksCount; week++) {
-    const weekStart = addDays(nextMonday, week * 7);
-    
-    // Понедельник
-    workoutDates.push(new Date(weekStart));
-    
-    // Среда
-    workoutDates.push(addDays(weekStart, 2));
-    
-    // Пятница
-    workoutDates.push(addDays(weekStart, 4));
-  }
-  
-  return workoutDates;
-};
-
-// Функция для поиска ближайшей тренировки
-const findNextWorkout = (workoutDates: Date[], workouts: WorkoutDay[]): { date: Date; workout: WorkoutDay } | null => {
-  const today = new Date();
-  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  
-  for (let i = 0; i < workoutDates.length; i++) {
-    const workoutDate = workoutDates[i];
-    const workoutDateStart = new Date(workoutDate.getFullYear(), workoutDate.getMonth(), workoutDate.getDate());
-    
-    // Если тренировка сегодня или в будущем
-    if (workoutDateStart >= todayStart) {
-      const workoutIndex = i % workouts.length;
-      return {
-        date: workoutDate,
-        workout: { ...workouts[workoutIndex], date: workoutDate }
-      };
-    }
-  }
-  
-  return null;
-};
-
-// Функция для создания календарных тренировок
-const createCalendarWorkouts = (dates: Date[], workouts: WorkoutDay[]): CalendarWorkout[] => {
-  return dates.map((date, index) => {
-    const workoutIndex = index % workouts.length;
-    const workout = workouts[workoutIndex];
-    
-    return {
-      date,
-      title: workout.title,
-      muscleGroup: workout.muscleGroup,
-      workoutIndex
-    };
-  });
-};
 
 export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: WorkoutProgramProps) {
   const { t } = useLanguage();
@@ -193,78 +64,189 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
   const [workoutDates, setWorkoutDates] = useState<Date[]>([]);
   const [nextWorkout, setNextWorkout] = useState<{ date: Date; workout: WorkoutDay } | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [programId, setProgramId] = useState<string | null>(null);
 
   useEffect(() => {
-    const generateProgram = async () => {
+    const loadProgram = async () => {
       if (!questionnaireData) {
-        // Use default program if no questionnaire data
-        setWorkoutProgram(defaultWorkoutProgram);
-      } else {
-        setIsGenerating(true);
-        setError(null);
+        setWorkoutProgram([]);
+        return;
+      }
 
-        try {
-          const response = await fetch('https://izymayczjppcgmejqxus.supabase.co/functions/v1/generate-workout-program', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              questionnaireData,
-              exercises: exercisesData
-            })
-          });
+      setIsGenerating(true);
+      try {
+        // Получаем пользователя
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('Пользователь не авторизован');
 
-          if (!response.ok) {
-            throw new Error('Failed to generate program');
-          }
+        // Получаем программу пользователя
+        const { data: programs, error: programError } = await supabase
+          .from('workout_programs')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(1);
 
-          const data = await response.json();
-          setWorkoutProgram(data.program.workouts);
-        } catch (err) {
-          console.error('Error generating program:', err);
-          setError('Failed to generate workout program. Using default program.');
-          setWorkoutProgram(defaultWorkoutProgram);
-        } finally {
-          setIsGenerating(false);
+        if (programError) throw programError;
+        if (!programs || programs.length === 0) {
+          setWorkoutProgram([]);
+          return;
         }
+
+        const program = programs[0];
+        setProgramId(program.id);
+
+        // Получаем сессии программы с упражнениями и сетами
+        const { data: sessions, error: sessionsError } = await supabase
+          .from('workout_sessions')
+          .select(`
+            *,
+            workout_exercises(
+              *,
+              exercises(name, description),
+              workout_exercise_sets(*)
+            )
+          `)
+          .eq('program_id', program.id)
+          .order('scheduled_date');
+
+        if (sessionsError) throw sessionsError;
+
+        // Группируем сессии по split_day
+        const sessionsByDay: Record<string, any[]> = {};
+        sessions?.forEach(session => {
+          if (!sessionsByDay[session.split_day]) {
+            sessionsByDay[session.split_day] = [];
+          }
+          sessionsByDay[session.split_day].push(session);
+        });
+
+        // Создаем программу тренировок для UI
+        const workoutDays: WorkoutDay[] = Object.entries(sessionsByDay).map(([splitDay, sessionGroup], index) => {
+          // Берем первую сессию для получения базовой информации
+          const firstSession = sessionGroup[0];
+          
+          const exercises = firstSession.workout_exercises?.map((we: any) => ({
+            name: we.exercises?.name || 'Упражнение',
+            sets: we.workout_exercise_sets?.map((set: any) => ({
+              reps: set.reps,
+              weight: set.weight_kg ? `${set.weight_kg}кг` : `${Math.round((set.pct_of_5rm || 0) * 100)}% от 5МП`,
+              completed: false
+            })) || []
+          })) || [];
+
+          const workoutName = splitDay === 'PUSH' ? 'Толкающие мышцы' : 
+                              splitDay === 'PULL' ? 'Тянущие мышцы' : 
+                              splitDay === 'LEGS' ? 'Ноги' :
+                              splitDay === 'UPPER' ? 'Верх тела' :
+                              splitDay === 'LOWER' ? 'Низ тела' : 'Все тело';
+          
+          return {
+            id: (index + 1).toString(),
+            name: workoutName,
+            description: `Тренировка группы: ${splitDay}`,
+            exercises,
+            date: new Date(),
+            day: index + 1, // Always provide required field
+            title: workoutName,
+            focus: `Тренировка группы: ${splitDay}`,
+            duration: '~60 мин',
+            completed: false,
+            muscleGroup: workoutName
+          };
+        });
+
+        setWorkoutProgram(workoutDays);
+      } catch (err) {
+        console.error('Error loading program:', err);
+        setError('Не удалось загрузить программу.');
+        setWorkoutProgram([]);
+      } finally {
+        setIsGenerating(false);
       }
     };
 
-    generateProgram();
+    loadProgram();
   }, [questionnaireData]);
 
   useEffect(() => {
-    if (workoutProgram.length > 0) {
-      // Генерируем даты тренировок на 12 недель
-      const dates = generateWorkoutDates(new Date(), 12);
-      setWorkoutDates(dates);
-      
-      // Находим ближайшую тренировку или используем выбранную дату
-      let targetWorkout;
-      
-      if (selectedDate) {
-        // Если выбрана определенная дата, используем ее
-        const calendarWorkouts = createCalendarWorkouts(dates, workoutProgram);
-        const selectedWorkout = calendarWorkouts.find(w => isSameDay(w.date, selectedDate));
-        
-        if (selectedWorkout) {
-          targetWorkout = {
-            date: selectedWorkout.date,
-            workout: { ...workoutProgram[selectedWorkout.workoutIndex], date: selectedWorkout.date }
-          };
+    if (workoutProgram.length > 0 && programId) {
+      const loadWorkoutDates = async () => {
+        try {
+          // Получаем даты сессий из базы данных
+          const { data: sessions } = await supabase
+            .from('workout_sessions')
+            .select('scheduled_date, split_day')
+            .eq('program_id', programId)
+            .order('scheduled_date');
+
+          if (sessions) {
+            const dates = sessions.map(s => new Date(s.scheduled_date));
+            setWorkoutDates(dates);
+            
+            // Находим ближайшую тренировку или используем выбранную дату
+            let targetWorkout;
+            
+            if (selectedDate) {
+              // Если выбрана определенная дата, используем ее
+              const sessionForDate = sessions.find(s => isSameDay(new Date(s.scheduled_date), selectedDate));
+              if (sessionForDate) {
+                const workoutIndex = workoutProgram.findIndex(w => 
+                  w.name.includes(sessionForDate.split_day) || 
+                  (sessionForDate.split_day === 'PUSH' && w.name.includes('Толкающие')) ||
+                  (sessionForDate.split_day === 'PULL' && w.name.includes('Тянущие')) ||
+                  (sessionForDate.split_day === 'LEGS' && w.name.includes('Ноги')) ||
+                  (sessionForDate.split_day === 'UPPER' && w.name.includes('Верх')) ||
+                  (sessionForDate.split_day === 'LOWER' && w.name.includes('Низ')) ||
+                  (sessionForDate.split_day === 'FULL' && w.name.includes('тело'))
+                );
+                
+                if (workoutIndex >= 0) {
+                  targetWorkout = {
+                    date: new Date(sessionForDate.scheduled_date),
+                    workout: { ...workoutProgram[workoutIndex], date: new Date(sessionForDate.scheduled_date) }
+                  };
+                }
+              }
+            }
+            
+            if (!targetWorkout) {
+              // Находим ближайшую тренировку
+              const today = new Date();
+              const upcomingSessions = sessions.filter(s => new Date(s.scheduled_date) >= today);
+              
+              if (upcomingSessions.length > 0) {
+                const nextSession = upcomingSessions[0];
+                const workoutIndex = workoutProgram.findIndex(w => 
+                  w.name.includes(nextSession.split_day) || 
+                  (nextSession.split_day === 'PUSH' && w.name.includes('Толкающие')) ||
+                  (nextSession.split_day === 'PULL' && w.name.includes('Тянущие')) ||
+                  (nextSession.split_day === 'LEGS' && w.name.includes('Ноги')) ||
+                  (nextSession.split_day === 'UPPER' && w.name.includes('Верх')) ||
+                  (nextSession.split_day === 'LOWER' && w.name.includes('Низ')) ||
+                  (nextSession.split_day === 'FULL' && w.name.includes('тело'))
+                );
+                
+                if (workoutIndex >= 0) {
+                  targetWorkout = {
+                    date: new Date(nextSession.scheduled_date),
+                    workout: { ...workoutProgram[workoutIndex], date: new Date(nextSession.scheduled_date) }
+                  };
+                }
+              }
+              setSelectedDate(null);
+            }
+            
+            setNextWorkout(targetWorkout);
+          }
+        } catch (error) {
+          console.error('Error loading workout dates:', error);
         }
-      }
-      
-      if (!targetWorkout) {
-        // Иначе находим ближайшую тренировку
-        targetWorkout = findNextWorkout(dates, workoutProgram);
-        setSelectedDate(null);
-      }
-      
-      setNextWorkout(targetWorkout);
+      };
+
+      loadWorkoutDates();
     }
-  }, [workoutProgram, selectedDate]);
+  }, [workoutProgram, selectedDate, programId]);
 
   // Функция для рендеринга календаря
   const renderCalendar = () => {
@@ -274,7 +256,6 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
     const calendarEnd = addDays(calendarStart, 41); // 6 недель
 
     const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
-    const calendarWorkouts = createCalendarWorkouts(workoutDates, workoutProgram);
     
     const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
@@ -317,20 +298,31 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
           {days.map((day) => {
             const isCurrentMonth = isSameMonth(day, currentMonth);
             const isCurrentDay = isToday(day);
-            const dayWorkout = calendarWorkouts.find(w => isSameDay(w.date, day));
+            
+            // Проверяем, есть ли тренировка в этот день
+            const hasWorkout = workoutDates.some(date => isSameDay(date, day));
+            
+            // Определяем тип тренировки на основе дня недели
+            const dayOfWeek = day.getDay(); // 0 = Sunday, 1 = Monday
+            let workoutType = '';
+            if (hasWorkout) {
+              if (dayOfWeek === 1) workoutType = 'Толкающие'; // Понедельник
+              else if (dayOfWeek === 3) workoutType = 'Тянущие'; // Среда  
+              else if (dayOfWeek === 5) workoutType = 'Ноги'; // Пятница
+            }
             
             return (
               <div
-                key={day.toISOString()}
+                key={format(day, 'yyyy-MM-dd')}
                 className={`
-                  relative h-16 p-1 border rounded-lg cursor-pointer transition-all
+                  p-2 rounded-lg border cursor-pointer transition-all duration-200
                   ${isCurrentMonth ? 'border-border' : 'border-transparent bg-muted/30'}
                   ${isCurrentDay ? 'bg-primary/10 border-primary' : ''}
-                  ${dayWorkout ? 'hover:bg-accent/10' : ''}
-                  ${dayWorkout && selectedDate && isSameDay(selectedDate, day) ? 'bg-accent/20 border-accent' : ''}
+                  ${hasWorkout ? 'hover:bg-accent/10' : ''}
+                  ${hasWorkout && selectedDate && isSameDay(selectedDate, day) ? 'bg-accent/20 border-accent' : ''}
                 `}
                 onClick={() => {
-                  if (dayWorkout) {
+                  if (hasWorkout) {
                     setSelectedDate(day);
                   }
                 }}
@@ -338,11 +330,15 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
                 <div className={`text-xs font-medium ${isCurrentMonth ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {format(day, 'd')}
                 </div>
-                
-                {dayWorkout && (
-                  <div className="absolute inset-x-1 bottom-1">
-                    <div className="bg-primary/20 text-primary rounded-sm px-1 py-0.5 text-[10px] font-medium leading-tight">
-                      {dayWorkout.muscleGroup}
+                {hasWorkout && workoutType && (
+                  <div className="mt-1">
+                    <div className={`text-xs px-1 py-0.5 rounded text-center font-medium ${
+                      workoutType === 'Толкающие' ? 'bg-red-500/20 text-red-600' :
+                      workoutType === 'Тянущие' ? 'bg-blue-500/20 text-blue-600' :
+                      workoutType === 'Ноги' ? 'bg-green-500/20 text-green-600' :
+                      'bg-gray-500/20 text-gray-600'
+                    }`}>
+                      {workoutType}
                     </div>
                   </div>
                 )}
@@ -362,10 +358,10 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
             <div className="mb-6">
               <Loader2 className="h-16 w-16 text-primary mx-auto mb-4 animate-spin" />
               <h2 className="text-2xl font-bold text-gradient-gold mb-2">
-                {t('questionnaire.generating')}
+                Загружаем программу
               </h2>
               <p className="text-muted-foreground">
-                ИИ создает вашу персональную программу...
+                Получаем вашу персональную программу из базы данных...
               </p>
             </div>
             <div className="space-y-2">
@@ -373,6 +369,26 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
                 <div className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all w-full" />
               </Progress>
             </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!questionnaireData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="card-premium max-w-md w-full text-center">
+          <CardContent className="pt-8 pb-8">
+            <h2 className="text-2xl font-bold text-gradient-gold mb-2">
+              Программа не найдена
+            </h2>
+            <p className="text-muted-foreground mb-4">
+              Сначала необходимо создать программу тренировок
+            </p>
+            <Button onClick={onBack} variant="premium">
+              Создать программу
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -434,13 +450,13 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
             <CardContent>
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold mb-2">{nextWorkout.workout.title}</h3>
-                  <p className="text-muted-foreground mb-4">{nextWorkout.workout.focus}</p>
+                  <h3 className="text-xl font-semibold mb-2">{nextWorkout.workout.name}</h3>
+                  <p className="text-muted-foreground mb-4">{nextWorkout.workout.description}</p>
                   
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
-                      <span>{nextWorkout.workout.duration}</span>
+                      <span>~60 мин</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Target className="h-4 w-4" />
@@ -452,10 +468,12 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
                   <div className="space-y-2">
                     <h4 className="font-medium text-sm">Упражнения:</h4>
                     <div className="grid gap-2">
-                      {nextWorkout.workout.exercises.slice(0, 3).map((exercise) => (
-                        <div key={exercise.id} className="bg-muted/30 rounded p-2 text-sm">
+                      {nextWorkout.workout.exercises.slice(0, 3).map((exercise, index) => (
+                        <div key={index} className="bg-muted/30 rounded p-2 text-sm">
                           <div className="font-medium">{exercise.name}</div>
-                          <div className="text-xs text-muted-foreground">{exercise.sets}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {exercise.sets.length} подходов: {exercise.sets.map(s => `${s.reps} × ${s.weight}`).join(', ')}
+                          </div>
                         </div>
                       ))}
                       {nextWorkout.workout.exercises.length > 3 && (
@@ -489,7 +507,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
               Календарь тренировок
             </CardTitle>
             <CardDescription>
-              Нажмите на день с тренировкой, чтобы начать
+              Нажмите на дату с тренировкой для просмотра деталей
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -497,24 +515,24 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
           </CardContent>
         </Card>
 
-        {/* Информация о программе */}
+        {/* Детали программы */}
         <Card className="card-premium">
           <CardHeader>
             <CardTitle>Детали программы</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid gap-4 md:grid-cols-3">
               <div className="text-center p-4 bg-muted/30 rounded-lg">
                 <div className="text-2xl font-bold text-primary mb-1">3</div>
-                <div className="text-sm text-muted-foreground">Тренировки в неделю</div>
+                <div className="text-sm text-muted-foreground">тренировки в неделю</div>
               </div>
               <div className="text-center p-4 bg-muted/30 rounded-lg">
-                <div className="text-2xl font-bold text-primary mb-1">ПН/СР/ПТ</div>
-                <div className="text-sm text-muted-foreground">Дни тренировок</div>
+                <div className="text-2xl font-bold text-primary mb-1">12</div>
+                <div className="text-sm text-muted-foreground">недель программы</div>
               </div>
               <div className="text-center p-4 bg-muted/30 rounded-lg">
-                <div className="text-2xl font-bold text-primary mb-1">50</div>
-                <div className="text-sm text-muted-foreground">Минут на тренировку</div>
+                <div className="text-2xl font-bold text-primary mb-1">Пн/Ср/Пт</div>
+                <div className="text-sm text-muted-foreground">дни тренировок</div>
               </div>
             </div>
           </CardContent>

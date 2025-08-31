@@ -64,11 +64,23 @@ export async function generateProgram(startDateISO: string) {
 
   const splitDays = getSplitDays(split);
 
-  for (let w = 1; w <= 12; w++) {
+  // Найдем ближайший понедельник от стартовой даты
+  const startDate = new Date(startDateISO);
+  const dayOfWeek = startDate.getDay(); // 0 = Sunday, 1 = Monday
+  const daysToMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek) % 7; // Если воскресенье, то +1, иначе до следующего понедельника
+  const nearestMonday = new Date(startDate);
+  if (daysToMonday > 0) {
+    nearestMonday.setDate(startDate.getDate() + daysToMonday);
+  }
+
+  // Массив дней недели для тренировок: Пн(0), Ср(2), Пт(4)
+  const workoutDays = [0, 2, 4]; // Понедельник, Среда, Пятница
+
+  for (let w = 0; w < 12; w++) {
     for (let d = 0; d < 3; d++) {
       const dayType = splitDays[d];
-      const dayDate = new Date(start);
-      dayDate.setDate(start.getDate() + (w - 1) * 7 + d);
+      const dayDate = new Date(nearestMonday);
+      dayDate.setDate(nearestMonday.getDate() + w * 7 + workoutDays[d]);
 
       // создаём сессию
       const { data: session, error: sErr } = await supabase
@@ -77,7 +89,7 @@ export async function generateProgram(startDateISO: string) {
           program_id: program.id,
           user_id: user.id,
           scheduled_date: dayDate.toISOString().slice(0, 10),
-          name: `Нед ${w} / День ${d + 1} (${dayType})`,
+          name: `Нед ${w + 1} / День ${d + 1} (${dayType})`,
           split_day: dayType
         })
         .select('*')
