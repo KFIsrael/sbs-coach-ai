@@ -358,26 +358,38 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
         )}
 
         {/* Exercise Card */}
-        {(!showInstructions || currentExercise > 0) && (
-          <Card className="card-premium">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-gradient-gold mb-2">
-                {exercise.name[language]}
-              </CardTitle>
-              <CardDescription>
-                {exercise.description[language]}
-              </CardDescription>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setShowInstructions(true)}
-                className="text-primary"
-              >
-                <Info className="h-4 w-4 mr-1" />
-                Показать инструкцию
-              </Button>
-            </CardHeader>
-            <CardContent className="space-y-6">
+        <Card className="card-premium">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl text-gradient-gold mb-2">
+              {exercise.name[language]}
+            </CardTitle>
+            <CardDescription>
+              {exercise.description[language]}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Инструкция для текущего упражнения */}
+            <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="flex items-start gap-2">
+                <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Как выполнять:</h4>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    {exercise.instruction[language]}
+                  </p>
+                  {currentExercise === 0 && (
+                    <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-700">
+                      <div className="flex items-start gap-2">
+                        <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <div className="text-xs text-amber-700 dark:text-amber-300">
+                          <strong>Безопасность:</strong> Разминайтесь, начинайте с легкого веса, следите за техникой, используйте страховку при необходимости.
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div className="p-4 rounded-lg bg-muted/30">
                   <div className="text-2xl font-bold text-primary">{exercise.sets}</div>
@@ -453,36 +465,33 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
               </div>
             </CardContent>
           </Card>
-        )}
 
         {/* Progress Overview */}
-        {(!showInstructions || currentExercise > 0) && (
-          <Card className="card-premium">
-            <CardHeader>
-              <CardTitle className="text-lg">Прогресс тестирования</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {testExercises.map((ex, index) => (
-                  <div 
-                    key={ex.id}
-                    className={`flex items-center justify-between p-2 rounded ${
-                      index === currentExercise ? 'bg-primary/10 border border-primary/20' : 
-                      index < currentExercise ? 'bg-success/10' : 'bg-muted/30'
-                    }`}
-                  >
-                    <span className="font-medium">{ex.name[language]}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {index < currentExercise ? '✓' : 
-                       index === currentExercise ? `${currentSet}/${ex.sets}` : 
-                       `0/${ex.sets}`}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        <Card className="card-premium">
+          <CardHeader>
+            <CardTitle className="text-lg">Прогресс тестирования</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {testExercises.map((ex, index) => (
+                <div 
+                  key={ex.id}
+                  className={`flex items-center justify-between p-2 rounded ${
+                    index === currentExercise ? 'bg-primary/10 border border-primary/20' : 
+                    index < currentExercise ? 'bg-success/10' : 'bg-muted/30'
+                  }`}
+                >
+                  <span className="font-medium">{ex.name[language]}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {index < currentExercise ? '✓' : 
+                     index === currentExercise ? `${currentSet}/${ex.sets}` : 
+                     `0/${ex.sets}`}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
