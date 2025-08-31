@@ -15,16 +15,13 @@ import {
   Calendar,
   Dumbbell,
   Mail,
-  User
+  User,
+  Settings
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
-interface TrainerDashboardProps {
-  user: { name: string; email: string };
-  onBack: () => void;
-}
+import { ClientProgramManager } from "./ClientProgramManager";
 
 interface Client {
   user_id: string;
@@ -38,6 +35,12 @@ interface Client {
     limitations?: string;
     equipment?: string;
   };
+  program_count?: number;
+}
+
+interface TrainerDashboardProps {
+  user: { name: string; email: string };
+  onBack: () => void;
 }
 
 export function TrainerDashboard({ user, onBack }: TrainerDashboardProps) {
@@ -48,6 +51,8 @@ export function TrainerDashboard({ user, onBack }: TrainerDashboardProps) {
   const [messageContent, setMessageContent] = useState("");
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [viewMode, setViewMode] = useState<'list' | 'program_manager'>('list');
+  const [selectedClientForPrograms, setSelectedClientForPrograms] = useState<Client | null>(null);
 
   useEffect(() => {
     fetchClients();
@@ -71,18 +76,25 @@ export function TrainerDashboard({ user, onBack }: TrainerDashboardProps) {
         .eq('role', 'client');
 
       if (profiles) {
-        // Fetch questionnaire data for each client
+        // Fetch questionnaire data and program count for each client
         const clientsWithQuestionnaires = await Promise.all(
           profiles.map(async (profile) => {
-            const { data: questionnaire } = await supabase
-              .from('user_questionnaire_data')
-              .select('*')
-              .eq('user_id', profile.user_id)
-              .single();
+            const [questionnaireResponse, programsResponse] = await Promise.all([
+              supabase
+                .from('user_questionnaire_data')
+                .select('*')
+                .eq('user_id', profile.user_id)
+                .single(),
+              supabase
+                .from('workout_programs')
+                .select('id')
+                .eq('user_id', profile.user_id)
+            ]);
 
             return {
               ...profile,
-              questionnaire: questionnaire || undefined
+              questionnaire: questionnaireResponse.data || undefined,
+              program_count: programsResponse.data?.length || 0
             };
           })
         );

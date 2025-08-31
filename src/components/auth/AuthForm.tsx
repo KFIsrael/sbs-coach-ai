@@ -24,7 +24,8 @@ export function AuthForm({ onAuth }: AuthFormProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
+    role: "client"
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,6 +62,7 @@ export function AuthForm({ onAuth }: AuthFormProps) {
             emailRedirectTo: redirectUrl,
             data: {
               first_name: formData.name,
+              role: formData.role,
             }
           }
         });
@@ -165,16 +167,31 @@ export function AuthForm({ onAuth }: AuthFormProps) {
         <CardContent className="space-y-4">
           
           {!isLogin && (
-            <div className="space-y-2">
-              <Label htmlFor="name">{t('auth.name')}</Label>
-              <Input
-                id="name"
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                className="bg-background/50 border-border/50 focus:border-primary"
-              />
-            </div>
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="name">{t('auth.name')}</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  className="bg-background/50 border-border/50 focus:border-primary"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="role">Роль</Label>
+                <select
+                  id="role"
+                  value={formData.role}
+                  onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
+                  className="w-full px-3 py-2 bg-background/50 border border-border/50 rounded-md focus:border-primary focus:outline-none"
+                >
+                  <option value="client">Клиент</option>
+                  <option value="trainer">Тренер</option>
+                </select>
+              </div>
+            </>
           )}
           
           <div className="space-y-2">

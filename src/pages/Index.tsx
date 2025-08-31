@@ -90,7 +90,7 @@ const Index = () => {
     handleEmailConfirmation();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         console.log('Auth state changed:', event, session);
         setSession(session);
         setSupabaseUser(session?.user ?? null);
@@ -103,14 +103,25 @@ const Index = () => {
           };
           setUser(userData);
           
-          // Check if user has completed questionnaire
-          checkUserQuestionnaire(session.user.id).then(hasQuestionnaire => {
-            if (hasQuestionnaire) {
-              setAppState('dashboard');
-            } else {
-              setAppState('questionnaire');
-            }
-          });
+          // Check user role and redirect accordingly
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('user_id', session.user.id)
+            .single();
+          
+          if (profile?.role === 'trainer') {
+            setAppState('trainer_dashboard');
+          } else {
+            // Check if user has completed questionnaire
+            checkUserQuestionnaire(session.user.id).then(hasQuestionnaire => {
+              if (hasQuestionnaire) {
+                setAppState('dashboard');
+              } else {
+                setAppState('questionnaire');
+              }
+            });
+          }
           
           // Show success toast for sign in
           if (event === 'SIGNED_IN') {
@@ -127,7 +138,7 @@ const Index = () => {
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       console.log('Initial session check:', session);
       setSession(session);
       setSupabaseUser(session?.user ?? null);
@@ -140,14 +151,25 @@ const Index = () => {
         };
         setUser(userData);
         
-        // Check if user has completed questionnaire
-        checkUserQuestionnaire(session.user.id).then(hasQuestionnaire => {
-          if (hasQuestionnaire) {
-            setAppState('dashboard');
-          } else {
-            setAppState('questionnaire');
-          }
-        });
+        // Check user role and redirect accordingly
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .single();
+        
+        if (profile?.role === 'trainer') {
+          setAppState('trainer_dashboard');
+        } else {
+          // Check if user has completed questionnaire
+          checkUserQuestionnaire(session.user.id).then(hasQuestionnaire => {
+            if (hasQuestionnaire) {
+              setAppState('dashboard');
+            } else {
+              setAppState('questionnaire');
+            }
+          });
+        }
       }
     });
 
@@ -267,7 +289,12 @@ const Index = () => {
           />
         )}
 
-        {appState === 'workout' && currentWorkout && (
+        {appState === 'trainer_dashboard' && user && (
+          <TrainerDashboard
+            user={user}
+            onBack={() => setAppState('auth')}
+          />
+        )}
           <WorkoutSession
             workout={currentWorkout}
             onBack={() => setAppState('dashboard')}
