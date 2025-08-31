@@ -62,8 +62,56 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
 
   const loadWorkoutData = async () => {
     try {
-      // Загружаем упражнения из сессии (если workout это сессия)
-      // Пока используем мок данные для примера
+      console.log('Loading workout data for workout ID:', workout.id);
+      
+      // Если ID похож на UUID, загружаем из БД
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      
+      if (workout.id && uuidRegex.test(workout.id)) {
+        // Загружаем реальные данные из БД
+        const { data: session, error } = await supabase
+          .from('workout_sessions')
+          .select(`
+            *,
+            workout_exercises(
+              *,
+              exercises(name, description),
+              workout_exercise_sets(*)
+            )
+          `)
+          .eq('id', workout.id)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Error loading session:', error);
+          throw error;
+        }
+
+        if (session && session.workout_exercises) {
+          console.log('Loaded session data:', session);
+          
+          const exercisesFromDB: ExerciseWithSets[] = session.workout_exercises.map((we: any) => ({
+            id: we.exercise_id,
+            name: we.exercises?.name || 'Упражнение',
+            description: we.exercises?.description || 'Базовое упражнение',
+            muscleGroup: 'Разные группы',
+            sets: we.workout_exercise_sets?.map((set: any) => ({
+              id: set.id,
+              set_no: set.set_no,
+              reps: set.reps,
+              weight_kg: set.weight_kg,
+              pct_of_5rm: set.pct_of_5rm
+            })) || []
+          }));
+          
+          setExercises(exercisesFromDB);
+          console.log('Exercises loaded from DB:', exercisesFromDB);
+          return;
+        }
+      }
+      
+      // Fallback - используем mock данные если реальных данных нет
+      console.log('Using fallback mock data');
       const mockExercises: ExerciseWithSets[] = workout.exercises?.map((ex: any, index: number) => ({
         id: `ex-${index}`,
         name: ex.name || `Упражнение ${index + 1}`,

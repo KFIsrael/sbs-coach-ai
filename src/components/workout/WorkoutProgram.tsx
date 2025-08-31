@@ -48,6 +48,7 @@ interface WorkoutDay {
   duration: string; // Required field
   completed: boolean; // Required field
   muscleGroup?: string;
+  sessionData?: any; // Добавляем данные сессии из БД
 }
 
 interface WorkoutProgramProps {
@@ -144,7 +145,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
                               splitDay === 'LOWER' ? 'Низ тела' : 'Все тело';
           
           return {
-            id: (index + 1).toString(),
+            id: firstSession.id, // Используем реальный ID сессии из БД
             name: workoutName,
             description: `Тренировка группы: ${splitDay}`,
             exercises,
@@ -154,7 +155,8 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
             focus: `Тренировка группы: ${splitDay}`,
             duration: '~60 мин',
             completed: false,
-            muscleGroup: workoutName
+            muscleGroup: workoutName,
+            sessionData: firstSession // Добавляем полные данные сессии
           };
         });
 
@@ -518,7 +520,58 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
                 <Button 
                   variant="premium"
                   size="lg"
-                  onClick={() => onStartWorkout(nextWorkout.workout)}
+                  onClick={async () => {
+                    try {
+                      // Находим реальную сессию для выбранной даты
+                      const { data: { user } } = await supabase.auth.getUser();
+                      if (!user) throw new Error('Пользователь не авторизован');
+
+                      const { data: sessionForDate } = await supabase
+                        .from('workout_sessions')
+                        .select(`
+                          *,
+                          workout_exercises(
+                            *,
+                            exercises(name, description),
+                            workout_exercise_sets(*)
+                          )
+                        `)
+                        .eq('program_id', programId)
+                        .eq('scheduled_date', format(nextWorkout.date, 'yyyy-MM-dd'))
+                        .maybeSingle();
+
+                      if (sessionForDate) {
+                        // Создаем объект тренировки с реальными данными
+                        const workoutWithRealData = {
+                          ...nextWorkout.workout,
+                          id: sessionForDate.id, // Реальный UUID из БД
+                          exercises: sessionForDate.workout_exercises?.map((we: any) => ({
+                            id: we.exercise_id,
+                            name: we.exercises?.name || 'Упражнение',
+                            description: we.exercises?.description || '',
+                            sets: we.workout_exercise_sets?.map((set: any) => ({
+                              id: set.id,
+                              set_no: set.set_no,
+                              reps: set.reps,
+                              weight_kg: set.weight_kg,
+                              pct_of_5rm: set.pct_of_5rm
+                            })) || []
+                          })) || []
+                        };
+                        
+                        console.log('Starting workout with ID:', sessionForDate.id);
+                        onStartWorkout(workoutWithRealData);
+                      } else {
+                        console.error('Session not found for date:', nextWorkout.date);
+                        // Fallback - используем данные как есть
+                        onStartWorkout(nextWorkout.workout);
+                      }
+                    } catch (error) {
+                      console.error('Error loading session data:', error);
+                      // Fallback - используем данные как есть
+                      onStartWorkout(nextWorkout.workout);
+                    }
+                  }}
                   className="w-full sm:w-auto"
                 >
                   <Play className="mr-2 h-4 w-4" />
