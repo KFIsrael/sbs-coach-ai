@@ -212,7 +212,16 @@ export function Dashboard({
 
     loadUserData();
 
-    // Real-time subscription для обновления статистик
+    // Real-time subscription для обновления статистик с debounce
+    let timeoutId: NodeJS.Timeout;
+    const debouncedLoadStats = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        console.log('Loading stats after debounce...');
+        loadStats();
+      }, 1000); // 1 секунда задержки
+    };
+
     const channel = supabase
       .channel('workout-updates')
       .on(
@@ -224,8 +233,8 @@ export function Dashboard({
           filter: `user_id=eq.${user.id}`
         },
         () => {
-          console.log('Workout sessions updated, reloading stats...');
-          loadStats();
+          console.log('Workout sessions updated, scheduling stats reload...');
+          debouncedLoadStats();
         }
       )
       .on(
@@ -237,13 +246,14 @@ export function Dashboard({
           filter: `user_id=eq.${user.id}`
         },
         () => {
-          console.log('Workout logs updated, reloading stats...');
-          loadStats();
+          console.log('Workout logs updated, scheduling stats reload...');
+          debouncedLoadStats();
         }
       )
       .subscribe();
 
     return () => {
+      clearTimeout(timeoutId);
       supabase.removeChannel(channel);
     };
   }, [user.id]);

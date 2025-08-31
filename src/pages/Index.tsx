@@ -258,10 +258,12 @@ const Index = () => {
     console.log('Test workout results:', results);
     
     try {
+      console.log('Starting program generation...');
       // Автоматически генерируем программу после тестовой тренировки
       const { generateProgram } = await import('@/hooks/useProgram');
       await generateProgram(new Date().toISOString());
       
+      console.log('Program generated successfully');
       toast({
         title: "Тестирование завершено!",
         description: "Программа тренировок создана на основе ваших результатов",

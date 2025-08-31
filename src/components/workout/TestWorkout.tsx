@@ -155,6 +155,7 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
   };
 
   const handleSetComplete = async () => {
+    console.log('Set complete button clicked');
     const weight = parseFloat(currentWeight);
     const reps = parseInt(actualReps);
     
@@ -175,6 +176,8 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
       });
       return;
     }
+
+    console.log(`Recording set: ${weight}kg x ${reps} reps`);
 
     const result = {
       exerciseId: exercise.id,
@@ -226,13 +229,17 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
 
     if (isLastSet) {
       if (isLastExercise) {
+        console.log('Test workout complete, calling onComplete...');
         // Workout complete
-        onComplete({
+        const finalResults = {
           exercises: testExercises.length,
           totalSets: workoutResults.length + 1,
           results: [...workoutResults, result],
           completedAt: new Date()
-        });
+        };
+        console.log('Final results:', finalResults);
+        onComplete(finalResults);
+        return;
       } else {
         // Next exercise
         setCurrentExercise(prev => prev + 1);
