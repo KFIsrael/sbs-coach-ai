@@ -78,7 +78,7 @@ export function ProgramChoice({ onBack, onAIGeneration, onTestWorkout }: Program
                 Создать программу без тестовой тренировки
               </CardTitle>
               <CardDescription className="text-sm">
-                Программа на основе анамнеза с расчетом в % от 5ПМ
+                Программа на основе анкеты с расчетом в % от 5МП (5 повторный максимум)
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -88,8 +88,8 @@ export function ProgramChoice({ onBack, onAIGeneration, onTestWorkout }: Program
                 </p>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li>• Программа создается на основе ваших ответов в анкете</li>
-                  <li>• Веса рассчитываются в процентах от вашего 5ПМ</li>
-                  <li>• Подходит если вы знаете свои возможности</li>
+                  <li>• Веса рассчитываются в процентах от вашего 5МП (максимальный вес на 5 повторений)</li>
+                  <li>• Подходит если вы примерно знаете свои рабочие веса</li>
                   <li>• Быстрый старт тренировок</li>
                 </ul>
               </div>
@@ -125,7 +125,7 @@ export function ProgramChoice({ onBack, onAIGeneration, onTestWorkout }: Program
                 Пройти тестовую тренировку
               </CardTitle>
               <CardDescription className="text-sm">
-                Определим ваши точные рабочие веса
+                Определим ваши точные 5МП (5 повторный максимум) для каждого упражнения
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -134,10 +134,10 @@ export function ProgramChoice({ onBack, onAIGeneration, onTestWorkout }: Program
                   <strong>Как это работает:</strong>
                 </p>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Проведем тестовую тренировку</li>
-                  <li>• Определим ваши реальные 5ПМ</li>
-                  <li>• Создадим программу с точными весами</li>
-                  <li>• Максимально персонализированный подход</li>
+                  <li>• Проведем тестовую тренировку для определения ваших возможностей</li>
+                  <li>• Определим ваши реальные 5МП (максимальный вес на 5 повторений)</li>
+                  <li>• Создадим программу с точными рабочими весами</li>
+                  <li>• Максимально персонализированный подход к тренировкам</li>
                 </ul>
               </div>
               <Button 
