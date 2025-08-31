@@ -68,18 +68,13 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
 
   useEffect(() => {
     const loadProgram = async () => {
-      if (!questionnaireData) {
-        setWorkoutProgram([]);
-        return;
-      }
-
       setIsGenerating(true);
       try {
         // Получаем пользователя
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('Пользователь не авторизован');
 
-        // Получаем программу пользователя
+        // Получаем программу пользователя (независимо от наличия данных анкеты)
         const { data: programs, error: programError } = await supabase
           .from('workout_programs')
           .select('*')
@@ -89,8 +84,13 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
 
         if (programError) throw programError;
         if (!programs || programs.length === 0) {
-          setWorkoutProgram([]);
-          return;
+          // Если программы нет и нет данных анкеты - показываем сообщение
+          if (!questionnaireData) {
+            setWorkoutProgram([]);
+            return;
+          }
+          // Если есть данные анкеты но нет программы - что-то пошло не так
+          throw new Error('Программа не найдена в базе данных');
         }
 
         const program = programs[0];
@@ -375,7 +375,27 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
     );
   }
 
-  if (!questionnaireData) {
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="card-premium max-w-md w-full text-center">
+          <CardContent className="pt-8 pb-8">
+            <h2 className="text-2xl font-bold text-gradient-gold mb-2">
+              Ошибка загрузки
+            </h2>
+            <p className="text-muted-foreground mb-4">
+              {error}
+            </p>
+            <Button onClick={onBack} variant="premium">
+              Назад
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!isGenerating && workoutProgram.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="card-premium max-w-md w-full text-center">
