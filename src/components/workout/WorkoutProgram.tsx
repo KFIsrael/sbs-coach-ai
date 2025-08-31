@@ -54,10 +54,11 @@ interface WorkoutDay {
 interface WorkoutProgramProps {
   onBack: () => void;
   onStartWorkout: (day: WorkoutDay) => void;
+  onChooseProgram?: () => void;
   questionnaireData?: any;
 }
 
-export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: WorkoutProgramProps) {
+export function WorkoutProgram({ onBack, onStartWorkout, onChooseProgram, questionnaireData }: WorkoutProgramProps) {
   const { t } = useLanguage();
   const [workoutProgram, setWorkoutProgram] = useState<WorkoutDay[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -87,13 +88,10 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
 
         if (programError) throw programError;
         if (!programs || programs.length === 0) {
-          // Если программы нет и нет данных анкеты - показываем сообщение
-          if (!questionnaireData) {
-            setWorkoutProgram([]);
-            return;
-          }
-          // Если есть данные анкеты но нет программы - что-то пошло не так
-          throw new Error('Программа не найдена в базе данных');
+          // Если программы нет - показываем пустое состояние
+          console.log('No program found, showing empty state');
+          setWorkoutProgram([]);
+          return;
         }
 
         const program = programs[0];
@@ -410,7 +408,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
             <p className="text-muted-foreground mb-4">
               Сначала необходимо создать программу тренировок
             </p>
-            <Button onClick={onBack} variant="premium">
+            <Button onClick={onChooseProgram || onBack} variant="premium">
               Создать программу
             </Button>
           </CardContent>

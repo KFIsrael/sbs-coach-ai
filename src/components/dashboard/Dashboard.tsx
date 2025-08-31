@@ -27,6 +27,7 @@ interface DashboardProps {
   onStartQuestionnaire: () => void;
   onStartWorkout: () => void;
   onViewPrograms: () => void;
+  onChooseProgram: () => void;
   onOpenChat: () => void;
   onOpenProfile: () => void;
   onLogout: () => void;
@@ -48,6 +49,7 @@ export function Dashboard({
   onStartQuestionnaire, 
   onStartWorkout, 
   onViewPrograms, 
+  onChooseProgram,
   onOpenChat,
   onOpenProfile,
   onLogout,

@@ -303,6 +303,7 @@ const Index = () => {
             onStartQuestionnaire={() => setAppState('questionnaire')}
             onStartWorkout={() => setAppState('programs')}
             onViewPrograms={() => setAppState('programs')}
+            onChooseProgram={() => setAppState('program_choice')}
             onOpenChat={() => setShowChat(true)}
             onOpenProfile={() => setAppState('profile')}
             onLogout={handleLogout}
@@ -351,6 +352,7 @@ const Index = () => {
           <WorkoutProgram
             onBack={() => setAppState('dashboard')}
             onStartWorkout={handleStartWorkout}
+            onChooseProgram={() => setAppState('program_choice')}
             questionnaireData={questionnaireData}
           />
         )}
