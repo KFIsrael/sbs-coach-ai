@@ -147,12 +147,39 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
     }
   };
 
-  const handleCompleteWorkout = () => {
-    toast({
-      title: "Тренировка завершена! 🎉",
-      description: "Отличная работа! Ваш прогресс сохранен."
-    });
-    setTimeout(() => onComplete(), 1000);
+  const handleCompleteWorkout = async () => {
+    try {
+      // Обновляем статус тренировки в базе данных
+      if (workout.id) {
+        const { error } = await supabase
+          .from('workout_sessions')
+          .update({ is_completed: true })
+          .eq('id', workout.id);
+        
+        if (error) {
+          console.error('Error updating workout status:', error);
+          toast({
+            title: "Ошибка",
+            description: "Не удалось сохранить статус тренировки",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+      
+      toast({
+        title: "Тренировка завершена! 🎉",
+        description: "Отличная работа! Ваш прогресс сохранен."
+      });
+      setTimeout(() => onComplete(), 1000);
+    } catch (error) {
+      console.error('Error completing workout:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось завершить тренировку",
+        variant: "destructive",
+      });
+    }
   };
 
   const formatTime = (seconds: number) => {

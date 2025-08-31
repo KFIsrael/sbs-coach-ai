@@ -91,6 +91,17 @@ export function Dashboard({
           setHasQuestionnaire(!!questionnaire.completed_at);
         }
 
+        await loadStats();
+
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      }
+    };
+
+    const loadStats = async () => {
+      if (!user.id) return;
+
+      try {
         // Calculate monthly workout stats
         const currentMonth = new Date();
         const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
@@ -181,11 +192,46 @@ export function Dashboard({
         }
 
       } catch (error) {
-        console.error('Error loading dashboard data:', error);
+        console.error('Error loading stats:', error);
       }
     };
 
     loadUserData();
+
+    // Real-time subscription для обновления статистик
+    const channel = supabase
+      .channel('workout-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'workout_sessions',
+          filter: `user_id=eq.${user.id}`
+        },
+        () => {
+          console.log('Workout sessions updated, reloading stats...');
+          loadStats();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'workout_logs',
+          filter: `user_id=eq.${user.id}`
+        },
+        () => {
+          console.log('Workout logs updated, reloading stats...');
+          loadStats();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user.id]);
 
   const getGoalLabel = (goal: string) => {
