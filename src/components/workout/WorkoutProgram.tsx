@@ -192,6 +192,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [workoutDates, setWorkoutDates] = useState<Date[]>([]);
   const [nextWorkout, setNextWorkout] = useState<{ date: Date; workout: WorkoutDay } | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   useEffect(() => {
     const generateProgram = async () => {
@@ -239,11 +240,31 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
       const dates = generateWorkoutDates(new Date(), 12);
       setWorkoutDates(dates);
       
-      // Находим ближайшую тренировку
-      const next = findNextWorkout(dates, workoutProgram);
-      setNextWorkout(next);
+      // Находим ближайшую тренировку или используем выбранную дату
+      let targetWorkout;
+      
+      if (selectedDate) {
+        // Если выбрана определенная дата, используем ее
+        const calendarWorkouts = createCalendarWorkouts(dates, workoutProgram);
+        const selectedWorkout = calendarWorkouts.find(w => isSameDay(w.date, selectedDate));
+        
+        if (selectedWorkout) {
+          targetWorkout = {
+            date: selectedWorkout.date,
+            workout: { ...workoutProgram[selectedWorkout.workoutIndex], date: selectedWorkout.date }
+          };
+        }
+      }
+      
+      if (!targetWorkout) {
+        // Иначе находим ближайшую тренировку
+        targetWorkout = findNextWorkout(dates, workoutProgram);
+        setSelectedDate(null);
+      }
+      
+      setNextWorkout(targetWorkout);
     }
-  }, [workoutProgram]);
+  }, [workoutProgram, selectedDate]);
 
   // Функция для рендеринга календаря
   const renderCalendar = () => {
@@ -306,11 +327,13 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
                   ${isCurrentMonth ? 'border-border' : 'border-transparent bg-muted/30'}
                   ${isCurrentDay ? 'bg-primary/10 border-primary' : ''}
                   ${dayWorkout ? 'hover:bg-accent/10' : ''}
+                  ${dayWorkout && selectedDate && isSameDay(selectedDate, day) ? 'bg-accent/20 border-accent' : ''}
                 `}
-                onClick={() => dayWorkout && onStartWorkout({
-                  ...workoutProgram[dayWorkout.workoutIndex],
-                  date: day
-                })}
+                onClick={() => {
+                  if (dayWorkout) {
+                    setSelectedDate(day);
+                  }
+                }}
               >
                 <div className={`text-xs font-medium ${isCurrentMonth ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {format(day, 'd')}
@@ -388,10 +411,24 @@ export function WorkoutProgram({ onBack, onStartWorkout, questionnaireData }: Wo
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="h-5 w-5 text-primary" />
-                {isSameDay(nextWorkout.date, new Date()) ? 'Тренировка сегодня' : 'Следующая тренировка'}
+                {selectedDate ? (
+                  `Тренировка на ${format(nextWorkout.date, 'd MMMM', { locale: ru })}`
+                ) : (
+                  isSameDay(nextWorkout.date, new Date()) ? 'Тренировка сегодня' : 'Следующая тренировка'
+                )}
               </CardTitle>
               <CardDescription>
                 {format(nextWorkout.date, 'EEEE, d MMMM', { locale: ru })}
+                {selectedDate && (
+                  <Button 
+                    variant="link" 
+                    size="sm" 
+                    className="ml-2 p-0 h-auto text-xs"
+                    onClick={() => setSelectedDate(null)}
+                  >
+                    Вернуться к ближайшей
+                  </Button>
+                )}
               </CardDescription>
             </CardHeader>
             <CardContent>
