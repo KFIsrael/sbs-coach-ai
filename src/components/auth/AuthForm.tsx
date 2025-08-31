@@ -38,9 +38,13 @@ export function AuthForm({ onAuth }: AuthFormProps) {
         });
 
         if (error) {
+          let errorMessage = error.message;
+          if (error.message === "Email not confirmed") {
+            errorMessage = "Подтвердите email для входа. Проверьте папку 'Спам' если письмо не пришло.";
+          }
           toast({
             title: t('common.error'),
-            description: error.message,
+            description: errorMessage,
             variant: "destructive",
           });
         }
@@ -85,9 +89,13 @@ export function AuthForm({ onAuth }: AuthFormProps) {
           
           if (loginError) {
             console.error('Auto-login error:', loginError);
+            let errorMessage = "Регистрация прошла успешно, но не удалось войти автоматически. Попробуйте войти вручную.";
+            if (loginError.message === "Email not confirmed") {
+              errorMessage = "Регистрация успешна! Проверьте email для подтверждения аккаунта, затем войдите.";
+            }
             toast({
               title: t('common.error'),
-              description: "Регистрация прошла успешно, но не удалось войти автоматически. Попробуйте войти вручную.",
+              description: errorMessage,
               variant: "destructive",
             });
           }
