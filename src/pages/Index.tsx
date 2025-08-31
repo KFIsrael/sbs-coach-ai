@@ -105,23 +105,37 @@ const Index = () => {
           
           // Defer Supabase calls to prevent deadlock
           setTimeout(async () => {
-            // Check user role and redirect accordingly
-            const { data: profile } = await supabase
-              .from('profiles')
-              .select('role')
-              .eq('user_id', session.user.id)
-              .single();
-            
-            if (profile?.role === 'trainer') {
-              setAppState('trainer_dashboard');
-            } else {
-              // Check if user has completed questionnaire
-              const hasQuestionnaire = await checkUserQuestionnaire(session.user.id);
-              if (hasQuestionnaire) {
-                setAppState('dashboard');
+            try {
+              console.log('Checking user profile for:', session.user.id);
+              // Check user role and redirect accordingly
+              const { data: profile, error: profileError } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('user_id', session.user.id)
+                .single();
+              
+              console.log('Profile data:', profile, 'Error:', profileError);
+              
+              if (profile?.role === 'trainer') {
+                console.log('Setting state to trainer_dashboard');
+                setAppState('trainer_dashboard');
               } else {
-                setAppState('questionnaire');
+                // Check if user has completed questionnaire
+                console.log('Checking questionnaire for user:', session.user.id);
+                const hasQuestionnaire = await checkUserQuestionnaire(session.user.id);
+                console.log('Has questionnaire:', hasQuestionnaire);
+                if (hasQuestionnaire) {
+                  console.log('Setting state to dashboard');
+                  setAppState('dashboard');
+                } else {
+                  console.log('Setting state to questionnaire');
+                  setAppState('questionnaire');
+                }
               }
+            } catch (error) {
+              console.error('Error in auth state handler:', error);
+              // Fallback to dashboard if there's an error
+              setAppState('dashboard');
             }
           }, 0);
           
