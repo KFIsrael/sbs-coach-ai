@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
 import { Toaster } from "@/components/ui/toaster";
@@ -42,6 +42,9 @@ const Index = () => {
   const [currentWorkout, setCurrentWorkout] = useState<IndexWorkoutDay | null>(null);
   const [questionnaireData, setQuestionnaireData] = useState<any>(null);
   const { toast } = useToast();
+  
+  // Prevent duplicate processing for same user
+  const lastProcessedUserRef = useRef<string | null>(null);
 
   // Check if user has completed questionnaire
   const checkUserQuestionnaire = async (userId: string): Promise<boolean> => {
@@ -63,6 +66,67 @@ const Index = () => {
       console.error('Error checking questionnaire:', error);
       return false;
     }
+  };
+
+  // Process authenticated user
+  const processAuthenticatedUser = async (user: SupabaseUser, eventType: string) => {
+    // Prevent duplicate processing for the same user
+    if (lastProcessedUserRef.current === user.id && eventType === 'SIGNED_IN') {
+      console.log('Skipping duplicate processing for user:', user.id);
+      return;
+    }
+    
+    lastProcessedUserRef.current = user.id;
+    
+    const userData: User = {
+      email: user.email || "",
+      name: user.user_metadata?.first_name || "User",
+      role: "client"
+    };
+    setUser(userData);
+    
+    // Immediately set dashboard to hide login form
+    if (eventType === 'SIGNED_IN') {
+      console.log('Setting state to dashboard (immediate)');
+      setAppState('dashboard');
+    }
+    
+    // Defer profile/questionnaire checks
+    setTimeout(async () => {
+      try {
+        console.log('Checking user profile for:', user.id);
+        // Check user role and redirect accordingly
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        console.log('Profile data:', profile, 'Error:', profileError);
+        
+        if (profile?.role === 'trainer') {
+          console.log('Setting state to trainer_dashboard');
+          setAppState('trainer_dashboard');
+        } else {
+          // Check if user has completed questionnaire
+          console.log('Checking questionnaire for user:', user.id);
+          const hasQuestionnaire = await checkUserQuestionnaire(user.id);
+          console.log('Has questionnaire:', hasQuestionnaire);
+          if (hasQuestionnaire) {
+            console.log('Setting state to dashboard');
+            setAppState('dashboard');
+          } else {
+            console.log('Setting state to questionnaire');
+            setAppState('questionnaire');
+          }
+        }
+      } catch (error) {
+        console.error('Error in user processing:', error);
+        // Fallback to dashboard if there's an error
+        console.log('Setting state to dashboard (fallback)');
+        setAppState('dashboard');
+      }
+    }, 0);
   };
 
   // Set up auth state listener
@@ -91,106 +155,58 @@ const Index = () => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('Auth state changed:', event, session);
+        console.log('Auth state changed:', event, session?.user?.id || 'no user');
         setSession(session);
         setSupabaseUser(session?.user ?? null);
         
-        if (session?.user) {
-          const userData: User = {
-            email: session.user.email || "",
-            name: session.user.user_metadata?.first_name || "User",
-            role: "client"
-          };
-          setUser(userData);
-          
-          // Defer Supabase calls to prevent deadlock
-          setTimeout(async () => {
-            try {
-              console.log('Checking user profile for:', session.user.id);
-              // Check user role and redirect accordingly
-              const { data: profile, error: profileError } = await supabase
-                .from('profiles')
-                .select('role')
-                .eq('user_id', session.user.id)
-                .single();
-              
-              console.log('Profile data:', profile, 'Error:', profileError);
-              
-              if (profile?.role === 'trainer') {
-                console.log('Setting state to trainer_dashboard');
-                setAppState('trainer_dashboard');
-              } else {
-                // Check if user has completed questionnaire
-                console.log('Checking questionnaire for user:', session.user.id);
-                const hasQuestionnaire = await checkUserQuestionnaire(session.user.id);
-                console.log('Has questionnaire:', hasQuestionnaire);
-                if (hasQuestionnaire) {
-                  console.log('Setting state to dashboard');
-                  setAppState('dashboard');
-                } else {
-                  console.log('Setting state to questionnaire');
-                  setAppState('questionnaire');
-                }
-              }
-            } catch (error) {
-              console.error('Error in auth state handler:', error);
-              // Fallback to dashboard if there's an error
-              setAppState('dashboard');
+        switch (event) {
+          case 'SIGNED_IN':
+            if (session?.user) {
+              processAuthenticatedUser(session.user, 'SIGNED_IN');
+              toast({
+                title: "Добро пожаловать!",
+                description: "Добро пожаловать в SBS Fitness!",
+              });
             }
-          }, 0);
-          
-          // Show success toast for sign in
-          if (event === 'SIGNED_IN') {
-            toast({
-              title: "Добро пожаловать!",
-              description: "Добро пожаловать в SBS Fitness!",
-            });
-          }
-        } else {
-          setUser(null);
-          setAppState('auth');
+            break;
+            
+          case 'INITIAL_SESSION':
+            if (session?.user) {
+              console.log('Initial session found, processing user');
+              processAuthenticatedUser(session.user, 'INITIAL_SESSION');
+            } else {
+              console.log('No initial session found');
+            }
+            break;
+            
+          case 'TOKEN_REFRESHED':
+            console.log('Token refreshed, no state change needed');
+            break;
+            
+          case 'SIGNED_OUT':
+            console.log('Setting state to auth (signed out)');
+            setUser(null);
+            setAppState('auth');
+            lastProcessedUserRef.current = null;
+            break;
+            
+          default:
+            console.log('Unhandled auth event:', event);
         }
       }
     );
 
-    // Check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      console.log('Initial session check:', session);
-      setSession(session);
-      setSupabaseUser(session?.user ?? null);
-      
-      if (session?.user) {
-        const userData: User = {
-          email: session.user.email || "",
-          name: session.user.user_metadata?.first_name || "User",
-          role: "client"
-        };
-        setUser(userData);
-        
-        // Check user role and redirect accordingly
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('user_id', session.user.id)
-          .single();
-        
-        if (profile?.role === 'trainer') {
-          setAppState('trainer_dashboard');
-        } else {
-          // Check if user has completed questionnaire
-          checkUserQuestionnaire(session.user.id).then(hasQuestionnaire => {
-            if (hasQuestionnaire) {
-              setAppState('dashboard');
-            } else {
-              setAppState('questionnaire');
-            }
-          });
-        }
+    // Check for existing session on mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.id || 'no session');
+      if (session) {
+        setSession(session);
+        setSupabaseUser(session.user);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [toast]);
+  }, []);
 
   const handleAuth = (userData: User) => {
     // Only handle demo users here - real auth goes through onAuthStateChange
