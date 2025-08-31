@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSelector } from "@/components/ui/language-selector";
+import { Logo } from "@/components/ui/logo";
 import { supabase } from "@/integrations/supabase/client";
 
 interface DashboardProps {
@@ -122,9 +123,12 @@ export function Dashboard({
       <header className="mb-8">
         {/* Top row - Logo and Logout */}
         <div className="flex items-center justify-between mb-4">
-          <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold text-gradient-gold truncate">Sport Body System</h1>
-            <p className="text-xs sm:text-sm text-muted-foreground truncate">{currentDate}</p>
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <Logo size="sm" className="flex-shrink-0" />
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-gradient-gold truncate">Sport Body System</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground truncate">{currentDate}</p>
+            </div>
           </div>
           <Button 
             variant="ghost" 

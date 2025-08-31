@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dumbbell } from "lucide-react";
 import { LanguageSelector } from "@/components/ui/language-selector";
+import { Logo } from "@/components/ui/logo";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -103,8 +103,8 @@ export function AuthForm({ onAuth }: AuthFormProps) {
       </div>
       <Card className="card-premium w-full max-w-md">
         <CardHeader className="text-center space-y-4">
-          <div className="mx-auto p-3 rounded-full bg-primary/10 w-fit">
-            <Dumbbell className="h-8 w-8 text-primary" />
+          <div className="mx-auto w-fit">
+            <Logo size="lg" />
           </div>
           <div>
             <CardTitle className="text-3xl font-bold text-gradient-gold">
