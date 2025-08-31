@@ -19,14 +19,14 @@ export function RegenerateProgramDialog({ isOpen, onClose, onSuccess }: Regenera
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().slice(0, 10);
   });
-  const [selectedSplit, setSelectedSplit] = useState<string>('');
+  const [selectedSplit, setSelectedSplit] = useState<string>('auto');
   const [isRegenerating, setIsRegenerating] = useState(false);
   const { toast } = useToast();
 
   const handleRegenerate = async () => {
     try {
       setIsRegenerating(true);
-      await regenerateProgram(selectedDate, selectedSplit || undefined);
+      await regenerateProgram(selectedDate, selectedSplit === 'auto' ? undefined : selectedSplit || undefined);
       
       toast({
         title: "Программа обновлена",
@@ -84,7 +84,7 @@ export function RegenerateProgramDialog({ isOpen, onClose, onSuccess }: Regenera
                 <SelectValue placeholder="Автоматический выбор на основе анкеты" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Автоматический выбор</SelectItem>
+                <SelectItem value="auto">Автоматический выбор</SelectItem>
                 <SelectItem value="PPL">Push/Pull/Legs (3 дня)</SelectItem>
                 <SelectItem value="ULF">Верх/Низ/Фулл-боди (3 дня)</SelectItem>
                 <SelectItem value="FULLx3">Фулл-боди (3 дня)</SelectItem>
