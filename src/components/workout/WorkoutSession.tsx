@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Timer, CheckCircle2, Play, Pause, RotateCcw, Dumbbell } from "lucide-react";
+import { ArrowLeft, Timer, CheckCircle2, Play, Pause, RotateCcw, Dumbbell, ExternalLink } from "lucide-react";
+import { getExerciseInfoByKeywords } from "@/lib/exercise-helpers";
 import { supabase } from "@/integrations/supabase/client";
 import { logSet } from "@/hooks/useProgram";
 import { useToast } from "@/hooks/use-toast";
@@ -310,12 +311,36 @@ export function WorkoutSession({ workout, onBack, onComplete }: WorkoutSessionPr
                 <Badge variant="outline" className="bg-primary/20 text-primary border-primary/30 w-fit mx-auto mb-2">
                   {currentExerciseData.muscleGroup}
                 </Badge>
-                <CardTitle className="text-2xl mb-2">{currentExerciseData.name}</CardTitle>
-                <CardDescription className="text-base">
-                  {currentExerciseData.description}
+                <div className="flex items-center justify-center gap-3 mb-2">
+                  {(() => {
+                    const exerciseInfo = getExerciseInfoByKeywords(currentExerciseData.name);
+                    const IconComponent = exerciseInfo.icon;
+                    return <IconComponent className="h-6 w-6 text-primary" />;
+                  })()}
+                  <CardTitle className="text-2xl">{currentExerciseData.name}</CardTitle>
+                </div>
+                <CardDescription className="text-base mb-3">
+                  {(() => {
+                    const exerciseInfo = getExerciseInfoByKeywords(currentExerciseData.name);
+                    return exerciseInfo.description;
+                  })()}
                 </CardDescription>
-                <div className="text-sm text-primary font-medium mt-2">
-                  Система 15-12-10 повторений
+                <div className="flex items-center justify-center gap-4 mb-2">
+                  <div className="text-sm text-primary font-medium">
+                    Система 15-12-10 повторений
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      const exerciseInfo = getExerciseInfoByKeywords(currentExerciseData.name);
+                      window.open(exerciseInfo.videoUrl, '_blank');
+                    }}
+                    className="text-xs"
+                  >
+                    <ExternalLink className="h-3 w-3 mr-1" />
+                    Видео
+                  </Button>
                 </div>
               </CardHeader>
             </Card>
