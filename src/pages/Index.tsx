@@ -13,6 +13,7 @@ import { TestWorkout } from "@/components/workout/TestWorkout";
 import { AIChat } from "@/components/chat/AIChat";
 import { UserProfile } from "@/components/profile/UserProfile";
 import { TrainerDashboard } from "@/components/trainer/TrainerDashboard";
+import { generateProgram } from "@/hooks/useProgram";
 import heroImage from "@/assets/hero-fitness.jpg";
 
 type AppState = 'auth' | 'dashboard' | 'questionnaire' | 'program_choice' | 'programs' | 'workout' | 'test_workout' | 'profile' | 'trainer_dashboard';
@@ -260,7 +261,6 @@ const Index = () => {
     try {
       console.log('Starting program generation...');
       // Автоматически генерируем программу после тестовой тренировки
-      const { generateProgram } = await import('@/hooks/useProgram');
       await generateProgram(new Date().toISOString());
       
       console.log('Program generated successfully');
