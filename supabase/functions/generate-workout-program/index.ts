@@ -84,9 +84,9 @@ serve(async (req) => {
 
     function setsFrom5RM(fiveRM?: number) {
       const sets = [
-        { set_no: 1, reps: 15, pct_of_5rm: 0.60 },
-        { set_no: 2, reps: 12, pct_of_5rm: 0.70 },
-        { set_no: 3, reps: 10, pct_of_5rm: 0.80 }
+        { set_no: 1, reps: 15, pct_of_5rm: 0.78 },
+        { set_no: 2, reps: 12, pct_of_5rm: 0.83 },
+        { set_no: 3, reps: 10, pct_of_5rm: 0.88 }
       ];
       
       return sets.map(s => ({
@@ -106,6 +106,9 @@ serve(async (req) => {
     const split = chooseSplit(questionnaireData || {});
     console.log('Selected split:', split);
 
+    // Fix split value - the screenshot shows "ULF" but our function returns different values
+    const actualSplit = split === 'UPPER_LOWER' ? 'ULF' : split;
+
     // 2) Create program
     const start = new Date(startDateISO);
     const end = new Date(start);
@@ -120,7 +123,7 @@ serve(async (req) => {
         description: 'Автогенерация на основе тестовой тренировки',
         start_date: start.toISOString().slice(0, 10),
         end_date: end.toISOString().slice(0, 10),
-        split
+        split: actualSplit
       })
       .select('*')
       .single();
@@ -172,148 +175,112 @@ serve(async (req) => {
     console.log('Starting program generation for 12 weeks...');
     const workoutDays = [0, 2, 4]; // Mon, Wed, Fri
 
-    // Batch operations for better performance
-    const sessionsToInsert = [];
-    
-    // Prepare all sessions first
+    // Initialize variables for exercises and muscle groups
+    let muscleGroupMap = new Map();
+    let allExercises: any[] = [];
+
+    // Generate sessions one by one to avoid complexity
     for (let w = 0; w < 12; w++) {
       for (let d = 0; d < 3; d++) {
         const dayType = splitDays[d];
         const dayDate = new Date(nearestMonday);
         dayDate.setDate(nearestMonday.getDate() + w * 7 + workoutDays[d]);
 
-        sessionsToInsert.push({
-          program_id: program.id,
-          user_id: user.id,
-          scheduled_date: dayDate.toISOString().slice(0, 10),
-          name: `Нед ${w + 1} / День ${d + 1} (${dayType})`,
-          split_day: dayType
-        });
-      }
-    }
+        console.log(`Creating session: Week ${w+1}, Day ${d+1}, Type: ${dayType}`);
 
-    console.log(`Inserting ${sessionsToInsert.length} sessions...`);
-    const { data: sessions, error: sessionsError } = await supabase
-      .from('workout_sessions')
-      .insert(sessionsToInsert)
-      .select('*');
+        // Get all muscle groups and exercises once (only on first iteration)
+        if (w === 0 && d === 0) {
+          const allMuscleGroupNames = [...new Set(Object.values(pools).flat())];
+          const { data: muscleGroups } = await supabase
+            .from('muscle_groups')
+            .select('id,name')
+            .in('name', allMuscleGroupNames);
 
-    if (sessionsError) {
-      console.error('Sessions creation error:', sessionsError);
-      throw sessionsError;
-    }
+          (muscleGroups || []).forEach((mg: any) => {
+            muscleGroupMap.set(mg.name, mg.id);
+          });
 
-    console.log('Sessions created, now adding exercises...');
+          const { data: exercises } = await supabase
+            .from('exercises')
+            .select('id,name,anchor_key,muscle_group_id,created_at')
+            .in('muscle_group_id', Array.from(muscleGroupMap.values()));
 
-    // Get all muscle groups once
-    const allMuscleGroupNames = [...new Set(Object.values(pools).flat())];
-    const { data: muscleGroups } = await supabase
-      .from('muscle_groups')
-      .select('id,name')
-      .in('name', allMuscleGroupNames);
+          allExercises = exercises || [];
+          console.log(`Loaded ${allExercises.length} exercises`);
+        }
 
-    const muscleGroupMap = new Map();
-    (muscleGroups || []).forEach((mg: any) => {
-      muscleGroupMap.set(mg.name, mg.id);
-    });
+        // Create session
+        const { data: session, error: sessionError } = await supabase
+          .from('workout_sessions')
+          .insert({
+            program_id: program.id,
+            user_id: user.id,
+            scheduled_date: dayDate.toISOString().slice(0, 10),
+            name: `Нед ${w + 1} / День ${d + 1} (${dayType})`,
+            split_day: dayType
+          })
+          .select('*')
+          .single();
 
-    // Get all exercises once
-    const { data: allExercises } = await supabase
-      .from('exercises')
-      .select('id,name,anchor_key,muscle_group_id,created_at')
-      .in('muscle_group_id', Array.from(muscleGroupMap.values()));
+        if (sessionError) {
+          console.error('Session creation error:', sessionError);
+          throw sessionError;
+        }
 
-    console.log(`Loaded ${allExercises?.length || 0} exercises`);
-
-    // Process sessions in smaller batches
-    const batchSize = 6; // Process 6 sessions at a time (2 weeks)
-    for (let i = 0; i < sessions.length; i += batchSize) {
-      const sessionBatch = sessions.slice(i, i + batchSize);
-      console.log(`Processing session batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(sessions.length/batchSize)}`);
-      
-      const exercisesToInsert = [];
-      const setsToInsert: any[] = [];
-
-      for (const session of sessionBatch) {
-        const dayType = session.split_day;
-        const muscleGroupNames = pools[dayType];
-        const relevantMuscleGroupIds = muscleGroupNames.map(name => muscleGroupMap.get(name)).filter(Boolean);
+        // Get exercises for this day type
+        const muscleGroupNames = pools[dayType] || [];
+        const relevantMuscleGroupIds = muscleGroupNames
+          .map(name => muscleGroupMap.get(name))
+          .filter(Boolean);
         
         const relevantExercises = (allExercises || [])
           .filter((ex: any) => relevantMuscleGroupIds.includes(ex.muscle_group_id))
           .sort(() => 0.5 - Math.random())
           .slice(0, 6);
 
-        let order = 1;
-        for (const ex of relevantExercises) {
-          exercisesToInsert.push({
-            session_id: session.id,
-            exercise_id: ex.id,
-            sets: 3,
-            reps: 0,
-            order_number: order++
-          });
+        console.log(`Adding ${relevantExercises.length} exercises to session ${session.id}`);
 
-          // Prepare sets for this exercise
+        // Add exercises to session
+        for (let order = 1; order <= relevantExercises.length; order++) {
+          const ex = relevantExercises[order - 1];
+          
+          // Create workout exercise
+          const { data: workoutExercise, error: exerciseError } = await supabase
+            .from('workout_exercises')
+            .insert({
+              session_id: session.id,
+              exercise_id: ex.id,
+              sets: 3,
+              reps: 0,
+              order_number: order
+            })
+            .select('*')
+            .single();
+
+          if (exerciseError) {
+            console.error('Exercise creation error:', exerciseError);
+            throw exerciseError;
+          }
+
+          // Create sets for this exercise
           const fiveRM = ex.anchor_key ? fiveRMMap.get(ex.anchor_key) : undefined;
           const sets = setsFrom5RM(fiveRM);
           
           for (const s of sets) {
-            setsToInsert.push({
-              exercise_id: ex.id,
-              session_id: session.id,
-              order: order - 1,
-              set_no: s.set_no,
-              reps: s.reps,
-              weight_kg: s.weight_kg,
-              pct_of_5rm: s.pct_of_5rm
-            });
-          }
-        }
-      }
-
-      // Insert exercises for this batch
-      if (exercisesToInsert.length > 0) {
-        const { data: insertedExercises, error: exercisesError } = await supabase
-          .from('workout_exercises')
-          .insert(exercisesToInsert)
-          .select('*');
-
-        if (exercisesError) {
-          console.error('Exercises insertion error:', exercisesError);
-          throw exercisesError;
-        }
-
-        // Map exercises to their sets
-        const finalSets = [];
-        let setsIndex = 0;
-        
-        for (let j = 0; j < insertedExercises.length; j++) {
-          const exercise = insertedExercises[j];
-          // Each exercise has 3 sets
-          for (let setNum = 0; setNum < 3; setNum++) {
-            if (setsIndex < setsToInsert.length) {
-              finalSets.push({
-                workout_exercise_id: exercise.id,
-                set_no: setsToInsert[setsIndex].set_no,
-                reps: setsToInsert[setsIndex].reps,
-                weight_kg: setsToInsert[setsIndex].weight_kg,
-                pct_of_5rm: setsToInsert[setsIndex].pct_of_5rm
+            const { error: setError } = await supabase
+              .from('workout_exercise_sets')
+              .insert({
+                workout_exercise_id: workoutExercise.id,
+                set_no: s.set_no,
+                reps: s.reps,
+                weight_kg: s.weight_kg,
+                pct_of_5rm: s.pct_of_5rm
               });
-              setsIndex++;
+
+            if (setError) {
+              console.error('Set creation error:', setError);
+              throw setError;
             }
-          }
-        }
-
-        // Insert sets for this batch
-        if (finalSets.length > 0) {
-          const { error: setsError } = await supabase
-            .from('workout_exercise_sets')
-            .insert(finalSets);
-
-          if (setsError) {
-            console.error('Sets insertion error:', setsError);
-            throw setsError;
           }
         }
       }
