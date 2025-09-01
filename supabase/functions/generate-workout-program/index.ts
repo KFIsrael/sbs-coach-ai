@@ -41,27 +41,19 @@ serve(async (req) => {
 
     // Create Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-      global: {
-        headers: {
-          Authorization: authHeader,
-        },
-      },
-    });
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
 
-    // Get user from token
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-      console.error('User error:', userError);
-      throw new Error('Unauthorized');
+    // Extract user ID from JWT token
+    const token = authHeader.replace('Bearer ', '');
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const userId = payload.sub;
+    
+    if (!userId) {
+      throw new Error('No user ID in token');
     }
 
-    console.log('User authenticated:', user.id);
+    console.log('User authenticated:', userId);
 
     // Helper functions
     function chooseSplit(questionnaireData: any): string {
@@ -100,7 +92,7 @@ serve(async (req) => {
     const { data: questionnaireData } = await supabase
       .from('user_questionnaire_data')
       .select('age_range,limitations')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .maybeSingle();
 
     const split = chooseSplit(questionnaireData || {});
@@ -118,7 +110,7 @@ serve(async (req) => {
     const { data: program, error: programError } = await supabase
       .from('workout_programs')
       .insert({
-        user_id: user.id,
+        user_id: userId,
         name: '12-недельная программа',
         description: 'Автогенерация на основе тестовой тренировки',
         start_date: start.toISOString().slice(0, 10),
@@ -140,7 +132,7 @@ serve(async (req) => {
     const { data: maxes } = await supabase
       .from('user_test_maxes')
       .select('anchor_key,five_rm_kg')
-      .eq('user_id', user.id);
+      .eq('user_id', userId);
 
     const fiveRMMap = new Map();
     (maxes || []).forEach((m: any) => {
@@ -214,7 +206,7 @@ serve(async (req) => {
           .from('workout_sessions')
           .insert({
             program_id: program.id,
-            user_id: user.id,
+            user_id: userId,
             scheduled_date: dayDate.toISOString().slice(0, 10),
             name: `Нед ${w + 1} / День ${d + 1} (${dayType})`,
             split_day: dayType
