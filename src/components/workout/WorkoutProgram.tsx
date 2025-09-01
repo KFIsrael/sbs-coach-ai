@@ -69,6 +69,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, onChooseProgram, questi
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [programId, setProgramId] = useState<string | null>(null);
   const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
+  const [programSplit, setProgramSplit] = useState<string | null>(null);
 
   useEffect(() => {
     const loadProgram = async () => {
@@ -96,6 +97,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, onChooseProgram, questi
 
         const program = programs[0];
         setProgramId(program.id);
+        setProgramSplit(program.split);
 
         // Получаем сессии программы с упражнениями и сетами
         const { data: sessions, error: sessionsError } = await supabase
@@ -304,13 +306,23 @@ export function WorkoutProgram({ onBack, onStartWorkout, onChooseProgram, questi
             // Проверяем, есть ли тренировка в этот день
             const hasWorkout = workoutDates.some(date => isSameDay(date, day));
             
-            // Определяем тип тренировки на основе дня недели
+            // Определяем тип тренировки на основе программы и дня недели
             const dayOfWeek = day.getDay(); // 0 = Sunday, 1 = Monday
             let workoutType = '';
-            if (hasWorkout) {
-              if (dayOfWeek === 1) workoutType = 'Толкающие'; // Понедельник
-              else if (dayOfWeek === 3) workoutType = 'Тянущие'; // Среда  
-              else if (dayOfWeek === 5) workoutType = 'Ноги'; // Пятница
+            if (hasWorkout && programSplit) {
+              if (programSplit === 'PPL') {
+                if (dayOfWeek === 1) workoutType = 'Толкающие'; // Понедельник
+                else if (dayOfWeek === 3) workoutType = 'Тянущие'; // Среда  
+                else if (dayOfWeek === 5) workoutType = 'Ноги'; // Пятница
+              } else if (programSplit === 'ULF') {
+                if (dayOfWeek === 1) workoutType = 'Верх'; // Понедельник
+                else if (dayOfWeek === 3) workoutType = 'Низ'; // Среда  
+                else if (dayOfWeek === 5) workoutType = 'Все тело'; // Пятница
+              } else if (programSplit === 'FULLx3') {
+                if (dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5) {
+                  workoutType = 'Все тело';
+                }
+              }
             }
             
             return (
@@ -338,6 +350,9 @@ export function WorkoutProgram({ onBack, onStartWorkout, onChooseProgram, questi
                       workoutType === 'Толкающие' ? 'bg-red-500/20 text-red-600' :
                       workoutType === 'Тянущие' ? 'bg-blue-500/20 text-blue-600' :
                       workoutType === 'Ноги' ? 'bg-green-500/20 text-green-600' :
+                      workoutType === 'Верх' ? 'bg-purple-500/20 text-purple-600' :
+                      workoutType === 'Низ' ? 'bg-orange-500/20 text-orange-600' :
+                      workoutType === 'Все тело' ? 'bg-teal-500/20 text-teal-600' :
                       'bg-gray-500/20 text-gray-600'
                     }`}>
                       {workoutType}
