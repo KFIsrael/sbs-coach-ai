@@ -246,8 +246,6 @@ serve(async (req) => {
 
         let order = 1;
         for (const ex of relevantExercises) {
-          const tempExerciseId = `temp-${session.id}-${ex.id}-${order}`;
-          
           exercisesToInsert.push({
             session_id: session.id,
             exercise_id: ex.id,
@@ -262,7 +260,9 @@ serve(async (req) => {
           
           for (const s of sets) {
             setsToInsert.push({
-              temp_exercise_id: tempExerciseId,
+              exercise_id: ex.id,
+              session_id: session.id,
+              order: order - 1,
               set_no: s.set_no,
               reps: s.reps,
               weight_kg: s.weight_kg,
@@ -284,38 +284,24 @@ serve(async (req) => {
           throw exercisesError;
         }
 
-        // Map temporary IDs to actual IDs
+        // Map exercises to their sets
         const finalSets = [];
-        let exerciseIndex = 0;
+        let setsIndex = 0;
         
-        for (const session of sessionBatch) {
-          const dayType = session.split_day;
-          const muscleGroupNames = pools[dayType];
-          const relevantMuscleGroupIds = muscleGroupNames.map(name => muscleGroupMap.get(name)).filter(Boolean);
-          
-          const relevantExercises = (allExercises || [])
-            .filter((ex: any) => relevantMuscleGroupIds.includes(ex.muscle_group_id))
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 6);
-
-          let order = 1;
-          for (const ex of relevantExercises) {
-            const tempExerciseId = `temp-${session.id}-${ex.id}-${order}`;
-            const actualExercise = insertedExercises[exerciseIndex];
-            
-            const exerciseSets = setsToInsert.filter(s => s.temp_exercise_id === tempExerciseId);
-            for (const set of exerciseSets) {
+        for (let j = 0; j < insertedExercises.length; j++) {
+          const exercise = insertedExercises[j];
+          // Each exercise has 3 sets
+          for (let setNum = 0; setNum < 3; setNum++) {
+            if (setsIndex < setsToInsert.length) {
               finalSets.push({
-                workout_exercise_id: actualExercise.id,
-                set_no: set.set_no,
-                reps: set.reps,
-                weight_kg: set.weight_kg,
-                pct_of_5rm: set.pct_of_5rm
+                workout_exercise_id: exercise.id,
+                set_no: setsToInsert[setsIndex].set_no,
+                reps: setsToInsert[setsIndex].reps,
+                weight_kg: setsToInsert[setsIndex].weight_kg,
+                pct_of_5rm: setsToInsert[setsIndex].pct_of_5rm
               });
+              setsIndex++;
             }
-            
-            order++;
-            exerciseIndex++;
           }
         }
 
