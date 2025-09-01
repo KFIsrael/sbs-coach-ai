@@ -156,6 +156,9 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
 
   const handleSetComplete = async () => {
     console.log('Set complete button clicked');
+    console.log('Current exercise:', currentExercise, 'of', testExercises.length);
+    console.log('Current set:', currentSet, 'of', exercise.sets);
+    console.log('isLastExercise:', isLastExercise, 'isLastSet:', isLastSet);
     const weight = parseFloat(currentWeight);
     const reps = parseInt(actualReps);
     
