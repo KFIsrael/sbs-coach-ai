@@ -70,6 +70,7 @@ export function WorkoutProgram({ onBack, onStartWorkout, onChooseProgram, questi
   const [programId, setProgramId] = useState<string | null>(null);
   const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
   const [programSplit, setProgramSplit] = useState<string | null>(null);
+  const [showAllExercises, setShowAllExercises] = useState(false);
 
   useEffect(() => {
     const loadProgram = async () => {
@@ -512,21 +513,32 @@ export function WorkoutProgram({ onBack, onStartWorkout, onChooseProgram, questi
                   {/* Превью упражнений */}
                   <div className="space-y-2">
                     <h4 className="font-medium text-sm">Упражнения:</h4>
-                    <div className="grid gap-2">
-                      {nextWorkout.workout.exercises.slice(0, 3).map((exercise, index) => (
-                        <div key={index} className="bg-muted/30 rounded p-2 text-sm">
-                          <div className="font-medium">{exercise.name}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {exercise.sets.length} подходов: {exercise.sets.map(s => `${s.reps} × ${s.weight}`).join(', ')}
-                          </div>
-                        </div>
-                      ))}
-                      {nextWorkout.workout.exercises.length > 3 && (
-                        <div className="text-xs text-muted-foreground text-center">
-                          +{nextWorkout.workout.exercises.length - 3} еще упражнений
-                        </div>
-                      )}
-                    </div>
+                     <div className="grid gap-2">
+                       {(showAllExercises ? nextWorkout.workout.exercises : nextWorkout.workout.exercises.slice(0, 3)).map((exercise, index) => (
+                         <div key={index} className="bg-muted/30 rounded p-2 text-sm">
+                           <div className="font-medium">{exercise.name}</div>
+                           <div className="text-xs text-muted-foreground">
+                             {exercise.sets.length} подходов: {exercise.sets.map(s => `${s.reps} × ${s.weight}`).join(', ')}
+                           </div>
+                         </div>
+                       ))}
+                       {nextWorkout.workout.exercises.length > 3 && !showAllExercises && (
+                         <button 
+                           onClick={() => setShowAllExercises(true)}
+                           className="text-xs text-muted-foreground text-center hover:text-foreground transition-colors duration-200 cursor-pointer p-2 rounded hover:bg-muted/50"
+                         >
+                           +{nextWorkout.workout.exercises.length - 3} еще упражнений
+                         </button>
+                       )}
+                       {showAllExercises && nextWorkout.workout.exercises.length > 3 && (
+                         <button 
+                           onClick={() => setShowAllExercises(false)}
+                           className="text-xs text-muted-foreground text-center hover:text-foreground transition-colors duration-200 cursor-pointer p-2 rounded hover:bg-muted/50"
+                         >
+                           Скрыть дополнительные упражнения
+                         </button>
+                       )}
+                     </div>
                   </div>
                 </div>
                 
