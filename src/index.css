@@ -179,6 +179,10 @@
   .shadow-dark {
     box-shadow: var(--shadow-dark);
   }
+  
+  .animation-delay-75 {
+    animation-delay: 75ms;
+  }
 }
 
 @keyframes float {

@@ -260,13 +260,23 @@ const Index = () => {
     
     try {
       console.log('Starting program generation...');
-      // Автоматически генерируем программу после тестовой тренировки
-      await generateProgram(new Date().toISOString());
       
-      console.log('Program generated successfully');
+      // Вызываем edge function для быстрой генерации программы
+      const { data, error } = await supabase.functions.invoke('generate-workout-program', {
+        body: { 
+          startDateISO: new Date().toISOString()
+        }
+      });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        throw new Error(error.message || 'Ошибка при создании программы');
+      }
+      
+      console.log('Program generated successfully:', data);
       toast({
-        title: "Тестирование завершено!",
-        description: "Программа тренировок создана на основе ваших результатов",
+        title: "Программа создана!",
+        description: "12-недельная программа тренировок готова на основе ваших результатов",
       });
       
       // Переходим к просмотру созданной программы

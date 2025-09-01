@@ -1,141 +1,359 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface QuestionnaireData {
-  1: string; // fitness goal
-  2: string; // fitness level  
-  3: string; // age
-  4: string; // limitations
-  5: string; // equipment
+interface Database {
+  public: {
+    Tables: {
+      workout_programs: any;
+      workout_sessions: any;
+      muscle_groups: any;
+      exercises: any;
+      workout_exercises: any;
+      workout_exercise_sets: any;
+      user_questionnaire_data: any;
+      user_test_maxes: any;
+    };
+  };
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { questionnaireData, exercises } = await req.json() as {
-      questionnaireData: QuestionnaireData;
-      exercises: any[];
+    console.log('Starting program generation edge function');
+    
+    const { startDateISO } = await req.json();
+    
+    // Get auth header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('No authorization header');
+    }
+
+    // Create Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+      global: {
+        headers: {
+          Authorization: authHeader,
+        },
+      },
+    });
+
+    // Get user from token
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      console.error('User error:', userError);
+      throw new Error('Unauthorized');
+    }
+
+    console.log('User authenticated:', user.id);
+
+    // Helper functions
+    function chooseSplit(questionnaireData: any): string {
+      const ageRange = questionnaireData?.age_range;
+      const limitations = questionnaireData?.limitations || [];
+      
+      if (limitations.includes('limited_time')) return 'FULL';
+      if (ageRange === 'under_18' || ageRange === 'over_60') return 'UPPER_LOWER';
+      return 'PUSH_PULL_LEGS';
+    }
+
+    function getSplitDays(split: string): string[] {
+      switch (split) {
+        case 'PUSH_PULL_LEGS': return ['PUSH', 'PULL', 'LEGS'];
+        case 'UPPER_LOWER': return ['UPPER', 'LOWER', 'UPPER'];
+        case 'FULL': return ['FULL', 'FULL', 'FULL'];
+        default: return ['PUSH', 'PULL', 'LEGS'];
+      }
+    }
+
+    function setsFrom5RM(fiveRM?: number) {
+      const sets = [
+        { set_no: 1, reps: 15, pct_of_5rm: 0.60 },
+        { set_no: 2, reps: 12, pct_of_5rm: 0.70 },
+        { set_no: 3, reps: 10, pct_of_5rm: 0.80 }
+      ];
+      
+      return sets.map(s => ({
+        ...s,
+        weight_kg: fiveRM ? Math.round(fiveRM * s.pct_of_5rm * 2) / 2 : null
+      }));
+    }
+
+    // 1) Read questionnaire data
+    console.log('Reading questionnaire data...');
+    const { data: questionnaireData } = await supabase
+      .from('user_questionnaire_data')
+      .select('age_range,limitations')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const split = chooseSplit(questionnaireData || {});
+    console.log('Selected split:', split);
+
+    // 2) Create program
+    const start = new Date(startDateISO);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 7 * 12);
+
+    console.log('Creating workout program...');
+    const { data: program, error: programError } = await supabase
+      .from('workout_programs')
+      .insert({
+        user_id: user.id,
+        name: '12-недельная программа',
+        description: 'Автогенерация на основе тестовой тренировки',
+        start_date: start.toISOString().slice(0, 10),
+        end_date: end.toISOString().slice(0, 10),
+        split
+      })
+      .select('*')
+      .single();
+
+    if (programError) {
+      console.error('Program creation error:', programError);
+      throw programError;
+    }
+
+    console.log('Program created:', program.id);
+
+    // 3) Load 5RM data
+    console.log('Loading test maxes...');
+    const { data: maxes } = await supabase
+      .from('user_test_maxes')
+      .select('anchor_key,five_rm_kg')
+      .eq('user_id', user.id);
+
+    const fiveRMMap = new Map();
+    (maxes || []).forEach((m: any) => {
+      if (m.five_rm_kg != null) {
+        fiveRMMap.set(m.anchor_key, Number(m.five_rm_kg));
+      }
+    });
+
+    console.log('Loaded 5RM data for exercises:', Array.from(fiveRMMap.keys()));
+
+    // 4) Exercise pools
+    const pools: Record<string, string[]> = {
+      PUSH: ['Грудь', 'Плечи', 'Руки'],
+      PULL: ['Спина', 'Руки'],
+      LEGS: ['Ноги'],
+      UPPER: ['Грудь', 'Плечи', 'Спина', 'Руки'],
+      LOWER: ['Ноги'],
+      FULL: ['Грудь', 'Спина', 'Ноги', 'Плечи']
     };
 
-    console.log('Generating workout program with data:', { questionnaireData, exerciseCount: exercises.length });
+    const splitDays = getSplitDays(split);
 
-    // Create a fitness profile from questionnaire data
-    const fitnessGoal = questionnaireData[1];
-    const fitnessLevel = questionnaireData[2];
-    const age = questionnaireData[3];
-    const limitations = questionnaireData[4];
-    const equipment = questionnaireData[5];
+    // 5) Find nearest Monday
+    const startDate = new Date(startDateISO);
+    const dayOfWeek = startDate.getDay();
+    const daysToMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek) % 7;
+    const nearestMonday = new Date(startDate);
+    if (daysToMonday > 0) {
+      nearestMonday.setDate(startDate.getDate() + daysToMonday);
+    }
 
-    const prompt = `You are an expert fitness trainer. Create a personalized 3-day split workout program based on this profile:
+    console.log('Starting program generation for 12 weeks...');
+    const workoutDays = [0, 2, 4]; // Mon, Wed, Fri
 
-Goal: ${fitnessGoal}
-Fitness Level: ${fitnessLevel}  
-Age: ${age}
-Limitations: ${limitations}
-Equipment: ${equipment}
+    // Batch operations for better performance
+    const sessionsToInsert = [];
+    
+    // Prepare all sessions first
+    for (let w = 0; w < 12; w++) {
+      for (let d = 0; d < 3; d++) {
+        const dayType = splitDays[d];
+        const dayDate = new Date(nearestMonday);
+        dayDate.setDate(nearestMonday.getDate() + w * 7 + workoutDays[d]);
 
-Available exercises: ${JSON.stringify(exercises, null, 2)}
-
-Create exactly 3 workout days following this split:
-- Day 1: Chest + Triceps (грудь и трицепс)
-- Day 2: Back + Biceps (спина и бицепс)  
-- Day 3: Legs (ноги)
-
-Each workout should:
-1. Have a descriptive Russian name and focus area
-2. Include 5-7 exercises from the available list that match the muscle groups
-3. Specify sets, reps, and rest time appropriate for the fitness level and age
-4. Be 45-60 minutes long
-5. Consider any limitations mentioned
-6. Use exercises with matching muscleGroup from the list
-
-Return ONLY a JSON object with this structure:
-{
-  "program": {
-    "name": "Трёхдневная сплит-программа",
-    "description": "Персональная программа тренировок на 3 дня в неделю",
-    "weeks": 12,
-    "workouts": [
-      {
-        "day": 1,
-        "title": "Грудь и Трицепс",
-        "focus": "Chest + Triceps", 
-        "duration": "50 min",
-        "completed": false,
-        "exercises": [
-          {
-            "id": "exercise_id_from_list",
-            "name": "Exercise name from list",
-            "description": "Exercise description", 
-            "muscleGroup": "chest",
-            "sets": "3 x 10-12"
-          }
-        ]
+        sessionsToInsert.push({
+          program_id: program.id,
+          user_id: user.id,
+          scheduled_date: dayDate.toISOString().slice(0, 10),
+          name: `Нед ${w + 1} / День ${d + 1} (${dayType})`,
+          split_day: dayType
+        });
       }
-    ]
-  }
-}`;
+    }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an expert fitness trainer who creates personalized workout programs. Always respond with valid JSON only.'
-          },
-          {
-            role: 'user',
-            content: prompt
+    console.log(`Inserting ${sessionsToInsert.length} sessions...`);
+    const { data: sessions, error: sessionsError } = await supabase
+      .from('workout_sessions')
+      .insert(sessionsToInsert)
+      .select('*');
+
+    if (sessionsError) {
+      console.error('Sessions creation error:', sessionsError);
+      throw sessionsError;
+    }
+
+    console.log('Sessions created, now adding exercises...');
+
+    // Get all muscle groups once
+    const allMuscleGroupNames = [...new Set(Object.values(pools).flat())];
+    const { data: muscleGroups } = await supabase
+      .from('muscle_groups')
+      .select('id,name')
+      .in('name', allMuscleGroupNames);
+
+    const muscleGroupMap = new Map();
+    (muscleGroups || []).forEach((mg: any) => {
+      muscleGroupMap.set(mg.name, mg.id);
+    });
+
+    // Get all exercises once
+    const { data: allExercises } = await supabase
+      .from('exercises')
+      .select('id,name,anchor_key,muscle_group_id,created_at')
+      .in('muscle_group_id', Array.from(muscleGroupMap.values()));
+
+    console.log(`Loaded ${allExercises?.length || 0} exercises`);
+
+    // Process sessions in smaller batches
+    const batchSize = 6; // Process 6 sessions at a time (2 weeks)
+    for (let i = 0; i < sessions.length; i += batchSize) {
+      const sessionBatch = sessions.slice(i, i + batchSize);
+      console.log(`Processing session batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(sessions.length/batchSize)}`);
+      
+      const exercisesToInsert = [];
+      const setsToInsert: any[] = [];
+
+      for (const session of sessionBatch) {
+        const dayType = session.split_day;
+        const muscleGroupNames = pools[dayType];
+        const relevantMuscleGroupIds = muscleGroupNames.map(name => muscleGroupMap.get(name)).filter(Boolean);
+        
+        const relevantExercises = (allExercises || [])
+          .filter((ex: any) => relevantMuscleGroupIds.includes(ex.muscle_group_id))
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 6);
+
+        let order = 1;
+        for (const ex of relevantExercises) {
+          const tempExerciseId = `temp-${session.id}-${ex.id}-${order}`;
+          
+          exercisesToInsert.push({
+            session_id: session.id,
+            exercise_id: ex.id,
+            sets: 3,
+            reps: 0,
+            order_number: order++
+          });
+
+          // Prepare sets for this exercise
+          const fiveRM = ex.anchor_key ? fiveRMMap.get(ex.anchor_key) : undefined;
+          const sets = setsFrom5RM(fiveRM);
+          
+          for (const s of sets) {
+            setsToInsert.push({
+              temp_exercise_id: tempExerciseId,
+              set_no: s.set_no,
+              reps: s.reps,
+              weight_kg: s.weight_kg,
+              pct_of_5rm: s.pct_of_5rm
+            });
           }
-        ],
-        max_tokens: 2000,
-        temperature: 0.7
-      }),
-    });
+        }
+      }
 
-    if (!response.ok) {
-      console.error('OpenAI API error:', response.status, response.statusText);
-      throw new Error(`OpenAI API error: ${response.status}`);
+      // Insert exercises for this batch
+      if (exercisesToInsert.length > 0) {
+        const { data: insertedExercises, error: exercisesError } = await supabase
+          .from('workout_exercises')
+          .insert(exercisesToInsert)
+          .select('*');
+
+        if (exercisesError) {
+          console.error('Exercises insertion error:', exercisesError);
+          throw exercisesError;
+        }
+
+        // Map temporary IDs to actual IDs
+        const finalSets = [];
+        let exerciseIndex = 0;
+        
+        for (const session of sessionBatch) {
+          const dayType = session.split_day;
+          const muscleGroupNames = pools[dayType];
+          const relevantMuscleGroupIds = muscleGroupNames.map(name => muscleGroupMap.get(name)).filter(Boolean);
+          
+          const relevantExercises = (allExercises || [])
+            .filter((ex: any) => relevantMuscleGroupIds.includes(ex.muscle_group_id))
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 6);
+
+          let order = 1;
+          for (const ex of relevantExercises) {
+            const tempExerciseId = `temp-${session.id}-${ex.id}-${order}`;
+            const actualExercise = insertedExercises[exerciseIndex];
+            
+            const exerciseSets = setsToInsert.filter(s => s.temp_exercise_id === tempExerciseId);
+            for (const set of exerciseSets) {
+              finalSets.push({
+                workout_exercise_id: actualExercise.id,
+                set_no: set.set_no,
+                reps: set.reps,
+                weight_kg: set.weight_kg,
+                pct_of_5rm: set.pct_of_5rm
+              });
+            }
+            
+            order++;
+            exerciseIndex++;
+          }
+        }
+
+        // Insert sets for this batch
+        if (finalSets.length > 0) {
+          const { error: setsError } = await supabase
+            .from('workout_exercise_sets')
+            .insert(finalSets);
+
+          if (setsError) {
+            console.error('Sets insertion error:', setsError);
+            throw setsError;
+          }
+        }
+      }
     }
 
-    const data = await response.json();
-    
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      console.error('Invalid OpenAI response:', data);
-      throw new Error('Invalid response from OpenAI');
-    }
+    console.log('Program generation completed successfully');
 
-    const generatedProgram = JSON.parse(data.choices[0].message.content);
-    
-    console.log('Generated program:', generatedProgram);
-
-    return new Response(JSON.stringify(generatedProgram), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-
-  } catch (error) {
-    console.error('Error generating workout program:', error);
     return new Response(
       JSON.stringify({ 
-        error: 'Failed to generate workout program',
-        details: error.message 
-      }), 
+        success: true, 
+        programId: program.id,
+        message: 'Программа успешно создана'
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      }
+    );
+
+  } catch (error) {
+    console.error('Error in generate-workout-program function:', error);
+    return new Response(
+      JSON.stringify({ 
+        error: error.message,
+        details: 'Ошибка при создании программы тренировок'
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

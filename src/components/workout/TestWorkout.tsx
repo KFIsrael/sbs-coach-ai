@@ -132,6 +132,7 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
   const [currentWeight, setCurrentWeight] = useState<string>('');
   const [actualReps, setActualReps] = useState<string>('5');
   const [showInstructions, setShowInstructions] = useState(true);
+  const [isGeneratingProgram, setIsGeneratingProgram] = useState(false);
   const { toast } = useToast();
 
   const exercise = testExercises[currentExercise];
@@ -241,6 +242,14 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
     if (isLastSet) {
       if (isLastExercise) {
         console.log('Test workout complete, calling onComplete...');
+        setIsGeneratingProgram(true);
+        
+        // Показываем уведомление о начале генерации
+        toast({
+          title: "Тестирование завершено!",
+          description: "Генерируем персональную программу тренировок...",
+        });
+        
         // Workout complete
         const finalResults = {
           exercises: testExercises.length,
@@ -279,6 +288,34 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
   // Устанавливаем стартовый вес при первом заходе на упражнение
   if (!currentWeight && currentSet === 1) {
     setCurrentWeight(exercise.startWeight.toString());
+  }
+
+  if (isGeneratingProgram) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="card-premium max-w-md w-full text-center">
+          <CardContent className="pt-8 pb-8">
+            <div className="mb-6">
+              <div className="h-16 w-16 mx-auto mb-4 relative">
+                <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <div className="absolute inset-2 border-2 border-accent border-b-transparent rounded-full animate-spin animation-delay-75"></div>
+              </div>
+              <h2 className="text-2xl font-bold text-gradient-gold mb-2">
+                Создаем программу тренировок
+              </h2>
+              <p className="text-muted-foreground mb-4">
+                Анализируем ваши результаты и создаем персональную 12-недельную программу...
+              </p>
+              <div className="bg-muted/30 p-4 rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  Это может занять до 1 минуты
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   if (isResting) {
