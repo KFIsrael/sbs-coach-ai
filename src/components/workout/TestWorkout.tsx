@@ -136,7 +136,15 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
 
   const exercise = testExercises[currentExercise];
   const isLastExercise = currentExercise === testExercises.length - 1;
-  const isLastSet = currentSet === exercise.sets;
+  const isLastSet = exercise ? currentSet === exercise.sets : false;
+
+  // Safety check - reset to valid state if currentExercise is out of bounds
+  if (!exercise && currentExercise >= testExercises.length) {
+    console.error('Invalid exercise index:', currentExercise, 'resetting to 0');
+    setCurrentExercise(0);
+    setCurrentSet(1);
+    return null; // Don't render until state is fixed
+  }
 
   const startRestTimer = () => {
     setIsResting(true);
