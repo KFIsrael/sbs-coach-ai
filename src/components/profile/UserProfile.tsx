@@ -217,21 +217,21 @@ export function UserProfile({ user, onBack, onAccountDeleted }: UserProfileProps
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-3 sm:p-4">
       {/* Header */}
-      <header className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
+      <header className="flex items-center justify-between mb-6 sm:mb-8">
+        <div className="flex items-center gap-3 sm:gap-4">
           <Button 
             variant="ghost" 
             size="icon"
             onClick={onBack}
             className="hover:bg-primary/10"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gradient-gold">{t('profile.title')}</h1>
-            <p className="text-sm text-muted-foreground">{user.name}</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gradient-gold">{t('profile.title')}</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">{user.name}</p>
           </div>
         </div>
       </header>
@@ -290,7 +290,7 @@ export function UserProfile({ user, onBack, onAccountDeleted }: UserProfileProps
           </CardHeader>
           <CardContent>
             {testMaxes.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {testMaxes.map((max) => (
                   <div key={max.anchor_key} className="p-4 bg-background/50 rounded-lg border border-border/50">
                     <div className="flex items-center justify-between mb-2">
@@ -354,7 +354,7 @@ export function UserProfile({ user, onBack, onAccountDeleted }: UserProfileProps
           </CardHeader>
           <CardContent>
             {questionnaireData ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 <div className="p-3 bg-background/50 rounded-lg border border-border/50">
                   <p className="text-sm font-medium text-muted-foreground mb-1">Цель</p>
                   <p className="text-base font-semibold">

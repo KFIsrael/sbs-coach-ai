@@ -92,12 +92,13 @@ export function AIChat({ onClose, user }: AIChatProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="card-premium w-full max-w-2xl h-[600px] flex flex-col shadow-dark">
-        <CardHeader className="flex-row items-center justify-between space-y-0 pb-4 border-b border-border/50">
-          <CardTitle className="flex items-center gap-2 text-gradient-gold">
-            <Bot className="h-5 w-5 text-primary" />
-            AI Fitness Coach
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+      <Card className="card-premium w-full max-w-2xl h-[90vh] sm:h-[600px] flex flex-col shadow-dark">
+        <CardHeader className="flex-row items-center justify-between space-y-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-border/50">
+          <CardTitle className="flex items-center gap-2 text-gradient-gold text-base sm:text-lg">
+            <Bot className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <span className="hidden sm:inline">AI Fitness Coach</span>
+            <span className="sm:hidden">AI Coach</span>
           </CardTitle>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="h-4 w-4" />
@@ -161,7 +162,7 @@ export function AIChat({ onClose, user }: AIChatProps) {
           </ScrollArea>
 
           {/* Input Area */}
-          <div className="p-4 border-t border-border/50">
+          <div className="p-3 sm:p-4 border-t border-border/50">
             <div className="flex gap-2">
               <Input
                 value={inputValue}

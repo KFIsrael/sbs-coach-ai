@@ -214,28 +214,28 @@ export function MessagingCenter({ user, onBack }: MessagingCenterProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-3 sm:p-4">
       {/* Header */}
-      <header className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
+      <header className="flex items-center justify-between mb-6 sm:mb-8">
+        <div className="flex items-center gap-3 sm:gap-4">
           <Button 
             variant="ghost" 
             size="icon"
             onClick={onBack}
             className="hover:bg-primary/10"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gradient-gold">Сообщения</h1>
-            <p className="text-sm text-muted-foreground">{user.name}</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gradient-gold">Сообщения</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">{user.name}</p>
           </div>
         </div>
       </header>
 
       <div className="max-w-6xl mx-auto">
         {conversations.size > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Conversations List */}
             <div className="lg:col-span-1">
               <Card className="card-premium">

@@ -345,19 +345,20 @@ export function TestWorkout({ onBack, onComplete }: TestWorkoutProps) {
   }
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-3 sm:p-4">
       {/* Header */}
-      <div className="max-w-2xl mx-auto mb-8">
+      <div className="max-w-2xl mx-auto mb-6 sm:mb-8">
         <div className="flex items-center justify-between mb-4">
           <Button 
             variant="ghost" 
             onClick={onBack}
             className="text-muted-foreground hover:text-primary"
+            size="sm"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Назад
+            <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Назад</span>
           </Button>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-xs sm:text-sm text-muted-foreground">
             {currentExercise + 1} из {testExercises.length}
           </span>
         </div>

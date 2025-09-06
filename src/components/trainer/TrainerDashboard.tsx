@@ -195,28 +195,28 @@ export function TrainerDashboard({ user, onBack }: TrainerDashboardProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-3 sm:p-4">
       {/* Header */}
-      <header className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
+      <header className="flex items-center justify-between mb-6 sm:mb-8">
+        <div className="flex items-center gap-3 sm:gap-4">
           <Button 
             variant="ghost" 
             size="icon"
             onClick={onBack}
             className="hover:bg-primary/10"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gradient-gold">{t('trainer.dashboard')}</h1>
-            <p className="text-sm text-muted-foreground">Тренер: {user.name}</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gradient-gold">{t('trainer.dashboard')}</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">Тренер: {user.name}</p>
           </div>
         </div>
       </header>
 
       <div className="max-w-6xl mx-auto">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card className="card-premium">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
@@ -267,7 +267,7 @@ export function TrainerDashboard({ user, onBack }: TrainerDashboardProps) {
           </CardHeader>
           <CardContent>
             {clients.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {clients.map((client) => (
                   <Card key={client.user_id} className="border-2 hover:border-primary/30 transition-colors">
                     <CardHeader className="pb-3">

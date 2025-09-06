@@ -434,33 +434,36 @@ export function WorkoutProgram({ onBack, onStartWorkout, onChooseProgram, questi
   }
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-3 sm:p-4">
       {/* Header */}
-      <div className="max-w-4xl mx-auto mb-6">
+      <div className="max-w-4xl mx-auto mb-4 sm:mb-6">
         <div className="flex items-center justify-between mb-4">
           <Button 
             variant="ghost" 
             onClick={onBack}
             className="text-muted-foreground hover:text-primary"
+            size="sm"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Назад
+            <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Назад</span>
           </Button>
           <Button 
             variant="outline"
             onClick={() => setShowRegenerateDialog(true)}
             className="text-primary border-primary hover:bg-primary/10"
+            size="sm"
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Обновить программу
+            <RefreshCw className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Обновить программу</span>
+            <span className="sm:hidden">Обновить</span>
           </Button>
         </div>
         
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-gradient-gold mb-2">
+        <div className="text-center mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gradient-gold mb-2">
             Ваша программа тренировок
           </h1>
-          <p className="text-muted-foreground mb-4">
+          <p className="text-sm sm:text-base text-muted-foreground mb-4">
             Тренировки проходят по понедельникам, средам и пятницам
           </p>
         </div>

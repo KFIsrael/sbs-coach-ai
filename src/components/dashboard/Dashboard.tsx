@@ -288,16 +288,16 @@ export function Dashboard({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-card p-3 sm:p-4">
       {/* Header */}
-      <header className="mb-8">
+      <header className="mb-6 sm:mb-8">
         {/* Top row - Logo and Logout */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
             <Logo size="sm" className="flex-shrink-0" />
             <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-gradient-gold truncate">Sport Body System</h1>
-              <p className="text-xs sm:text-sm text-muted-foreground truncate">{currentDate}</p>
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gradient-gold truncate">Sport Body System</h1>
+              <p className="text-xs text-muted-foreground truncate">{currentDate}</p>
             </div>
           </div>
           <Button 
@@ -320,25 +320,25 @@ export function Dashboard({
             onClick={onOpenProfile}
           >
             <User className="h-4 w-4 text-primary flex-shrink-0" />
-            <span className="text-sm font-medium truncate">{user.name}</span>
+            <span className="text-xs sm:text-sm font-medium truncate">{user.name}</span>
           </div>
         </div>
       </header>
 
       {/* Welcome Section */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <Card className="card-premium bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
-          <CardHeader>
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <CardHeader className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
               <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg sm:text-xl text-gradient-gold">
+                <CardTitle className="text-base sm:text-lg md:text-xl text-gradient-gold">
                   {t('dashboard.welcome')}, {user.name}! 💪
                 </CardTitle>
-                <CardDescription className="text-sm sm:text-base mt-2">
+                <CardDescription className="text-sm mt-2">
                   {t('dashboard.ready_to_train')}
                 </CardDescription>
               </div>
-              <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 self-start">
+              <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 self-start text-xs">
                 Active
               </Badge>
             </div>
@@ -347,16 +347,16 @@ export function Dashboard({
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 gap-4 mb-8">
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <Card className="card-premium hover:shadow-gold cursor-pointer transition-all duration-300 hover:scale-[1.02]" onClick={onStartWorkout}>
-          <CardHeader className="pb-3">
+          <CardHeader className="p-4 sm:p-6 pb-3">
             <div className="flex items-center gap-3">
               <div className="bg-primary rounded-full p-2 flex-shrink-0">
-                <Play className="h-5 w-5 text-primary-foreground" />
+                <Play className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
               </div>
               <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg">{t('dashboard.start_workout')}</CardTitle>
-                <CardDescription className="text-sm">{t('dashboard.ready_to_train')}</CardDescription>
+                <CardTitle className="text-base sm:text-lg">{t('dashboard.start_workout')}</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">{t('dashboard.ready_to_train')}</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -364,28 +364,28 @@ export function Dashboard({
 
         {!hasQuestionnaire ? (
           <Card className="card-premium hover:shadow-gold cursor-pointer transition-all duration-300 hover:scale-[1.02]" onClick={onStartQuestionnaire}>
-            <CardHeader className="pb-3">
+            <CardHeader className="p-4 sm:p-6 pb-3">
               <div className="flex items-center gap-3">
                 <div className="bg-accent rounded-full p-2 flex-shrink-0">
-                  <Target className="h-5 w-5 text-primary-foreground" />
+                  <Target className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <CardTitle className="text-lg">{t('questionnaire.title')}</CardTitle>
-                  <CardDescription className="text-sm">{t('questionnaire.choose_option')}</CardDescription>
+                  <CardTitle className="text-base sm:text-lg">{t('questionnaire.title')}</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">{t('questionnaire.choose_option')}</CardDescription>
                 </div>
               </div>
             </CardHeader>
           </Card>
         ) : (
           <Card className="card-premium hover:shadow-gold cursor-pointer transition-all duration-300 hover:scale-[1.02]" onClick={onTestWorkout}>
-            <CardHeader className="pb-3">
+            <CardHeader className="p-4 sm:p-6 pb-3">
               <div className="flex items-center gap-3">
                 <div className="bg-accent rounded-full p-2 flex-shrink-0">
-                  <Target className="h-5 w-5 text-primary-foreground" />
+                  <Target className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <CardTitle className="text-lg">Тестовая тренировка</CardTitle>
-                  <CardDescription className="text-sm">Обновить рабочие веса и программу</CardDescription>
+                  <CardTitle className="text-base sm:text-lg">Тестовая тренировка</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">Обновить рабочие веса и программу</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -394,7 +394,7 @@ export function Dashboard({
       </div>
 
       {/* Progress Overview */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <Card className="card-premium">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">

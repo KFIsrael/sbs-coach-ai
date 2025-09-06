@@ -118,25 +118,25 @@ export function AuthForm({ onAuth }: AuthFormProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="absolute top-4 right-4">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
+      <div className="absolute top-4 right-4 z-10">
         <LanguageSelector />
       </div>
-      <Card className="card-premium w-full max-w-md">
-        <CardHeader className="text-center space-y-4">
+      <Card className="card-premium w-full max-w-md mx-auto">
+        <CardHeader className="text-center space-y-4 px-4 sm:px-6">
           <div className="mx-auto w-fit">
             <Logo size="lg" />
           </div>
           <div>
-            <CardTitle className="text-3xl font-bold text-gradient-gold">
+            <CardTitle className="text-2xl sm:text-3xl font-bold text-gradient-gold">
               {t('auth.title')}
             </CardTitle>
-            <CardDescription className="text-lg mt-2">
+            <CardDescription className="text-base sm:text-lg mt-2">
               {t('auth.subtitle')}
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 px-4 sm:px-6 pb-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <>

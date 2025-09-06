@@ -440,36 +440,37 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
   }
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-3 sm:p-4">
       {/* Header */}
-      <div className="max-w-2xl mx-auto mb-8">
+      <div className="max-w-2xl mx-auto mb-6 sm:mb-8">
         <div className="flex items-center justify-between mb-4">
           <Button 
             variant="ghost" 
             onClick={handlePrevious}
             className="text-muted-foreground hover:text-primary"
+            size="sm"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Назад
+            <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Назад</span>
           </Button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {isDemoUser && (
-              <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-600 dark:text-amber-400">
+              <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-600 dark:text-amber-400 hidden sm:inline-flex">
                 Демо режим — сохранение отключено
               </Badge>
             )}
-            <span className="text-sm text-muted-foreground">
+            <span className="text-xs sm:text-sm text-muted-foreground">
               {currentQuestionIndex + 1} из {totalQuestions}
             </span>
             {in5RMSection && (
               <Badge variant="secondary" className="text-xs">
-                Замеры 5ПМ
+                5ПМ
               </Badge>
             )}
           </div>
         </div>
         
-        <Progress value={progress} className="h-2 bg-muted mb-6">
+        <Progress value={progress} className="h-2 bg-muted mb-4 sm:mb-6">
           <div 
             className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-500" 
             style={{ width: `${progress}%` }} 
