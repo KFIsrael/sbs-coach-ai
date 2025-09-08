@@ -1,5 +1,5 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import 'https://deno.land/x/xhr@0.1.0/mod.ts';
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const corsHeaders = {
@@ -30,9 +30,9 @@ serve(async (req) => {
 
   try {
     console.log('Starting program generation edge function');
-    
+
     const { startDateISO } = await req.json();
-    
+
     // Get auth header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
@@ -48,7 +48,7 @@ serve(async (req) => {
     const token = authHeader.replace('Bearer ', '');
     const payload = JSON.parse(atob(token.split('.')[1]));
     const userId = payload.sub;
-    
+
     if (!userId) {
       throw new Error('No user ID in token');
     }
@@ -59,7 +59,7 @@ serve(async (req) => {
     function chooseSplit(questionnaireData: any): string {
       const ageRange = questionnaireData?.age_range;
       const limitations = questionnaireData?.limitations || [];
-      
+
       if (limitations.includes('limited_time')) return 'FULL';
       if (ageRange === 'under_18' || ageRange === 'over_60') return 'UPPER_LOWER';
       return 'PUSH_PULL_LEGS';
@@ -67,10 +67,14 @@ serve(async (req) => {
 
     function getSplitDays(split: string): string[] {
       switch (split) {
-        case 'PUSH_PULL_LEGS': return ['PUSH', 'PULL', 'LEGS'];
-        case 'UPPER_LOWER': return ['UPPER', 'LOWER', 'UPPER'];
-        case 'FULL': return ['FULL', 'FULL', 'FULL'];
-        default: return ['PUSH', 'PULL', 'LEGS'];
+        case 'PUSH_PULL_LEGS':
+          return ['PUSH', 'PULL', 'LEGS'];
+        case 'UPPER_LOWER':
+          return ['UPPER', 'LOWER', 'UPPER'];
+        case 'FULL':
+          return ['FULL', 'FULL', 'FULL'];
+        default:
+          return ['PUSH', 'PULL', 'LEGS'];
       }
     }
 
@@ -78,12 +82,12 @@ serve(async (req) => {
       const sets = [
         { set_no: 1, reps: 15, pct_of_5rm: 0.78 },
         { set_no: 2, reps: 12, pct_of_5rm: 0.83 },
-        { set_no: 3, reps: 10, pct_of_5rm: 0.88 }
+        { set_no: 3, reps: 10, pct_of_5rm: 0.88 },
       ];
-      
-      return sets.map(s => ({
+
+      return sets.map((s) => ({
         ...s,
-        weight_kg: fiveRM ? Math.round(fiveRM * s.pct_of_5rm * 2) / 2 : null
+        weight_kg: fiveRM ? Math.round(fiveRM * s.pct_of_5rm * 2) / 2 : null,
       }));
     }
 
@@ -115,7 +119,7 @@ serve(async (req) => {
         description: 'Автогенерация на основе тестовой тренировки',
         start_date: start.toISOString().slice(0, 10),
         end_date: end.toISOString().slice(0, 10),
-        split: actualSplit
+        split: actualSplit,
       })
       .select('*')
       .single();
@@ -150,7 +154,7 @@ serve(async (req) => {
       LEGS: ['Ноги'],
       UPPER: ['Грудь', 'Плечи', 'Спина', 'Руки'],
       LOWER: ['Ноги'],
-      FULL: ['Грудь', 'Спина', 'Ноги', 'Плечи']
+      FULL: ['Грудь', 'Спина', 'Ноги', 'Плечи'],
     };
 
     const splitDays = getSplitDays(split);
@@ -168,8 +172,9 @@ serve(async (req) => {
     const workoutDays = [0, 2, 4]; // Mon, Wed, Fri
 
     // Initialize variables for exercises and muscle groups
-    let muscleGroupMap = new Map();
+    const muscleGroupMap = new Map();
     let allExercises: any[] = [];
+
 
     // Generate sessions one by one to avoid complexity
     for (let w = 0; w < 12; w++) {
@@ -178,7 +183,7 @@ serve(async (req) => {
         const dayDate = new Date(nearestMonday);
         dayDate.setDate(nearestMonday.getDate() + w * 7 + workoutDays[d]);
 
-        console.log(`Creating session: Week ${w+1}, Day ${d+1}, Type: ${dayType}`);
+        console.log(`Creating session: Week ${w + 1}, Day ${d + 1}, Type: ${dayType}`);
 
         // Get all muscle groups and exercises once (only on first iteration)
         if (w === 0 && d === 0) {
@@ -209,7 +214,7 @@ serve(async (req) => {
             user_id: userId,
             scheduled_date: dayDate.toISOString().slice(0, 10),
             name: `Нед ${w + 1} / День ${d + 1} (${dayType})`,
-            split_day: dayType
+            split_day: dayType,
           })
           .select('*')
           .single();
@@ -222,9 +227,9 @@ serve(async (req) => {
         // Get exercises for this day type
         const muscleGroupNames = pools[dayType] || [];
         const relevantMuscleGroupIds = muscleGroupNames
-          .map(name => muscleGroupMap.get(name))
+          .map((name) => muscleGroupMap.get(name))
           .filter(Boolean);
-        
+
         const relevantExercises = (allExercises || [])
           .filter((ex: any) => relevantMuscleGroupIds.includes(ex.muscle_group_id))
           .sort(() => 0.5 - Math.random())
@@ -235,7 +240,7 @@ serve(async (req) => {
         // Add exercises to session
         for (let order = 1; order <= relevantExercises.length; order++) {
           const ex = relevantExercises[order - 1];
-          
+
           // Create workout exercise
           const { data: workoutExercise, error: exerciseError } = await supabase
             .from('workout_exercises')
@@ -244,7 +249,7 @@ serve(async (req) => {
               exercise_id: ex.id,
               sets: 3,
               reps: 0,
-              order_number: order
+              order_number: order,
             })
             .select('*')
             .single();
@@ -257,17 +262,15 @@ serve(async (req) => {
           // Create sets for this exercise
           const fiveRM = ex.anchor_key ? fiveRMMap.get(ex.anchor_key) : undefined;
           const sets = setsFrom5RM(fiveRM);
-          
+
           for (const s of sets) {
-            const { error: setError } = await supabase
-              .from('workout_exercise_sets')
-              .insert({
-                workout_exercise_id: workoutExercise.id,
-                set_no: s.set_no,
-                reps: s.reps,
-                weight_kg: s.weight_kg,
-                pct_of_5rm: s.pct_of_5rm
-              });
+            const { error: setError } = await supabase.from('workout_exercise_sets').insert({
+              workout_exercise_id: workoutExercise.id,
+              set_no: s.set_no,
+              reps: s.reps,
+              weight_kg: s.weight_kg,
+              pct_of_5rm: s.pct_of_5rm,
+            });
 
             if (setError) {
               console.error('Set creation error:', setError);
@@ -281,28 +284,27 @@ serve(async (req) => {
     console.log('Program generation completed successfully');
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         programId: program.id,
-        message: 'Программа успешно создана'
+        message: 'Программа успешно создана',
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
-      }
+      },
     );
-
   } catch (error) {
     console.error('Error in generate-workout-program function:', error);
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: error.message,
-        details: 'Ошибка при создании программы тренировок'
+        details: 'Ошибка при создании программы тренировок',
       }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      },
     );
   }
 });
